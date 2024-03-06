@@ -1,25 +1,12 @@
-import Button from '@mui/material/Button';
-import { useColorScheme,} from '@mui/material/styles';
+import Board from './pages/Boards/_id'
+
+
 function App() {
-  
-  function ModeToggle() {
-    const { mode, setMode } = useColorScheme();
-    return (
-      <Button
-        onClick={() => {
-          setMode(mode === 'light' ? 'dark' : 'light');
-        }}
-      >
-        {mode === 'light' ? 'Turn dark' : 'Turn light'}
-      </Button>
-    );
-  }
 
   return (
     <>
-    <ModeToggle />
-    <p>Nguyen Dinh Hao</p>
-      <Button variant="contained">Hello world</Button>
+    {/* Board detail */}
+      <Board/>
     </>
   )
 }
