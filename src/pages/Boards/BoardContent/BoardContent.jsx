@@ -2,13 +2,15 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import Box from '@mui/material/Box'
 import ListColumns from './ListColumns/ListColumns'
 import { mapOrder } from '~/utils/sorts'
-import { getFirstCollision, pointerWithin, closestCorners, defaultDropAnimationSideEffects, DndContext, PointerSensor, useSensor, useSensors, MouseSensor, DragOverlay } from '@dnd-kit/core'
+import { getFirstCollision, pointerWithin, closestCorners, defaultDropAnimationSideEffects, DndContext, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import Column from './ListColumns/Column/Column'
 import CardItem from './ListColumns/Column/ListCards/Card/Card'
 import { cloneDeep, isEmpty } from 'lodash'
-import { Container } from '@mui/material'
+// import { Container } from '@mui/material'
 import {generatePlacehoderCard} from '~/utils/formatters'
+import { MouseSensor, TouchSensor } from '~/customLibraries/DndKitSensors'
+
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -16,7 +18,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
 }
 
 
-function BoardContent({ board }) {
+function BoardContent({ board, createNewColumn, createNewCard }) {
 
 
   // chuột di chuyển quá 10px mới kích hoạt event
@@ -292,7 +294,7 @@ function BoardContent({ board }) {
       }}>
 
         {/* Box container column*/}
-        <ListColumns columns={orderedColumnsState} />
+        <ListColumns columns={orderedColumnsState} createNewColumn={createNewColumn} createNewCard={createNewCard}/>
         <DragOverlay dropAnimation={dropAnimationCustom}>
           {(!activeDragItemType) && null}
           {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={activeDragItemData} />}

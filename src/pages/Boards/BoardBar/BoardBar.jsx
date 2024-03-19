@@ -27,39 +27,42 @@ function BoardBar({ board }) {
       
     }}>
       <Box sx={{ display:'flex', alignItems:'center', gap:2 }}>
-        <Chip
-          sx={{
-            color:'white',
-            backgroundColor:'transparent',
-            border:'none',
-            paddingX:'5px',
-            borderRadius:'4px',
-            '.MuiSvgIcon-root': {
-              color:'white'
-            },
-            '&:hover':{
-              bgcolor:'primary.50'
-            }
-          }}
-          icon={<DashboardIcon />} label={board?.title} clickable
-        />
-        <Chip
-          sx={{
-            color:'white',
-            backgroundColor:'transparent',
-            border:'none',
-            paddingX:'5px',
-            borderRadius:'4px',
-            '.MuiSvgIcon-root': {
-              color:'white'
-            },
-            '&:hover':{
-              bgcolor:'primary.50'
-            }
-          }}
-          icon={<VpnLockIcon />} label={capitalizeFirstLetter(board?.type)} clickable
-        />
-
+        <Tooltip title={board?.description}>
+          <Chip
+            sx={{
+              color:'white',
+              backgroundColor:'transparent',
+              border:'none',
+              paddingX:'5px',
+              borderRadius:'4px',
+              '.MuiSvgIcon-root': {
+                color:'white'
+              },
+              '&:hover':{
+                bgcolor:'primary.50'
+              }
+            }}
+            icon={<DashboardIcon />} label={board?.title} clickable
+          />
+        </Tooltip>
+        <Tooltip title={board?.type}>
+          <Chip
+            sx={{
+              color:'white',
+              backgroundColor:'transparent',
+              border:'none',
+              paddingX:'5px',
+              borderRadius:'4px',
+              '.MuiSvgIcon-root': {
+                color:'white'
+              },
+              '&:hover':{
+                bgcolor:'primary.50'
+              }
+            }}
+            icon={<VpnLockIcon />} label={capitalizeFirstLetter(board?.type)} clickable
+          />
+        </Tooltip>
         <Chip
           sx={{
             color:'white',
