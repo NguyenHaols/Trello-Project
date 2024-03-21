@@ -25,16 +25,17 @@ import CloseIcon from '@mui/icons-material/Close'
 import TextField from '@mui/material/TextField'
 // import theme from '~/theme'
 import { toast } from 'react-toastify'
+import { useConfirm } from 'material-ui-confirm'
 
 
-function Column({ column, createNewCard }) {
+function Column({ column, createNewCard, deleteColumn }) {
 
   const [openNewCardForm, setopenNewCardForm] = useState(false)
   const toggleOpenNewCardForm = () => setopenNewCardForm(!openNewCardForm)
   const [newCardTitle, setNewCardTitle] = useState('')
 
   // tim hieu react hook cho form co nhieu input
-  const addNewCard = async() => {
+  const addNewCard = () => {
     if (!newCardTitle) {
       toast.error('Please enter card title')
       return
@@ -47,10 +48,25 @@ function Column({ column, createNewCard }) {
       title: newCardTitle,
       columnId: column._id
     }
-    await createNewCard(newCardData)
+    createNewCard(newCardData)
 
     toggleOpenNewCardForm()
     setNewCardTitle('')
+  }
+  const confirmDeleteColumn = useConfirm()
+  const handleDeleteColumn = () => {
+    confirmDeleteColumn({
+      description:'Are you sure you want to delete this column ?',
+      title: 'Delete Column ?'
+      // confirmationText:'Confirm',  đã là mặc định ở main.jsx
+      // cancellationText:'Cancel'  đã là mặc định ở main.jsx
+      // dialogProps:{ maxWidth:'xs' } đã là mặc định ở main.jsx
+    })
+      .then( () => {
+        deleteColumn(column._id)
+      })
+      .catch(() => {})
+
   }
 
   const {
@@ -78,7 +94,8 @@ function Column({ column, createNewCard }) {
     setAnchorEl(null)
   }
 
-  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
+  // Card sau khi được sắp xếp ở boardContent
+  const orderedCards = column.cards
 
   return (
     <div
@@ -127,12 +144,21 @@ function Column({ column, createNewCard }) {
               anchorEl={anchorEl}
               open={open}
               onClose={handleClose}
+              onClick={handleClose}
               MenuListProps={{
                 'aria-labelledby': 'basic-column-dropdown'
               }}
             >
-              <MenuItem>
-                <ListItemIcon><AddCardIcon fontSize="small" /></ListItemIcon>
+              <MenuItem onClick={toggleOpenNewCardForm}
+                sx={{
+                  '&:hover': {
+                    color: 'success.light',
+                    '& .add-card-Icon':{
+                      color: 'success.light'
+                    }
+                  }
+                }}>
+                <ListItemIcon><AddCardIcon className='add-card-Icon' fontSize="small" /></ListItemIcon>
                 <ListItemText>Add new card</ListItemText>
               </MenuItem>
               <MenuItem>
@@ -148,12 +174,19 @@ function Column({ column, createNewCard }) {
                 <ListItemText>Paste</ListItemText>
               </MenuItem>
               <Divider />
-              <MenuItem>
+              <MenuItem >
                 <ListItemIcon> <Cloud fontSize="small" /> </ListItemIcon>
                 <ListItemText>Archive this column</ListItemText>
               </MenuItem>
-              <MenuItem>
-                <ListItemIcon> <DeleteOutlineIcon fontSize="small" /> </ListItemIcon>
+              <MenuItem onClick={handleDeleteColumn} sx={{
+                '&:hover': {
+                  color: 'warning.dark',
+                  '& .delete-forever-Icon':{
+                    color: 'warning.dark'
+                  }
+                }
+              }}>
+                <ListItemIcon> <DeleteOutlineIcon className='delete-forever-Icon' fontSize="small" /> </ListItemIcon>
                 <ListItemText>Remove this column</ListItemText>
               </MenuItem>
 
@@ -186,7 +219,7 @@ function Column({ column, createNewCard }) {
               height:'100%',
               alignItems:'center',
               gap:1
-              
+
             }}>
               <TextField
                 label="Enter card title"
@@ -199,11 +232,11 @@ function Column({ column, createNewCard }) {
                 onChange = {(e) => setNewCardTitle(e.target.value)}
                 sx={{
                   '& label':{ color:'text.primary' },
-                  '& input':{ 
+                  '& input':{
                     color:(theme) => theme.palette.primary.main,
-                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : 'white'),
+                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : 'white')
                   },
-                  '& label.Mui-focused':{ color:(theme) => theme.palette.main},
+                  '& label.Mui-focused':{ color:(theme) => theme.palette.main },
                   '& .MuiOutlinedInput-root':{
                     '& fieldset' : {
                       borderColor:(theme) => theme.palette.primary.main

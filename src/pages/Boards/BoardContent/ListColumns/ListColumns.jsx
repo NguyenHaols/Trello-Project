@@ -8,14 +8,14 @@ import CloseIcon from '@mui/icons-material/Close'
 import TextField from '@mui/material/TextField'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 
-function ListColumns({ columns, createNewColumn, createNewCard }) {
+function ListColumns({ columns, createNewColumn, createNewCard, deleteColumn }) {
 
   const [openNewColumnForm, setopenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm = () => setopenNewColumnForm(!openNewColumnForm)
   const [newColumnTitle, setNewColumnTitle] = useState('')
 
   // tim hieu react hook cho form co nhieu input
-  const addNewColumn = async() => {
+  const addNewColumn = () => {
     if (!newColumnTitle) {
       toast.error('Please enter column title')
       return
@@ -27,7 +27,7 @@ function ListColumns({ columns, createNewColumn, createNewCard }) {
     const newColumnData = {
       title: newColumnTitle
     }
-    await createNewColumn(newColumnData)
+    createNewColumn(newColumnData)
 
     toggleOpenNewColumnForm()
     setNewColumnTitle('')
@@ -46,7 +46,7 @@ function ListColumns({ columns, createNewColumn, createNewCard }) {
       }}>
 
         {/* box column */}
-        {columns?.map( column => <Column key={column._id} column={column} createNewCard={createNewCard}/>)}
+        {columns?.map( column => <Column key={column._id} column={column} createNewCard={createNewCard} deleteColumn={deleteColumn}/>)}
 
         {!openNewColumnForm
           ? <Box onClick={toggleOpenNewColumnForm} sx={{
