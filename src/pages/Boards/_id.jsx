@@ -3,7 +3,7 @@ import Container from '@mui/material/Container'
 import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
-import { mockData } from '~/apis/mock-data'
+import { mockData, MocDataUserAPI } from '~/apis/mock-data'
 import { useEffect, useState } from 'react'
 import { deleteColumnDetailsAPI, moveCardToDifferentColumnAPI, updateColumnDetailsAPI, fetchBoardDetailsAPI, createNewColumnApi, createNewCardApi, updateBoardDetailsAPI } from '~/apis'
 import { generatePlacehoderCard } from '~/utils/formatters'
@@ -155,24 +155,24 @@ function Board() {
       } )
   }
 
-  if (!board) {
-    return (
-      <Box sx={{ height:'100vh', display: 'flex', justifyContent:'center', alignItems:'center' }}>
-        <CircularProgress />
-      </Box>
-    )
-  }
+  // if (!board) {
+  //   return (
+  //     <Box sx={{ height:'100vh', display: 'flex', justifyContent:'center', alignItems:'center' }}>
+  //       <CircularProgress />
+  //     </Box>
+  //   )
+  // }
 
   return (
 
     <Container disableGutters maxWidth={false} sx={{ height:'100vh', backgroundColor:'primary.main' }}>
 
-      <AppBar/>
+      <AppBar data={MocDataUserAPI}/>
 
-      <BoardBar board ={board} />
+      <BoardBar board ={mockData.board} />
 
       <BoardContent
-        board ={board}
+        board ={mockData.board}
         createNewColumn={createNewColumn}
         createNewCard={createNewCard}
         moveColumns={moveColumns}

@@ -73,3 +73,63 @@ export const mockData = {
     ]
   }
 }
+
+export const MocDataUserAPI = {
+  _id: 'user_421',
+  Email: 'user1@gmail.com',
+  Username: 'Nguyen Hao',
+  Avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xdL28VY0-7EAX-XWroU&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAR1NIE1U-n4-rrK6IYCJBM6PDbyWYrqF0paNg6tw_LAA&oe=660C4196',
+  RoleId:'1',
+  isActive:'true',
+  Workspaces: [
+    {
+      _id : 'workspace-01',
+      title: 'IT company',
+      avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xdL28VY0-7EAX-XWroU&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAR1NIE1U-n4-rrK6IYCJBM6PDbyWYrqF0paNg6tw_LAA&oe=660C4196',
+      type : 'public',
+      ownerIds: 'user-01',
+      memberIds: ['user-01','user-02'],
+      board: [
+        {
+          _id: 'board-01',
+          title: 'learn js',
+          avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xdL28VY0-7EAX-XWroU&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAR1NIE1U-n4-rrK6IYCJBM6PDbyWYrqF0paNg6tw_LAA&oe=660C4196',
+          ownerIds: 'user-01',
+          memberIds: ['user-01','user-02']
+        },
+        {
+          _id: 'board-02',
+          title: 'learn css',
+          avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xdL28VY0-7EAX-XWroU&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAR1NIE1U-n4-rrK6IYCJBM6PDbyWYrqF0paNg6tw_LAA&oe=660C4196',
+          ownerIds: 'user-01',
+          memberIds: ['user-01','user-02']
+        }
+      ]
+    },
+    {
+      _id : 'workspace-02',
+      title: 'FE company',
+      avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xdL28VY0-7EAX-XWroU&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAR1NIE1U-n4-rrK6IYCJBM6PDbyWYrqF0paNg6tw_LAA&oe=660C4196',
+      type : 'public',
+      ownerIds: 'user-01',
+      memberIds: ['user-01','user-02'],
+      board: [
+        {
+          _id: 'board-01',
+          title: 'learn js',
+          avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xdL28VY0-7EAX-XWroU&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAR1NIE1U-n4-rrK6IYCJBM6PDbyWYrqF0paNg6tw_LAA&oe=660C4196',
+          ownerIds: 'user-01',
+          memberIds: ['user-01','user-02']
+        },
+        {
+          _id: 'board-02',
+          title: 'learn css',
+          avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xdL28VY0-7EAX-XWroU&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAR1NIE1U-n4-rrK6IYCJBM6PDbyWYrqF0paNg6tw_LAA&oe=660C4196',
+          ownerIds: 'user-01',
+          memberIds: ['user-01','user-02']
+        }
+      ]
+    }
+
+  ]
+}

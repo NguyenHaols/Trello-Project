@@ -21,8 +21,11 @@ import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 
-function AppBar() {
-
+function AppBar({data}) {
+  console.log('🚀 ~ AppBar ~ data:', data)
+  const workspaces = data.Workspaces
+  console.log('🚀 ~ AppBar ~ workspace2:', workspaces)
+  
   const [searchValue, setSearchValue] = useState('')
   return (
 
@@ -34,7 +37,10 @@ function AppBar() {
       alignItems:'center',
       justifyContent:'space-between',
       gap: 2,
-      overflow:'hidden'
+      overflow:'hidden',
+      position: 'sticky',
+      top:0,
+      zIndex:10
     }}>
 
 
@@ -45,7 +51,7 @@ function AppBar() {
           <Typography variant="span" sx={{ fontSize:'1.2rem', fontWeight:'bold', color:'white' }}>Trello</Typography>
         </Box>
         <Box sx={{ display: { xs:'none', md:'flex' }, gap:1 }}>
-          <Workspaces />
+          <Workspaces workspaces={workspaces} />
           <Recent />
           <Starred />
           <Templates />
@@ -109,7 +115,7 @@ function AppBar() {
         <Tooltip title="Notification">
           <HelpOutlineIcon sx={{ cursor:'pointer', color:'white' }}/>
         </Tooltip>
-        <Profiles />
+        <Profiles data= {data} />
       </Box>
 
     </Box>
