@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Tooltip from '@mui/material/Tooltip'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
@@ -26,6 +26,7 @@ import TextField from '@mui/material/TextField'
 // import theme from '~/theme'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
+import { useSelector } from 'react-redux'
 
 
 function Column({ column, createNewCard, deleteColumn }) {
@@ -33,8 +34,9 @@ function Column({ column, createNewCard, deleteColumn }) {
   const [openNewCardForm, setopenNewCardForm] = useState(false)
   const toggleOpenNewCardForm = () => setopenNewCardForm(!openNewCardForm)
   const [newCardTitle, setNewCardTitle] = useState('')
+  const ownerBoard = useSelector(state=> state.user)
+  
 
-  // tim hieu react hook cho form co nhieu input
   const addNewCard = () => {
     if (!newCardTitle) {
       toast.error('Please enter card title')
@@ -98,7 +100,8 @@ function Column({ column, createNewCard, deleteColumn }) {
   const orderedCards = column.cards
 
   return (
-    <div
+    <Box
+
       ref={setNodeRef}
       style={dndKitColumnStyle}
       {...attributes}
@@ -109,7 +112,7 @@ function Column({ column, createNewCard, deleteColumn }) {
         sx={{
           minWidth:'300px',
           maxWidth:'300px',
-          bgcolor:(theme) => (theme.palette.mode === 'dark' ? '#333643' : '#ebecf0'),
+          bgcolor:(theme) => (theme.palette.mode === 'dark' ? '#333643' : theme.palette.primary[300]),
           ml:2,
           borderRadius:'6px',
           height:'fit-content',
@@ -202,83 +205,85 @@ function Column({ column, createNewCard, deleteColumn }) {
           height:(theme) => theme.COLUMN_FOOTER_HEIGHT,
           p:2
         }}>
-          {!openNewCardForm
-            ? <Box sx={{
-              display:'flex',
-              height:'100%',
-              alignItems:'center',
-              justifyContent:'space-between'
-            }}>
-              <Button startIcon={<AddIcon/>} onClick={toggleOpenNewCardForm}>Add new card</Button>
-              <Tooltip title="Drag to move">
-                <DragHandleIcon sx={{ cursor:'pointer', color:'primary.main' }}/>
-              </Tooltip>
-            </Box>
-            : <Box sx={{
-              display:'flex',
-              height:'100%',
-              alignItems:'center',
-              gap:1
-
-            }}>
-              <TextField
-                label="Enter card title"
-                type="text"
-                size="small"
-                variant="outlined"
-                autoFocus
-                data-no-dnd = "true"
-                value = {newCardTitle}
-                onChange = {(e) => setNewCardTitle(e.target.value)}
-                sx={{
-                  '& label':{ color:'text.primary' },
-                  '& input':{
-                    color:(theme) => theme.palette.primary.main,
-                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : 'white')
-                  },
-                  '& label.Mui-focused':{ color:(theme) => theme.palette.main },
-                  '& .MuiOutlinedInput-root':{
-                    '& fieldset' : {
-                      borderColor:(theme) => theme.palette.primary.main
-                    },
-                    '&:hover fieldset' : {
-                      borderColor:(theme) => theme.palette.primary.main
-                    },
-                    '&.Mui-focused fieldset' : {
-                      borderColor:(theme) => theme.palette.primary.main
-                    },
-                    '& .MuiOutLinedInput-input' : {
-                      borderRadius:1
-                    }
-                  }
-                }} />
-              <Box sx={{ display:'flex', alignItems:'center', gap:1 }}>
-                <Button variant='contained' size='small' onClick={addNewCard}
-                  sx={{
-                    boxShadow:'none',
-                    border:'0.5px solid',
-                    borderColor: (theme) => theme.palette.primary.main,
-                    '&:hover': { bgcolor: (theme) => theme.palette.primary.main }
-                  }}
-                >
-                Add
-                </Button>
-                <CloseIcon
-                  sx={{
-                    color:(theme) => theme.palette.warning.light,
-                    cursor:'pointer'
-
-                  }}
-                  onClick={() => toggleOpenNewCardForm()}
-                />
+          {ownerBoard &&(
+            !openNewCardForm
+              ? <Box sx={{
+                display:'flex',
+                height:'100%',
+                alignItems:'center',
+                justifyContent:'space-between'
+              }}>
+                <Button startIcon={<AddIcon/>} onClick={toggleOpenNewCardForm}>Add new card</Button>
+                <Tooltip title="Drag to move">
+                  <DragHandleIcon sx={{ cursor:'pointer', color:'primary.main' }}/>
+                </Tooltip>
               </Box>
-            </Box>
-          }
+              : <Box sx={{
+                display:'flex',
+                height:'100%',
+                alignItems:'center',
+                gap:1
+  
+              }}>
+                <TextField
+                  label="Enter card title"
+                  type="text"
+                  size="small"
+                  variant="outlined"
+                  autoFocus
+                  data-no-dnd = "true"
+                  value = {newCardTitle}
+                  onChange = {(e) => setNewCardTitle(e.target.value)}
+                  sx={{
+                    '& label':{ color:'text.primary' },
+                    '& input':{
+                      color:(theme) => theme.palette.primary.main,
+                      bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : 'white')
+                    },
+                    '& label.Mui-focused':{ color:(theme) => theme.palette.main },
+                    '& .MuiOutlinedInput-root':{
+                      '& fieldset' : {
+                        borderColor:(theme) => theme.palette.primary.main
+                      },
+                      '&:hover fieldset' : {
+                        borderColor:(theme) => theme.palette.primary.main
+                      },
+                      '&.Mui-focused fieldset' : {
+                        borderColor:(theme) => theme.palette.primary.main
+                      },
+                      '& .MuiOutLinedInput-input' : {
+                        borderRadius:1
+                      }
+                    }
+                  }} />
+                <Box sx={{ display:'flex', alignItems:'center', gap:1 }}>
+                  <Button variant='contained' size='small' onClick={addNewCard}
+                    sx={{
+                      boxShadow:'none',
+                      border:'0.5px solid',
+                      borderColor: (theme) => theme.palette.primary.main,
+                      '&:hover': { bgcolor: (theme) => theme.palette.primary.main }
+                    }}
+                  >
+                  Add
+                  </Button>
+                  <CloseIcon
+                    sx={{
+                      color:(theme) => theme.palette.warning.light,
+                      cursor:'pointer'
+  
+                    }}
+                    onClick={() => toggleOpenNewCardForm()}
+                  />
+                </Box>
+              </Box>
+            
+          )}
 
         </Box>
 
       </Box>
-    </div>
+    </Box>
   )
 }
 

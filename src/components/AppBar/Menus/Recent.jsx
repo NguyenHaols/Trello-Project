@@ -21,9 +21,13 @@ function Recent() {
   }
 
   return (
-    <Box >
+    <Box>
       <Button
-        sx={{color:'white'}}
+        sx={{ color:(theme) => theme.palette.text.primary,
+          '&:hover':{
+            bgcolor:(theme) => theme.palette.primary[300]
+          }
+        }}
         id="basic-button-Recent"
         aria-controls={open ? 'basic-menu-Recent' : undefined}
         aria-haspopup="true"

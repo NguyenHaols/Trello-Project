@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { toast } from 'react-toastify'
 import Box from '@mui/material/Box'
 import Column from './Column/Column'
@@ -7,12 +7,15 @@ import AddIcon from '@mui/icons-material/Add'
 import CloseIcon from '@mui/icons-material/Close'
 import TextField from '@mui/material/TextField'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
+import { useSelector } from 'react-redux'
 
 function ListColumns({ columns, createNewColumn, createNewCard, deleteColumn }) {
 
   const [openNewColumnForm, setopenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm = () => setopenNewColumnForm(!openNewColumnForm)
   const [newColumnTitle, setNewColumnTitle] = useState('')
+  const ownerBoard = useSelector(state=> state.user)
+
 
   // tim hieu react hook cho form co nhieu input
   const addNewColumn = () => {
@@ -36,6 +39,7 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumn }) 
   return (
     <SortableContext items={columns?.map(c => c._id)} strategy={horizontalListSortingStrategy}>
       <Box sx={{
+        paddingTop:'20px',
         bgcolor:'inherit',
         width: '100%',
         height: '100%',
@@ -46,96 +50,98 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumn }) 
       }}>
 
         {/* box column */}
-        {columns?.map( column => <Column key={column._id} column={column} createNewCard={createNewCard} deleteColumn={deleteColumn}/>)}
+        {columns?.map( column => <Column key={column._id} column={column} createNewCard={createNewCard} deleteColumn={deleteColumn} />)}
 
-        {!openNewColumnForm
-          ? <Box onClick={toggleOpenNewColumnForm} sx={{
-            minWidth: '250px',
-            maxWidth: '250px',
-            mx: 2,
-            borderRadius: '6px',
-            height: 'fit-content',
-            bgcolor: '#ffffff3d'
-          }}>
-            <Button
-              sx={{
-                color:'white',
-                width: '100%',
-                justifyContent: 'flex-start',
-                pl: 2.5,
-                py: 1
-              }}
-              startIcon={<AddIcon />}
-            >Add new column
-            </Button>
-          </Box>
-
-          : <Box sx={{
-            minWidth:'250px',
-            maxWidth:'250px',
-            mx:2,
-            p:1,
-            borderRadius:'6px',
-            height:'fit-content',
-            bgcolor: '#ffffff3d',
-            display:'flex',
-            flexDirection:'column',
-            gap:'1'
-          }}>
-            <TextField
-              label="Enter column title"
-              type="text"
-              size="small"
-              variant='outlined'
-              autoFocus
-              value = {newColumnTitle}
-              onChange = {(e) => setNewColumnTitle(e.target.value)}
-              sx={{
-                '& label':{ color:'white' },
-                '& input':{ color:'white' },
-                '& label.Mui-focused':{ color:'white' },
-                '& .MuiOutlinedInput-root':{
-                  '& fieldset' : {
-                    borderColor:'white'
-                  },
-                  '&:hover fieldset' : {
-                    borderColor:'white'
-                  },
-                  '&.Mui-focused fieldset' : {
-                    borderColor:'white'
-                  }
-                }
-              }} />
-            <Box sx={{ display:'flex', alignItems:'center', gap:1, marginTop:1 }}>
-              <Button variant='contained' size='small' onClick={addNewColumn}
+        {ownerBoard &&
+          (!openNewColumnForm
+            ? <Box onClick={toggleOpenNewColumnForm} sx={{
+              minWidth: '250px',
+              maxWidth: '250px',
+              mx: 2,
+              borderRadius: '6px',
+              height: 'fit-content',
+              bgcolor: '#ffffff3d'
+            }}>
+              <Button
                 sx={{
-                  boxShadow:'none',
-                  border:'0.5px solid',
-                  borderColor: (theme) => theme.palette.primary.main,
-                  '&:hover': { bgcolor: (theme) => theme.palette.primary.main }
-                }}
-              >
-                Add Column
-              </Button>
-              <CloseIcon
-                sx={{
-                  height:'30px',
-                  fontSize:'small',
                   color:'white',
-                  cursor:'pointer',
-                  '&:hover': {
-                    color: (theme) => theme.palette.warning.light
-                  },
-                  '&.MuiSvgIcon-root': {
-                    height:'30px',
-                    width: '20px'
-                  }
-
+                  width: '100%',
+                  justifyContent: 'flex-start',
+                  pl: 2.5,
+                  py: 1
                 }}
-                onClick={() => toggleOpenNewColumnForm()}
-              />
+                startIcon={<AddIcon />}
+              >Add new column
+              </Button>
             </Box>
-          </Box>
+
+            : <Box sx={{
+              minWidth:'250px',
+              maxWidth:'250px',
+              mx:2,
+              p:1,
+              borderRadius:'6px',
+              height:'fit-content',
+              bgcolor: '#ffffff3d',
+              display:'flex',
+              flexDirection:'column',
+              gap:'1'
+            }}>
+              <TextField
+                label="Enter column title"
+                type="text"
+                size="small"
+                variant='outlined'
+                autoFocus
+                value = {newColumnTitle}
+                onChange = {(e) => setNewColumnTitle(e.target.value)}
+                sx={{
+                  '& label':{ color:'white' },
+                  '& input':{ color:'white' },
+                  '& label.Mui-focused':{ color:'white' },
+                  '& .MuiOutlinedInput-root':{
+                    '& fieldset' : {
+                      borderColor:'white'
+                    },
+                    '&:hover fieldset' : {
+                      borderColor:'white'
+                    },
+                    '&.Mui-focused fieldset' : {
+                      borderColor:'white'
+                    }
+                  }
+                }} />
+              <Box sx={{ display:'flex', alignItems:'center', gap:1, marginTop:1 }}>
+                <Button variant='contained' size='small' onClick={addNewColumn}
+                  sx={{
+                    boxShadow:'none',
+                    border:'0.5px solid',
+                    borderColor: (theme) => theme.palette.primary.main,
+                    '&:hover': { bgcolor: (theme) => theme.palette.primary.main }
+                  }}
+                >
+                  Add Column
+                </Button>
+                <CloseIcon
+                  sx={{
+                    height:'30px',
+                    fontSize:'small',
+                    color:'white',
+                    cursor:'pointer',
+                    '&:hover': {
+                      color: (theme) => theme.palette.warning.light
+                    },
+                    '&.MuiSvgIcon-root': {
+                      height:'30px',
+                      width: '20px'
+                    }
+
+                  }}
+                  onClick={() => toggleOpenNewColumnForm()}
+                />
+              </Box>
+            </Box>
+          )
         }
 
       </Box>

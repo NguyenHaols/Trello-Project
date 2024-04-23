@@ -10,6 +10,11 @@ export const fetchBoardDetailsAPI = async(boardId) => {
   return response.data
 }
 
+export const createNewBoardAPI = async(boardData) => {
+  const response = await asiox.post(`${API_ROOT}/v1/boards`, boardData)
+  return response.data
+}
+
 export const updateBoardDetailsAPI = async(boardId, updateData) => {
   const response = await asiox.put(`${API_ROOT}/v1/boards/${boardId}`, updateData)
   return response.data
@@ -50,3 +55,40 @@ export const createNewCardApi = async (newCardData) => {
 
 
 // end card
+
+// user 
+
+export const loginApi = async (userData) => {
+  const response = await axios.post(`${API_ROOT}/v1/users/login`, userData)
+  return response.data
+}
+
+export const registerApi = async (userData) => {
+  const response = await axios.post(`${API_ROOT}/v1/users`, userData)
+  return response.data
+}
+
+export const getUser = async () => {
+  const response = await axios.get(`${API_ROOT}/v1/users/getUser`,{
+    withCredentials: true
+  })
+  return response.data
+}
+
+
+// end user
+
+
+// upload image 
+
+export const uploadImageAPI = async (image) => {
+  const response = await axios.post(`${API_ROOT}/v1/image/upload`, image, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+  return response.data
+}
+
+
+// end upload image

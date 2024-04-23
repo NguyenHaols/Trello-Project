@@ -7,6 +7,8 @@ import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/s
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { ConfirmProvider } from 'material-ui-confirm'
+import { Provider } from 'react-redux'
+import store from './redux/store'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 
@@ -18,7 +20,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       cancellationText:'Cancel'
     }}>
       <CssBaseline />
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
       <ToastContainer position='bottom-right'/>
     </ConfirmProvider>
   </CssVarsProvider>

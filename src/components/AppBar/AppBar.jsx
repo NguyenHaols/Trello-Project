@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import ModeSelect from '~/components/ModeSelect/ModeSelect'
 import Box from '@mui/material/Box'
 import AppsIcon from '@mui/icons-material/Apps'
@@ -20,17 +20,18 @@ import LibraryAddIcon from '@mui/icons-material/LibraryAdd'
 import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
+import { Link } from 'react-router-dom'
+import style from '~/CSS/CSSGlobal.module.scss'
+import { useSelector } from 'react-redux'
 
-function AppBar({data}) {
-  console.log('🚀 ~ AppBar ~ data:', data)
-  const workspaces = data.Workspaces
-  console.log('🚀 ~ AppBar ~ workspace2:', workspaces)
-  
+function AppBar() {
+  const user = useSelector(state => state.user)
+  const workspaces = user?.workspaces
   const [searchValue, setSearchValue] = useState('')
   return (
 
     <Box px={2} sx={{
-      backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#2c3e50':'#01579b'),
+      background:(theme) => (theme.palette.mode === 'dark' ? theme.trello.backgroundDark : theme.trello.backgroundLight),
       width:'100%',
       height: (theme) => theme.trello.appBarHight,
       display:'flex',
@@ -40,28 +41,35 @@ function AppBar({data}) {
       overflow:'hidden',
       position: 'sticky',
       top:0,
-      zIndex:10
+      zIndex:10,
+      borderBottom: '1px solid hsla(218, 54%, 19.6%, 0.16)'
     }}>
 
 
       <Box sx={{ display:'flex', alignItems:'center', gap:2 }}>
-        <AppsIcon sx={{ color:'white' }}/>
-        <Box sx={{ display:'flex', alignItems:'center', gap:0.5 }}>
-          <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:'white' }} />
-          <Typography variant="span" sx={{ fontSize:'1.2rem', fontWeight:'bold', color:'white' }}>Trello</Typography>
-        </Box>
-        <Box sx={{ display: { xs:'none', md:'flex' }, gap:1 }}>
+        <AppsIcon sx={{ color:(theme) => theme.palette.primary, cursor:'pointer' }}/>
+        <Link className={style['a-none']} to='/'>
+          <Box sx={{ display:'flex', alignItems:'center', gap:0.5 }}>
+            <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:(theme) => theme.palette.text.primary }} />
+            <Typography variant="span" sx={{ fontSize:'1.2rem', fontWeight:'bold', color:(theme) => theme.palette.text.primary }}>ItWorks</Typography>
+          </Box>
+        </Link>
+        <Box sx={{
+          display: { xs:'none', md:'flex' }, gap:1 }}>
           <Workspaces workspaces={workspaces} />
           <Recent />
           <Starred />
           <Templates />
           <Button
             sx={{
-              color:'white',
+              color:(theme) => theme.palette.text.primary,
               border:'none',
-              '&:hover':{ border:'none' }
+              '&:hover':{ border:'none',
+                bgcolor:(theme) => theme.palette.primary[300]
+              }
             }}
-            variant="outlined" startIcon={<LibraryAddIcon/>}>Create</Button>
+            variant="outlined" startIcon={<LibraryAddIcon/>}>Create
+          </Button>
         </Box>
       </Box>
 
@@ -76,13 +84,13 @@ function AppBar({data}) {
           InputProps={{
             startAdornment:(
               <InputAdornment position="start">
-                <SearchIcon sx={{ color:'white' }} />
+                <SearchIcon sx={{ color:(theme) => theme.palette.text.primary }} />
               </InputAdornment>
             ),
             endAdornment:(
               <InputAdornment position="end">
                 <CloseIcon
-                  sx={{ fontSize:'small', color:searchValue?'white':'transparent', cursor:'pointer' }}
+                  sx={{ fontSize:'small', color:searchValue? (theme) => theme.palette.text.primary: 'transparent', cursor:'pointer' }}
                   onClick={() => setSearchValue('')}
                 />
               </InputAdornment>
@@ -91,31 +99,35 @@ function AppBar({data}) {
           sx={{
             minWidth: 120,
             maxWidth: 180,
-            '& label':{ color:'white' },
-            '& input':{ color:'white' },
-            '& label.Mui-focused':{ color:'white' },
+            '& label':{ color:(theme) => theme.palette.text.primary },
+            '& input':{ color:(theme) => theme.palette.text.primary },
+            '& label.Mui-focused':{ color:(theme) => theme.palette.text.primary },
+            '& MuiFormLabel-root':{
+              'outline': 'none'
+            },
             '& .MuiOutlinedInput-root':{
               '& fieldset' : {
-                borderColor:'white'
+                borderColor:{ color:(theme) => theme.palette.text.primary }
               },
               '&:hover fieldset' : {
-                borderColor:'white'
+                borderColor:{ color:(theme) => theme.palette.text.primary }
               },
               '&.Mui-focused fieldset' : {
-                borderColor:'white'
-              }
+                borderColor:{ color:(theme) => theme.palette.text.primary }
+              },
+              'outline': 'none'
             }
           }} />
         <ModeSelect />
         <Tooltip title="Notification">
           <Badge color="warning" variant="dot" sx={{ cursor:'pointer' }}>
-            <NotificationsNoneIcon sx={{ color:'white' }} />
+            <NotificationsNoneIcon sx={{ color:(theme) => theme.palette.text.primary }} />
           </Badge>
         </Tooltip>
         <Tooltip title="Notification">
-          <HelpOutlineIcon sx={{ cursor:'pointer', color:'white' }}/>
+          <HelpOutlineIcon sx={{ cursor:'pointer' }}/>
         </Tooltip>
-        <Profiles data= {data} />
+        <Profiles />
       </Box>
 
     </Box>

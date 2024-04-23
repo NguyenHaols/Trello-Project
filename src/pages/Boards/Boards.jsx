@@ -4,7 +4,7 @@ import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
 import { mockData, MocDataUserAPI } from '~/apis/mock-data'
-import { useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { deleteColumnDetailsAPI, moveCardToDifferentColumnAPI, updateColumnDetailsAPI, fetchBoardDetailsAPI, createNewColumnApi, createNewCardApi, updateBoardDetailsAPI } from '~/apis'
 import { generatePlacehoderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
@@ -12,16 +12,20 @@ import { mapOrder } from '~/utils/sorts'
 import { Box } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import { toast } from 'react-toastify'
+import { useParams } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 
 function Board() {
+  let { id } = useParams()
 
-  const [board, setBoard] = useState(null)
+  const [board, setBoard] = useState()
+  // const { userData } = useContext(UserDataContext)
+  const userData = useSelector(state => state.user)
+
 
   useEffect(() => {
-    // react router-dom ( tim hieu lay board id tu url)
-    const boardId = '65f6b88e562d8e34f7f018cc'
-    fetchBoardDetailsAPI(boardId).then((board) => {
+    fetchBoardDetailsAPI(id).then((board) => {
       // Sắp xếp thứ tự column trong board luôn
       board.columns = mapOrder(board.columns, board.columnOrderIds, '_id')
 
@@ -34,9 +38,12 @@ function Board() {
           column.cards = mapOrder(column.cards, column.cardOrderIds, '_id')
         }
       })
+
       setBoard(board)
     })
   }, [])
+
+  // !important Learn redux to store board
 
   // Call api tạo column và refesh lại dữ liệu state
   const createNewColumn = async( newColumnData ) => {
@@ -155,31 +162,34 @@ function Board() {
       } )
   }
 
-  // if (!board) {
-  //   return (
-  //     <Box sx={{ height:'100vh', display: 'flex', justifyContent:'center', alignItems:'center' }}>
-  //       <CircularProgress />
-  //     </Box>
-  //   )
-  // }
+  if (!board) {
+    return (
+      <Box sx={{ height:'100vh', display: 'flex', justifyContent:'center', alignItems:'center' }}>
+        <CircularProgress />
+      </Box>
+    )
+  }
 
   return (
 
-    <Container disableGutters maxWidth={false} sx={{ height:'100vh', backgroundColor:'primary.main' }}>
+    <Container disableGutters maxWidth={false} sx={{ height:(theme) => theme.trello.BOARD_CONTENT_HEIGHT, backgroundColor:'primary.main' }}>
 
-      <AppBar data={MocDataUserAPI}/>
 
-      <BoardBar board ={mockData.board} />
+      <Box sx={{
+        background: board.avatar ? `url(${board.avatar}) center/cover no-repeat` : ((theme) => (theme.palette.mode === 'dark' ? theme.trello.backgroundDark : theme.trello.backgroundLight)),
+      }}>
+        <BoardBar board ={board} />
+        <BoardContent
+          board ={board}
+          createNewColumn={createNewColumn}
+          createNewCard={createNewCard}
+          moveColumns={moveColumns}
+          moveCardInTheSameColumn={moveCardInTheSameColumn}
+          moveCardToDifferentColumn={moveCardToDifferentColumn}
+          deleteColumn={deleteColumn}
+        />
+      </Box>
 
-      <BoardContent
-        board ={mockData.board}
-        createNewColumn={createNewColumn}
-        createNewCard={createNewCard}
-        moveColumns={moveColumns}
-        moveCardInTheSameColumn={moveCardInTheSameColumn}
-        moveCardToDifferentColumn={moveCardToDifferentColumn}
-        deleteColumn={deleteColumn}
-      />
 
     </Container>
 

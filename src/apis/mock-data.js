@@ -7,7 +7,7 @@ export const mockData = {
     type: 'public', // 'private'
     ownerIds: [], // Những users là Admin của board
     memberIds: [], // Những users là member bình thường của board
-    columnOrderIds: ['column-id-01', 'column-id-03', 'column-id-02','column-id-04'], // Thứ tự sắp xếp / vị trí của các Columns trong 1 boards
+    columnOrderIds: ['column-id-01', 'column-id-03', 'column-id-02', 'column-id-04'], // Thứ tự sắp xếp / vị trí của các Columns trong 1 boards
     columns: [
       {
         _id: 'column-id-01',
@@ -75,61 +75,81 @@ export const mockData = {
 }
 
 export const MocDataUserAPI = {
-  _id: 'user_421',
-  Email: 'user1@gmail.com',
-  Username: 'Nguyen Hao',
-  Avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xdL28VY0-7EAX-XWroU&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAR1NIE1U-n4-rrK6IYCJBM6PDbyWYrqF0paNg6tw_LAA&oe=660C4196',
-  RoleId:'1',
-  isActive:'true',
-  Workspaces: [
+  _id: 'user_1',
+  email: 'user1@gmail.com',
+  username: 'Nguyen Hao',
+  avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=eoll-zzKJ_cAb5orIxJ&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAb9jwU6B3VhcnfDI8EdaLGjCVd1zd55b1XEGihEtgm-A&oe=661D2CD6',
+  roleId:'1',
+  starredBoard:['board-01','board-06'],
+  workspaces:[
     {
       _id : 'workspace-01',
+      ownerId:'user_1',
       title: 'IT company',
-      avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xdL28VY0-7EAX-XWroU&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAR1NIE1U-n4-rrK6IYCJBM6PDbyWYrqF0paNg6tw_LAA&oe=660C4196',
-      type : 'public',
-      ownerIds: 'user-01',
-      memberIds: ['user-01','user-02'],
+      avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=eoll-zzKJ_cAb5orIxJ&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAb9jwU6B3VhcnfDI8EdaLGjCVd1zd55b1XEGihEtgm-A&oe=661D2CD6',
+      description: 'Đứng trên ngọn đồi hoa sim nở tím biếc, em có thể ngắm nhìn toàn cảnh ngôi làng nhỏ - quê ngoại yêu dấu của em. Đây là một ngôi làng nhỏ mang những đặc trưng thân thuộc nhất của một làng quê bắc bộ. Với những ngôi nhà gạch có mái ngói đỏ tươi, cùng khoảng sân rộng bằng xi măng ở phía trước',
+      type: 'Private',
+      members: [
+        {
+          _id: 'user_1',
+          email: 'user1@gmail.com',
+          username: 'Nguyen Hao',
+          Avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=eoll-zzKJ_cAb5orIxJ&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAb9jwU6B3VhcnfDI8EdaLGjCVd1zd55b1XEGihEtgm-A&oe=661D2CD6'
+        },
+        {
+          _id: 'user_3',
+          email: 'user2@gmail.com',
+          username: 'Nguyen Hao b',
+          avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=eoll-zzKJ_cAb5orIxJ&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAb9jwU6B3VhcnfDI8EdaLGjCVd1zd55b1XEGihEtgm-A&oe=661D2CD6'
+        }
+      ],
       board: [
         {
           _id: 'board-01',
-          title: 'learn js',
-          avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xdL28VY0-7EAX-XWroU&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAR1NIE1U-n4-rrK6IYCJBM6PDbyWYrqF0paNg6tw_LAA&oe=660C4196',
-          ownerIds: 'user-01',
-          memberIds: ['user-01','user-02']
+          ownerId: 'user-01',
+          title: 'Learn React',
+          type:'public',
+          avatar: 'https://images.spiderum.com/sp-images/7386aff0e12f11e9a86fb1e9505dc991.jpg',
         },
         {
           _id: 'board-02',
-          title: 'learn css',
-          avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xdL28VY0-7EAX-XWroU&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAR1NIE1U-n4-rrK6IYCJBM6PDbyWYrqF0paNg6tw_LAA&oe=660C4196',
-          ownerIds: 'user-01',
-          memberIds: ['user-01','user-02']
-        }
+          ownerId: 'user-01',
+          starred:'false',
+          title: 'Learn ExpressJs',
+          type:'public',
+          avatar: 'https://tltvietnam.vn/upload/images/video-deo-hoat-hinh-giai-thich-4.jpg',
+        } 
       ]
     },
     {
       _id : 'workspace-02',
-      title: 'FE company',
-      avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xdL28VY0-7EAX-XWroU&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAR1NIE1U-n4-rrK6IYCJBM6PDbyWYrqF0paNg6tw_LAA&oe=660C4196',
-      type : 'public',
-      ownerIds: 'user-01',
-      memberIds: ['user-01','user-02'],
-      board: [
+      title: 'IT FE',
+      avatar: '',
+      description: '',
+      type: 'Public',
+      members: [
         {
-          _id: 'board-01',
-          title: 'learn js',
-          avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xdL28VY0-7EAX-XWroU&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAR1NIE1U-n4-rrK6IYCJBM6PDbyWYrqF0paNg6tw_LAA&oe=660C4196',
-          ownerIds: 'user-01',
-          memberIds: ['user-01','user-02']
+          _id: 'user_1',
+          email: 'user1@gmail.com',
+          username: 'Nguyen Hao 1',
+          Avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=eoll-zzKJ_cAb5orIxJ&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAb9jwU6B3VhcnfDI8EdaLGjCVd1zd55b1XEGihEtgm-A&oe=661D2CD6'
         },
         {
-          _id: 'board-02',
-          title: 'learn css',
-          avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=xdL28VY0-7EAX-XWroU&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAR1NIE1U-n4-rrK6IYCJBM6PDbyWYrqF0paNg6tw_LAA&oe=660C4196',
-          ownerIds: 'user-01',
-          memberIds: ['user-01','user-02']
+          _id: 'user_2',
+          umail: 'user2@gmail.com',
+          username: 'Nguyen Hao 2',
+          avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=eoll-zzKJ_cAb5orIxJ&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAb9jwU6B3VhcnfDI8EdaLGjCVd1zd55b1XEGihEtgm-A&oe=661D2CD6'
         }
+      ],
+      board: [
+        {
+          _id: 'board-06',
+          title: 'learn js',
+          type:'public',
+          avatar: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/301457307_1133116100610644_3640136920263431766_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=eoll-zzKJ_cAb5orIxJ&_nc_ht=scontent.fhan14-2.fna&oh=00_AfAb9jwU6B3VhcnfDI8EdaLGjCVd1zd55b1XEGihEtgm-A&oe=661D2CD6',
+          ownerId: 'user-02',
+        } 
       ]
     }
-
   ]
 }

@@ -2,36 +2,37 @@ import Button from '@mui/material/Button'
 import SvgIcon from '@mui/material/SvgIcon'
 import { Typography } from '@mui/material'
 import HomeIcon from '@mui/icons-material/Home'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { ReactComponent as trelloIcon } from '~/assets/trello.svg'
 import { Link } from 'react-router-dom'
 import style from '~/CSS/CSSGlobal.module.scss'
+import { ActiveContextBtn } from '~/Contexts/Context'
 
 function Menu() {
-  const [activeButton, setAtiveButton] = useState('home')
+  const {activeBtn, setActiveBtn} = useContext(ActiveContextBtn)
 
   const handleButtonClick = (btnName) => {
-    setAtiveButton(btnName)
+    setActiveBtn(btnName)
   }
   return (
     <>
-      <Link className={style['a-none']} to='/board'>
+      <Link className={style['a-none']} to='/boards'>
         <Button
           onClick={ () => handleButtonClick('board')}
           sx={{
-            color:'white',
+            color:(theme) => theme.palette.text.primary,
             width: '100%',
             display:'flex',
             marginBottom:'10px',
             justifyContent:'left',
-            bgcolor: activeButton === 'board' ? 'primary.main' : 'transparent',
+            bgcolor: (theme) => activeBtn === 'board' ? theme.trello.btnBackground : 'transparent',
             border:'none',
-            '&:hover':{ bgcolor:'primary.main' }
+            '&:hover':{ bgcolor:(theme) => theme.palette.primary[300]}
           }}
 
         >
-          <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:'white' }} />
-          <Typography sx={{ marginLeft:'10px' }}>  Board </Typography>
+          <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:(theme) => theme.palette.text.primary }} />
+          <Typography sx={{ marginLeft:'10px' }}>  Boards </Typography>
 
         </Button>
       </Link>
@@ -40,13 +41,13 @@ function Menu() {
         <Button
           onClick={() => handleButtonClick('home')}
           sx={{
-            color:'white',
+            color:(theme) => theme.palette.text.primary,
             width: '100%',
             display:'flex',
             justifyContent:'left',
-            bgcolor: activeButton === 'home' ? 'primary.main' : 'transparent',
-            border:'none',
-            '&:hover':{ bgcolor:'primary.main' }
+            bgcolor: (theme) => activeBtn === 'home' ? theme.trello.btnBackground : 'transparent',
+            borderBottom:'none',
+            '&:hover':{ bgcolor:(theme) => theme.palette.primary[300]}
 
           }}
         >

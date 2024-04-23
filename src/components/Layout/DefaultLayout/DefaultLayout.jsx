@@ -3,9 +3,44 @@ import AppBar from '~/components/AppBar/AppBar'
 import SideBar from '~/components/SideBar/SideBar'
 import { MocDataUserAPI } from '~/apis/mock-data'
 import { Outlet } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { getUser } from '~/apis'
+import CircularProgress from '@mui/material/CircularProgress'
+import { useNavigate } from 'react-router-dom'
+import Cookies from 'js-cookie'
+import { useDispatch, useSelector } from 'react-redux'
+import { setUser } from '~/redux/actions/userAction'
+
+
 function DefaultLayout() {
-console.log('🚀 ~ MocDataUserAPI:', MocDataUserAPI)
-  const data = MocDataUserAPI
+  const navigate = useNavigate()
+  const user = useSelector(state => state.user)
+  const data = user
+  const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = useState(true)
+  // const data = MocDataUserAPI
+  useEffect(() => {
+    const token = Cookies.get('accessToken')
+    if (token) {
+      getUser()
+        .then(data => {
+          const action = setUser(data)
+          dispatch(action)
+          setIsLoading(false)
+        })
+    } else {
+      navigate('/auth/login')
+    }
+  }, [])
+
+
+  if (isLoading) {
+    return (
+      <Box sx={{ height:'100vh', display: 'flex', justifyContent:'center', alignItems:'center' }}>
+        <CircularProgress />
+      </Box>
+    )
+  }
   return (
     <Box >
       <AppBar data={data} />
@@ -14,7 +49,8 @@ console.log('🚀 ~ MocDataUserAPI:', MocDataUserAPI)
         height:'100%',
         display:'flex',
         justifyContent:'center',
-        bgcolor:(theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1565c0')
+        background:(theme) => (theme.palette.mode === 'dark' ? theme.trello.backgroundDark : theme.trello.backgroundLight)
+
 
       }}>
         <Box sx={{
@@ -22,15 +58,14 @@ console.log('🚀 ~ MocDataUserAPI:', MocDataUserAPI)
           height:'100%',
           display:'flex',
           justifyContent:'center',
-          paddingTop: '40px',
-          bgcolor:(theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1565c0')
+          paddingTop: '40px'
+
         }}>
           <SideBar />
           <Box className='content' sx={{
-            width:'75%',
-            height:'200vh'
+            width:'75%'
           }}>
-            <Outlet />
+            <Outlet context={[data]}/>
           </Box>
         </Box>
       </Box>

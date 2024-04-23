@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useContext } from 'react'
 import Box from '@mui/material/Box'
 import ListColumns from './ListColumns/ListColumns'
 import { mapOrder } from '~/utils/sorts'
@@ -20,7 +20,6 @@ const ACTIVE_DRAG_ITEM_TYPE = {
 
 function BoardContent({ board, createNewColumn, createNewCard, moveColumns, moveCardInTheSameColumn, moveCardToDifferentColumn, deleteColumn }) {
 
-
   // chuột di chuyển quá 10px mới kích hoạt event
   const mouseSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
 
@@ -36,9 +35,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns, move
   const [activeDragItemData, setActiveDragItemData] = useState([null])
   const [oldColumnWhenDdraggingCard, setOldColumnWhenDdraggingCard] = useState([null])
 
-
   const lastOverId = useRef(null)
-
   useEffect(() => {
     setOrderedColumnsState(board.columns)
   }, [board])
@@ -107,7 +104,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns, move
 
       }
 
-      // 
+      //
       if (triggerFrom === 'handleDragEnd') {
         moveCardToDifferentColumn(
           activeDraggingCardId,
@@ -306,20 +303,36 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns, move
 
     >
       <Box sx={{
+        position: 'relative',
         width:'100%',
         height: (theme) => theme.trello.boardContentHeight,
-        bgcolor:(theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1565c0'),
+        background: board.avatar ? 'transparent' : ((theme) => (theme.palette.mode === 'dark' ? theme.trello.backgroundDark : theme.trello.backgroundLight)),
         p:'10px 0'
       }}>
 
-        {/* Box container column*/}
-        <ListColumns columns={orderedColumnsState} createNewColumn={createNewColumn} createNewCard={createNewCard} deleteColumn={deleteColumn}/>
-        <DragOverlay dropAnimation={dropAnimationCustom}>
-          {(!activeDragItemType) && null}
-          {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={activeDragItemData} />}
-          {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) && <CardItem card={activeDragItemData} />}
 
-        </DragOverlay>
+        {board.avatar && (
+          <Box sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'rgba(0, 0, 0, 0.1)',
+            backdropFilter: 'blur(5px)', // Điều chỉnh giá trị 5px để thay đổi độ mờ
+            zIndex: 1
+          }}>
+            
+            {/* {/* Box container column */}
+            <ListColumns columns={orderedColumnsState} createNewColumn={createNewColumn} createNewCard={createNewCard} deleteColumn={deleteColumn} />
+            <DragOverlay dropAnimation={dropAnimationCustom}>
+              {(!activeDragItemType) && null}
+              {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={activeDragItemData} />}
+              {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) && <CardItem card={activeDragItemData} />}
+
+            </DragOverlay>
+          </Box>
+        )}
       </Box>
     </DndContext>
   )

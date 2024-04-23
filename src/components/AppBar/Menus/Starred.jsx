@@ -23,7 +23,12 @@ function Starred() {
   return (
     <Box >
       <Button
-        sx={{color:'white'}}
+        sx={{
+          color:(theme) => theme.palette.text.primary,
+          '&:hover':{
+            bgcolor:(theme) => theme.palette.primary[300]
+          }
+        }}
         id="basic-button-Starred"
         aria-controls={open ? 'basic-menu-Starred' : undefined}
         aria-haspopup="true"
