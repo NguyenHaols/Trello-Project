@@ -13,8 +13,9 @@ import Check from '@mui/icons-material/Check'
 function Templates() {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
+  
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget)
+    setAnchorEl((prev) => (prev ? null : event.currentTarget))
   }
   const handleClose = () => {
     setAnchorEl(null)

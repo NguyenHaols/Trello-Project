@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import Tooltip from '@mui/material/Tooltip'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
@@ -29,13 +29,23 @@ import { useConfirm } from 'material-ui-confirm'
 import { useSelector } from 'react-redux'
 
 
-function Column({ column, createNewCard, deleteColumn }) {
-
+function Column({ board, column, createNewCard, deleteColumn }) {
+  const oldBoard = { ...board }
+  const currentBoard = useRef(oldBoard)
   const [openNewCardForm, setopenNewCardForm] = useState(false)
   const toggleOpenNewCardForm = () => setopenNewCardForm(!openNewCardForm)
   const [newCardTitle, setNewCardTitle] = useState('')
-  const ownerBoard = useSelector(state=> state.user)
-  
+  const user = useSelector(state => state.user)
+  const ownerBoard = currentBoard.current.ownerId === user._id
+
+  const [openDialog, setOpenDialog] = useState(false)
+  const handleClickOpenDialog = () => {
+    setOpenDialog(true)
+  }
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false)
+  }
 
   const addNewCard = () => {
     if (!newCardTitle) {
@@ -58,11 +68,11 @@ function Column({ column, createNewCard, deleteColumn }) {
   const confirmDeleteColumn = useConfirm()
   const handleDeleteColumn = () => {
     confirmDeleteColumn({
-      description:'Are you sure you want to delete this column ?',
-      title: 'Delete Column ?'
+      content:'Are you sure you want to delete this column ?',
+      title: 'Delete Column ?',
       // confirmationText:'Confirm',  đã là mặc định ở main.jsx
       // cancellationText:'Cancel'  đã là mặc định ở main.jsx
-      // dialogProps:{ maxWidth:'xs' } đã là mặc định ở main.jsx
+      dialogProps:{ maxWidth:'xs' }
     })
       .then( () => {
         deleteColumn(column._id)
@@ -75,7 +85,8 @@ function Column({ column, createNewCard, deleteColumn }) {
     attributes, listeners, setNodeRef, transform, transition, isDragging
   } = useSortable({
     id: column._id,
-    data:{ ...column }
+    data:{ ...column },
+    disabled:openDialog
   })
 
   const dndKitColumnStyle = {
@@ -112,7 +123,7 @@ function Column({ column, createNewCard, deleteColumn }) {
         sx={{
           minWidth:'300px',
           maxWidth:'300px',
-          bgcolor:(theme) => (theme.palette.mode === 'dark' ? '#333643' : theme.palette.primary[300]),
+          bgcolor:(theme) => (theme.palette.mode === 'dark' ? '#333643' : theme.palette.secondary[300]),
           ml:2,
           borderRadius:'6px',
           height:'fit-content',
@@ -131,81 +142,87 @@ function Column({ column, createNewCard, deleteColumn }) {
             fontWeight:'Bold',
             cursor:'pointer'
           }}>{column.title}</Typography>
-          <Box >
-            <Tooltip title="More options">
-              <ExpandMoreIcon
-                sx={{ color:'text.primary', cursor:'pointer' }}
-                id="basic-column-dropdown"
-                aria-controls={open ? 'basic-menu-column-dropdown' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                onClick={handleClick}
-              />
-            </Tooltip>
-            <Menu
-              id="basic-menu-column-dropdown"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              onClick={handleClose}
-              MenuListProps={{
-                'aria-labelledby': 'basic-column-dropdown'
-              }}
-            >
-              <MenuItem onClick={toggleOpenNewCardForm}
-                sx={{
+          {ownerBoard && (
+            <Box >
+              <Tooltip title="More options">
+                <ExpandMoreIcon
+                  sx={{ color:'text.primary', cursor:'pointer' }}
+                  id="basic-column-dropdown"
+                  aria-controls={open ? 'basic-menu-column-dropdown' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={handleClick}
+                />
+              </Tooltip>
+              <Menu
+                id="basic-menu-column-dropdown"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                onClick={handleClose}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-column-dropdown'
+                }}
+              >
+                <MenuItem onClick={toggleOpenNewCardForm}
+                  sx={{
+                    '&:hover': {
+                      color: 'success.light',
+                      '& .add-card-Icon':{
+                        color: 'success.light'
+                      }
+                    }
+                  }}>
+                  <ListItemIcon><AddCardIcon className='add-card-Icon' fontSize="small" /></ListItemIcon>
+                  <ListItemText>Add new card</ListItemText>
+                </MenuItem>
+                {/* <MenuItem>
+                <ListItemIcon><ContentCut fontSize="small" /></ListItemIcon>
+                <ListItemText>Cut</ListItemText>
+              </MenuItem> */}
+                {/* <MenuItem>
+                <ListItemIcon><ContentCopyIcon fontSize="small" /></ListItemIcon>
+                <ListItemText>Copy</ListItemText>
+              </MenuItem> */}
+                {/* <MenuItem>
+                <ListItemIcon><ContentPasteIcon fontSize="small" /></ListItemIcon>
+                <ListItemText>Paste</ListItemText>
+              </MenuItem> */}
+                <Divider />
+                {/* <MenuItem >
+                <ListItemIcon> <Cloud fontSize="small" /> </ListItemIcon>
+                <ListItemText>Archive this column</ListItemText>
+              </MenuItem> */}
+                <MenuItem onClick={handleDeleteColumn} sx={{
                   '&:hover': {
-                    color: 'success.light',
-                    '& .add-card-Icon':{
-                      color: 'success.light'
+                    color: 'warning.dark',
+                    '& .delete-forever-Icon':{
+                      color: 'warning.dark'
                     }
                   }
                 }}>
-                <ListItemIcon><AddCardIcon className='add-card-Icon' fontSize="small" /></ListItemIcon>
-                <ListItemText>Add new card</ListItemText>
-              </MenuItem>
-              <MenuItem>
-                <ListItemIcon><ContentCut fontSize="small" /></ListItemIcon>
-                <ListItemText>Cut</ListItemText>
-              </MenuItem>
-              <MenuItem>
-                <ListItemIcon><ContentCopyIcon fontSize="small" /></ListItemIcon>
-                <ListItemText>Copy</ListItemText>
-              </MenuItem>
-              <MenuItem>
-                <ListItemIcon><ContentPasteIcon fontSize="small" /></ListItemIcon>
-                <ListItemText>Paste</ListItemText>
-              </MenuItem>
-              <Divider />
-              <MenuItem >
-                <ListItemIcon> <Cloud fontSize="small" /> </ListItemIcon>
-                <ListItemText>Archive this column</ListItemText>
-              </MenuItem>
-              <MenuItem onClick={handleDeleteColumn} sx={{
-                '&:hover': {
-                  color: 'warning.dark',
-                  '& .delete-forever-Icon':{
-                    color: 'warning.dark'
-                  }
-                }
-              }}>
-                <ListItemIcon> <DeleteOutlineIcon className='delete-forever-Icon' fontSize="small" /> </ListItemIcon>
-                <ListItemText>Remove this column</ListItemText>
-              </MenuItem>
+                  <ListItemIcon> <DeleteOutlineIcon className='delete-forever-Icon' fontSize="small" /> </ListItemIcon>
+                  <ListItemText>Remove this column</ListItemText>
+                </MenuItem>
 
-            </Menu>
-          </Box>
+              </Menu>
+            </Box>
+          )}
         </Box>
 
         {/* List card*/}
-        <ListCards cards={orderedCards}/>
+        <ListCards
+          board={board}
+          handleClickOpenDialog={handleClickOpenDialog}
+          handleCloseDialog={handleCloseDialog}
+          cards={orderedCards}/>
 
         {/* column footer */}
         <Box sx={{
           height:(theme) => theme.COLUMN_FOOTER_HEIGHT,
           p:2
         }}>
-          {ownerBoard &&(
+          {ownerBoard ? (
             !openNewCardForm
               ? <Box sx={{
                 display:'flex',
@@ -223,7 +240,7 @@ function Column({ column, createNewCard, deleteColumn }) {
                 height:'100%',
                 alignItems:'center',
                 gap:1
-  
+
               }}>
                 <TextField
                   label="Enter card title"
@@ -271,14 +288,14 @@ function Column({ column, createNewCard, deleteColumn }) {
                     sx={{
                       color:(theme) => theme.palette.warning.light,
                       cursor:'pointer'
-  
+
                     }}
                     onClick={() => toggleOpenNewCardForm()}
                   />
                 </Box>
               </Box>
-            
-          )}
+
+          ) : null}
 
         </Box>
 

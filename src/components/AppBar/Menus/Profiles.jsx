@@ -22,7 +22,7 @@ function Profiles() {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget)
+    setAnchorEl((prev) => (prev ? null : event.currentTarget))
   }
   const handleClose = () => {
     setAnchorEl(null)
@@ -53,7 +53,6 @@ function Profiles() {
         </IconButton>
       </Tooltip>
       <Menu
-        className='123'
         id="basic-menu-Profiles"
         anchorEl={anchorEl}
         open={open}
@@ -66,7 +65,7 @@ function Profiles() {
         }}
       >
 
-        <MenuItem >
+        <MenuItem onClick={() => {navigate('/profile')}}>
           <Avatar src={data.avatar} sx={{width:28, height:28, mr:2 }} /> Profile
         </MenuItem>
         <Divider />

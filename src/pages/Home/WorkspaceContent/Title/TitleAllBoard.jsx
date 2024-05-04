@@ -11,7 +11,7 @@ function TitleAllBoard() {
       color:(theme) => theme.palette.primary,
       margin:'40px 0 10px 0'
     }}>
-      <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:'white', marginRight:'10px' }} />
+      <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:(theme)=> theme.palette.text.primary, marginRight:'10px' }} />
       <Typography variant='h6' fontWeight={500}>ALL BOARDS</Typography>
     </Box>
   )

@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Typography from '@mui/material/Typography'
-import { Button } from '@mui/material'
+import { Box, Button, Dialog, DialogContent } from '@mui/material'
 import Card from '@mui/material/Card'
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
@@ -10,9 +10,33 @@ import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer'
 import AttachmentIcon from '@mui/icons-material/Attachment'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import CardDetail from './CardDetail/CardDetail'
+import AssignmentIcon from '@mui/icons-material/Assignment'
 
-function CardItem({ card }) {
+function CardItem({ board, card, handleClickOpenDialog, handleCloseDialog }) {
+  const [openDialog, setOpenDialog] = useState(false)
+ 
+  const setStatusColor = () => {
+    if (card.status === 'Still Good') {
+      return '#99cc33'
+    } else if (card.status === 'Coming Up') {
+      return '#ffcc00'
+    } else if (card.status === 'Over Time') {
+      return '#cc3300'
+    } else {
+      return '#99cc33'
+    }
+  }
+ 
+  const handleClick = () => {
+    setOpenDialog(true)
+    handleClickOpenDialog()
+  }
 
+  const handleClose = () => {
+    setOpenDialog(false)
+    handleCloseDialog()
+  }
   const {
     attributes, listeners, setNodeRef, transform, transition, isDragging
   } = useSortable({
@@ -30,50 +54,57 @@ function CardItem({ card }) {
 
 
   const shouldShowCardActions = () => {
-    return !!card?.memberIds?.length || !!card?.comments?.length || !!card?.attachments?.length
+    return !!card?.members?.length || !!card?.comments?.length || !!card?.attachments?.length
   }
 
   return (
 
-    <Card
-      ref={setNodeRef}
-      style={dndKitCardStyle}
-      {...attributes}
-      {...listeners}
-      sx={{
-        cursor: 'pointer',
-        boxShadow: '0 1px 1px rgba(0,0,0,0.2)',
-        overflow: 'unset',
-        display: card?.FE_PlacehoderCard ? 'none' : 'block',
-        border:'1px solid transparent',
-        '&:hover':{ borderColor:(theme) => theme.palette.primary.main}
-      }}>
+    <>
+      <Card
+        onClick={handleClick}
+        ref={setNodeRef}
+        style={dndKitCardStyle}
+        {...attributes}
+        {...listeners}
+        sx={{
+          cursor: 'pointer',
+          boxShadow: '0 1px 1px rgba(0,0,0,0.2)',
+          overflow: 'unset',
+          display: card?.FE_PlacehoderCard ? 'none' : 'block',
+          border:'1px solid transparent',
+          '&:hover':{ borderColor:(theme) => theme.palette.primary.main }
+        }}>
 
-      {card?.cover &&
-        <CardMedia
-          sx={{ height: 140 }}
-          image={card?.cover}
-        />
-      }
+        {card?.cover &&
+          <CardMedia
+            sx={{ height: 140 }}
+            image={card?.cover}
+          />
+        }
 
-      <CardContent sx={{ p:1.5, '&:last-child':{ p:1.5 } }}>
-        <Typography > {card?.title} </Typography>
-      </CardContent>
-      {shouldShowCardActions() &&
-        <CardActions sx={{ p:'0 4px 8px 4px' }}>
-          {!!card?.memberIds?.length &&
-          <Button size="small" startIcon={<GroupIcon/>}>{card?.memberIds.length}</Button>
-          }
-          {!!card?.comments?.length &&
-         <Button size="small" startIcon={<QuestionAnswerIcon/>}>{card?.comments.length}</Button>
-          }
-          {!!card?.attachments?.length &&
-          <Button size="small" startIcon={<AttachmentIcon/>}>{card?.attachments.length}</Button>
-          }
-        </CardActions>
-      }
+        <CardContent sx={{ display:'flex',justifyContent:'space-between' ,p:1.5, '&:last-child':{ p:1.5 } }}>
+          <Typography > {card?.title} </Typography>
+          <Box sx={{bgcolor:setStatusColor(),color:'white',padding:'5px',width:'100px',textAlign:'center',borderRadius:'6px'}}>
+            {card.status}
+          </Box>
+        </CardContent>
+        {shouldShowCardActions() &&
+          <CardActions sx={{ p:'0 4px 8px 4px' }}>
+            {!!card?.members?.length &&
+            <Button size="small" startIcon={<GroupIcon/>}>{card?.members.length}</Button>
+            }
+            {!!card?.comments?.length &&
+           <Button size="small" startIcon={<QuestionAnswerIcon/>}>{card?.comments.length}</Button>
+            }
+            {!!card?.tasks?.length &&
+            <Button size="small" startIcon={<AssignmentIcon/>}>{card?.tasks.length}</Button>
+            }
+          </CardActions>
+        }
+      </Card>
+      <CardDetail board={board} card={card} open={openDialog} handleClose={handleClose} />
 
-    </Card>
+    </>
 
   )
 }

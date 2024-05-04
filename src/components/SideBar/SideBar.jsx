@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux'
 
 
 function SideBar() {
-  const [activeBtn, setActiveBtn] = useState(null)
+  const [activeBtn, setActiveBtn] = useState('board')
   const user = useSelector(state => state.user)
   const data = user
   const currentUserId = data._id 

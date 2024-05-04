@@ -21,9 +21,9 @@ function ModeSelect() {
       <InputLabel
         id="lable-dark-light-mode"
         sx={{
-          color:'text.secondary',
+          color:(theme)=> theme.palette.text.primary,
           '&.Mui-focused':{
-            color : 'text.secondary'
+            color : (theme)=> theme.palette.text.primary
           }
         }}
       >

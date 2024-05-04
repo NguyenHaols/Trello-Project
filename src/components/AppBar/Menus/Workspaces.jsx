@@ -7,16 +7,22 @@ import ListItemText from '@mui/material/ListItemText'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import Typography from '@mui/material/Typography'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { useNavigate } from 'react-router-dom'
 
 
 function Workspaces({ workspaces }) {
+  const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget)
+    setAnchorEl((prev) => (prev ? null : event.currentTarget))
   }
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  const handleNavigateToWorkspace = (id) => {
+    navigate(`/workspace/${id}`)
   }
 
   return (
@@ -34,10 +40,14 @@ function Workspaces({ workspaces }) {
         onClick={handleClick}
         endIcon={<ExpandMoreIcon/>}
       >
-        Dashboard
+        Workspaces
       </Button>
       <Menu
-        sx={{ top:'12px' }}
+        sx={{
+          top:'12px',
+          boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+          '& .MuiPaper-root': { minWidth:'250px' }
+        }}
         id="basic-menu-workspaces"
         anchorEl={anchorEl}
         open={open}
@@ -47,13 +57,15 @@ function Workspaces({ workspaces }) {
         }}
       >
         <MenuItem>
-          <Typography variant="body2" color="">Các không gian làm việc của bạn</Typography>
+          <Typography variant="body2" color="">Your workspaces</Typography>
         </MenuItem>
         {workspaces.map(workspace => (
-          <Box key={workspace._id}>
+          <Box onClick={() => {handleNavigateToWorkspace(workspace._id)}} key={workspace._id}>
             <MenuItem>
               <ListItemIcon>
-                <Box sx={{ width:'40px', marginRight:'10px', height:'40px', backgroundImage:'linear-gradient(#c9372c,#fea362)', borderRadius:'4px', color:'white', textAlign:'center', lineHeight:'40px' }}> {workspace.title[0]} </Box>
+                <Box sx={{ width:'40px', marginRight:'10px', height:'40px',backgroundSize:'cover' ,backgroundImage: workspace.avatar ? `url(${workspace.avatar})` : 'linear-gradient(#c9372c,#fea362)', borderRadius:'4px', color:'white', textAlign:'center', lineHeight:'40px' }}>
+                  {workspace.avatar ? '' : workspace.title[0]}
+                </Box>
               </ListItemIcon>
               <ListItemText>
                 <Typography variant='body2' fontWeight='450'>{workspace.title}</Typography>

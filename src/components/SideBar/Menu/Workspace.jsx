@@ -1,4 +1,4 @@
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Select, TextField, Typography } from '@mui/material'
+import { Box, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Select, TextField, Typography } from '@mui/material'
 import { useContext, useState } from 'react'
 import MenuList from '@mui/material/MenuList'
 import Button from '@mui/material/Button'
@@ -17,21 +17,25 @@ import { ActiveContextBtn } from '~/Contexts/Context'
 import { Link } from 'react-router-dom'
 import { createNewBoardAPI, uploadImageAPI } from '~/apis'
 import { toast } from 'react-toastify'
+import { useDispatch, useSelector } from 'react-redux'
+import { addBoardToWorkspace } from '~/redux/actions/userAction'
 
 
 function Workspace( { data, currentUserId } ) {
-  // console.log('🚀 ~ Workspace ~ data:', data)
-  const ownerWorkspace = currentUserId === data.ownerId
 
+  const user = useSelector(state => state.user)
+  const dispatch = useDispatch()
+  const ownerWorkspace = currentUserId === data.ownerId
   const { activeBtn, setActiveBtn } = useContext(ActiveContextBtn)
   const [open, setOpen] = useState(false)
   const [selectedImage, setSelectedImage] = useState(null)
-
+  const [errorMessage, setErrorMessage] = useState(null)
   const [boardTitle, setBoardTitle] = useState('')
   const [description, setDescription] = useState('')
   const [type, setType] = useState('Public')
   const [boardImage, setBoardImage] = useState('')
   const [ImageFile, setImageFile] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleButtonClick = () => {
     activeBtn === data._id ? setActiveBtn(null)
@@ -59,6 +63,7 @@ function Workspace( { data, currentUserId } ) {
   }
 
   const handleSubmitCreateBoard = () => {
+    setLoading(true)
     const image = {
       image:ImageFile
     }
@@ -67,24 +72,41 @@ function Workspace( { data, currentUserId } ) {
     const newboard = {
       workspaceId: workspaceId,
       ownerId: ownerId,
-      title: boardTitle.trim(),
-      description: description.trim(),
-      type:type,
+      title: boardTitle,
+      description: description,
+      type:type
     }
     uploadImageAPI(image)
       .then(data => {
         setBoardImage(data.data.url)
+        if (data.data.url) {
+          newboard.avatar = data.data.url
+        }
       })
-    if (boardImage) {
-      newboard.avatar = boardImage
-    }
-    
-    createNewBoardAPI(newboard)
-      .then(res => {
+      .finally(() => {
+        createNewBoardAPI(newboard)
+          .then(res => {
+            toast.success('Board created successfully')
+            const action = addBoardToWorkspace(data._id, res)
+            dispatch(action)
+            handleClose()
+            setLoading(false)
 
-        toast.success('Table created successfully')
-        handleClose()
+            // clear input
+            setSelectedImage(null)
+            setBoardImage(null)
+            setImageFile(null)
+          })
+          .catch(error => {
+            setLoading(false)
+            const message = error.response.data.message.split(':')
+            setErrorMessage(message[1])
+            toast.error('Board create failure')
+          })
+
+        setErrorMessage('')
       })
+
   }
 
   const VisuallyHiddenInput = styled('input')({
@@ -102,6 +124,7 @@ function Workspace( { data, currentUserId } ) {
 
   return (
     <>
+
       <MenuList>
         <Button
           onClick={handleButtonClick}
@@ -110,10 +133,10 @@ function Workspace( { data, currentUserId } ) {
             display:'flex',
             color:(theme) => theme.palette.text.primary,
             justifyContent:'left',
-            bgcolor: (theme) => activeBtn === data._id ? theme.trello.btnBackground : 'transparent',
+            bgcolor: (theme) => activeBtn === data._id ? '#ccc' : 'transparent',
             width:{ md:'100%', xs:'0' },
             '&:hover':{
-              bgcolor:(theme) => theme.palette.primary[300]
+              bgcolor:(theme) => '#ccc'
             }
           }}
         >
@@ -135,16 +158,33 @@ function Workspace( { data, currentUserId } ) {
 
             {ownerWorkspace && (
               <>
+
                 <MenuItem onClick={handleOpen}>
                   <ListItemIcon >
-                    <AddBoxIcon sx={{ color:(theme) => theme.palette.text.primary }} />
+                    <AddBoxIcon sx={{ color:'#2196f3' }} />
                   </ListItemIcon>
                   <ListItemText sx={{ color:(theme) => theme.palette.text.primary }}>New board</ListItemText>
                 </MenuItem>
                 <Dialog sx={{ margin:'0 auto', '& .MuiPaper-root':{ width:'50%' } }} open={open} onClose={handleClose}>
-                  <DialogTitle sx={{ color:(theme)=> theme.palette.text.primary }}>CREATED BOARD</DialogTitle>
+                  {loading && (
+                    <Box sx={{
+                      position: 'fixed',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                      zIndex: 9999
+                    }}>
+                      <CircularProgress sx={{ color:'2196f3' }} />
+                    </Box>
+                  )}
+                  <DialogTitle sx={{ color:(theme) => theme.palette.text.primary }}>CREATE BOARD</DialogTitle>
                   <DialogContent sx={{ display:'flex', flexDirection:'column' }}>
-                    <TextField onChange={(e) => {setBoardTitle(e.target.value)}} sx={{ margin:'5px 0' }} size='small' id="outlined-basic" value={boardTitle} label="Board title" variant="outlined" />
+                    <TextField onChange={(e) => {setBoardTitle(e.target.value)}} sx={{ margin:'5px 0' }} size='small' id="outlined-basic" label="Board title" variant="outlined" />
                     <TextField onChange={(e) => {setDescription(e.target.value)}} sx={{ margin:'5px 0' }} multiline maxRows={4} size='large' id="outlined-basic" label="Description" variant="outlined" />
                     <Select
                       size='small'
@@ -161,13 +201,16 @@ function Workspace( { data, currentUserId } ) {
                         Private
                       </MenuItem>
                     </Select>
+                    {errorMessage && (
+                      <Typography color='error'>{errorMessage}</Typography>
+                    )}
                     <Button
                       component="label"
                       role={undefined}
                       variant="contained"
                       tabIndex={-1}
                       startIcon={<CloudUploadIcon />}
-                      sx={{bgcolor:(theme)=> theme.palette.primary}}
+                      sx={{ bgcolor:(theme) => theme.palette.primary }}
                     >
                         Upload background image
                       <VisuallyHiddenInput type="file" accept='image/*' onChange={handleImageChange} />
@@ -180,17 +223,17 @@ function Workspace( { data, currentUserId } ) {
 
                   </DialogContent>
                   <DialogActions >
-                    <Button sx={{color:(theme) => theme.palette.text.primary,'&:hover':{bgcolor:(theme)=>theme.palette.primary[300]}}} onClick={handleClose}>Cancel</Button>
-                    <Button sx={{color:(theme) => theme.palette.text.primary,'&:hover':{bgcolor:(theme)=>theme.palette.primary[300]}}} onClick={handleSubmitCreateBoard}>Create</Button>
+                    <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} onClick={handleClose}>Cancel</Button>
+                    <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} onClick={handleSubmitCreateBoard}>Create</Button>
                   </DialogActions>
                 </Dialog>
               </>
             )}
 
-            <Link to={`workspace/${data._id}`} style={{ textDecoration:'none' }}>
+            <Link to={`workspace/${data._id}/`} style={{ textDecoration:'none' }}>
               <MenuItem >
                 <ListItemIcon >
-                  <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:(theme) => theme.palette.text.primary }} />
+                  <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:'#2196f3' }} />
                 </ListItemIcon>
                 <ListItemText sx={{ color:(theme) => theme.palette.text.primary }}>Boards</ListItemText>
               </MenuItem>
@@ -199,7 +242,7 @@ function Workspace( { data, currentUserId } ) {
             <Link to={`workspace/${data._id}`} style={{ textDecoration:'none' }}>
               <MenuItem>
                 <ListItemIcon >
-                  <PeopleIcon sx={{ color:(theme) => theme.palette.text.primary }}/>
+                  <PeopleIcon sx={{ color:'#2196f3' }}/>
                 </ListItemIcon>
                 <ListItemText sx={{ color:(theme) => theme.palette.text.primary }}>Members</ListItemText>
               </MenuItem>
@@ -209,7 +252,7 @@ function Workspace( { data, currentUserId } ) {
               <Link to={`workspace/${data._id}`} style={{ textDecoration:'none' }}>
                 <MenuItem>
                   <ListItemIcon >
-                    <SettingsIcon sx={{ color:(theme) => theme.palette.text.primary }}/>
+                    <SettingsIcon sx={{ color:'#2196f3' }}/>
                   </ListItemIcon>
                   <ListItemText sx={{ color:(theme) => theme.palette.text.primary }}>Settings</ListItemText>
                 </MenuItem>

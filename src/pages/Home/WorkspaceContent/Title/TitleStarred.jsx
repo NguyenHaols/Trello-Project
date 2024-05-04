@@ -8,7 +8,7 @@ function TitleStarred() {
       display:'flex',
       justifyContent:'left',
       alignItems:'center',
-      color:'white'
+      color:(theme)=> theme.palette.text.primary
     }}>
       <StarIcon sx={{ marginRight:'10px', color:'#e2b203' }}></StarIcon>
       <Typography variant='h6' fontWeight={500}>YOUR STARRED BOARDS</Typography>

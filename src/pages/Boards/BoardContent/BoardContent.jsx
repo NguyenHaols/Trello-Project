@@ -311,7 +311,8 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns, move
       }}>
 
 
-        {board.avatar && (
+        {board.avatar ?
+
           <Box sx={{
             position: 'absolute',
             top: 0,
@@ -320,11 +321,10 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns, move
             height: '100%',
             background: 'rgba(0, 0, 0, 0.1)',
             backdropFilter: 'blur(5px)', // Điều chỉnh giá trị 5px để thay đổi độ mờ
-            zIndex: 1
           }}>
-            
+
             {/* {/* Box container column */}
-            <ListColumns columns={orderedColumnsState} createNewColumn={createNewColumn} createNewCard={createNewCard} deleteColumn={deleteColumn} />
+            <ListColumns board={board} columns={orderedColumnsState} createNewColumn={createNewColumn} createNewCard={createNewCard} deleteColumn={deleteColumn} />
             <DragOverlay dropAnimation={dropAnimationCustom}>
               {(!activeDragItemType) && null}
               {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={activeDragItemData} />}
@@ -332,7 +332,17 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns, move
 
             </DragOverlay>
           </Box>
-        )}
+          :
+          <>
+            <ListColumns board={board} columns={orderedColumnsState} createNewColumn={createNewColumn} createNewCard={createNewCard} deleteColumn={deleteColumn} />
+            <DragOverlay dropAnimation={dropAnimationCustom}>
+              {(!activeDragItemType) && null}
+              {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={activeDragItemData} />}
+              {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) && <CardItem card={activeDragItemData} />}
+
+            </DragOverlay>
+          </>
+        }
       </Box>
     </DndContext>
   )

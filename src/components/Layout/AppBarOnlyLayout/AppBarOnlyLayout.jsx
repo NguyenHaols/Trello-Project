@@ -5,26 +5,32 @@ import { useEffect, useState } from 'react'
 import { getUser } from '~/apis'
 import { UserDataContext } from '~/Contexts/UserContext'
 import Cookies from 'js-cookie'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { setUser } from '~/redux/actions/userAction'
 
 function AppBarOnlyLayout() {
   const navigate = useNavigate()
-  const userData = useSelector(state => state.user)
-  console.log('🚀 ~ AppBarOnlyLayout ~ userData:', userData)
-  // const [userData, setUserData] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const dispatch = useDispatch()
   // const data = MocDataUserAPI
-  const data = userData
-  // useEffect(() => {
-  //   const token = Cookies.get('accessToken')
-  //   if (token) {
-  //     getUser(token)
-  //       .then(data => {
-  //         setUserData(data)
-  //       })
-  //   }
-  // }, [])
+  useEffect(() => {
+    const token = Cookies.get('accessToken')
+    if (token) {
+      getUser()
+        .then(data => {
+          const action = setUser(data)
+          dispatch(action)
+          setIsLoading(false)
+        })
+        .catch(() => {
+          navigate('/auth/login')
+        })
+    } else {
+      navigate('/auth/login')
+    }
+  }, [])
 
-  if (!data) {
+  if (isLoading) {
     return (
       <Box sx={{ height:'100vh', display: 'flex', justifyContent:'center', alignItems:'center' }}>
         <CircularProgress />
@@ -32,7 +38,13 @@ function AppBarOnlyLayout() {
     )
   }
   return (
-    <Container disableGutters maxWidth={false} sx={{ height:(theme) => theme.trello.BOARD_CONTENT_HEIGHT }}>
+    <Container disableGutters maxWidth={false}
+      sx={{
+        background:(theme) => (theme.palette.mode === 'dark' ? theme.trello.backgroundDark : theme.trello.backgroundLight),
+        height:'100vh'
+      }}
+    >
+
 
       <AppBar />
       <Outlet />

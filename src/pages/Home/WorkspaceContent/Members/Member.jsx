@@ -1,7 +1,34 @@
 import { Box, Button, Typography } from '@mui/material'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { removeMemberAPI } from '~/apis'
+import { removeMemberAction } from '~/redux/actions/userAction'
 
 
-function Members({ ownerId, currentUserId, member }) {
+function Members({ workspace, currentUserId, member }) {
+  const currentWorkspace = workspace
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const handleRemoveSubmit = () => {
+    if ( currentUserId === member._id || currentUserId === currentWorkspace.ownerId ) {
+      const data = {
+        workspaceId: currentWorkspace._id,
+        email : member.email
+      }
+      removeMemberAPI(data)
+        .then( data => {
+          toast.success('Remove member successfully')
+          const action = removeMemberAction(workspace._id, member._id)
+          if (currentUserId === member._id) {
+            navigate('/')
+          }
+          dispatch(action)
+        })
+    } else {
+      toast.error('you don\'t have permission to delete')
+    }
+  }
 
   return (
     <Box key={member._id} sx={{
@@ -20,7 +47,7 @@ function Members({ ownerId, currentUserId, member }) {
           borderRadius:'16px',
           backgroundSize:'cover',
           backgroundPosition:'center',
-          color:'white', 
+          color:'white',
           textAlign:'center',
           lineHeight:'30px'
         }}
@@ -31,19 +58,19 @@ function Members({ ownerId, currentUserId, member }) {
       <Box sx={{
         flex:'1'
       }}>
-        <Typography variant='strong' fontWeight='bold' color={(theme) => theme.trello.mainTextColor} > {member.username} </Typography>
-        <Typography color={(theme) => theme.trello.mainTextColor}>{member.email}</Typography>
+        <Typography variant='strong' fontWeight='bold' color={(theme) => theme.palette.text.primary} > {member.username} </Typography>
+        <Typography color={(theme) => theme.palette.text.primary}>{member.email}</Typography>
       </Box>
       <Box sx={{
         flex:'1'
       }}>
-        <Button sx={{
+        <Button onClick={handleRemoveSubmit} sx={{
           width:'115px',
           height:'32px',
-          background:(theme) => theme.trello.btnBackground,
+          background:(theme) => theme.palette.primary[500],
           color:'white',
           float:'right',
-          '&:hover':{ backgroundColor:(theme) => theme.trello.btnBackgroundHover }
+          '&:hover':{ backgroundColor:(theme) => theme.palette.primary[800] }
         }}> {member._id === currentUserId ? 'Leave' : 'Remove'} </Button>
       </Box>
     </Box>

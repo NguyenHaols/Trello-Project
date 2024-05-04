@@ -2,22 +2,14 @@ import { Box, Button } from '@mui/material'
 import { ReactComponent as trelloIcon } from '~/assets/trello.svg'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import googlePng from '~/assets/google.png'
-import fbPng from '~/assets/facebook.png'
 import SvgIcon from '@mui/material/SvgIcon'
 import { Link } from 'react-router-dom'
-import { sendEmailAPI } from '~/apis'
 import { useState } from 'react'
 
-function Forgot() {
-  const [email, setEmail] = useState('')
-  const [message, setMessage] = useState('')
-  const handleSendEmail = () => {
-    sendEmailAPI({ email:email })
-      .then(res => {
-        console.log(res)
-      })
-    setMessage('Access your email to get link recover password')
+function RecoverPassword() {
+  const [password, setPassword] = useState('')
+  const handleUpdatePassword = () => {
+    
   }
   return (
     <Box flex='1' display='flex' justifyContent='center' alignItems='center'>
@@ -36,18 +28,20 @@ function Forgot() {
             <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:'primary.main', width:'32px', height:'42px' }} />
             <Typography variant='h4'fontWeight='700' color='#44546f'>Trello</Typography>
           </Box>
-          <Typography textAlign='center' variant='subtitle2' color={(theme) => theme.palette.text.primary} >Can&apos;t login</Typography>
+          <Typography textAlign='center' variant='subtitle2' color={(theme) => theme.palette.text.primary} > New password </Typography>
         </Box>
         <form style={{ display:'flex', flexDirection:'column', width:'100%' }}>
-          <TextField onChange={(e) => setEmail(e.target.value)} id="outlined-basic" label="Your email" variant="outlined" type='email' sx={{
+        <TextField  onChange={(e) => setPassword(e.target.value)} id="outlined-basic" label="Email" variant="outlined" type='email' sx={{
+            '& input':{ padding:'8px' },
+            '& label':{ top:'-8px' },
+            marginBottom:'20px'
+          }} />
+          <TextField  onChange={(e) => setPassword(e.target.value)} id="outlined-basic" label="New password" variant="outlined" type='password' sx={{
             '& input':{ padding:'8px' },
             '& label':{ top:'-8px' }
 
           }} />
-          {message && (
-            <Typography color='green'> {message} </Typography>
-          )}
-          <Button onClick={handleSendEmail} value={email} sx={{ marginTop:'15px', color:'white', bgcolor:'primary.main', '&:hover':{ bgcolor:'primary.dark' } }}>Send recover link</Button>
+          <Button onClick={handleUpdatePassword} sx={{ marginTop:'15px', color:'white', bgcolor:'primary.main', '&:hover':{ bgcolor:'primary.dark' } }}>Update password</Button>
         </form>
 
         <Box display='flex' width='100%'>
@@ -58,4 +52,4 @@ function Forgot() {
   )
 }
 
-export default Forgot
+export default RecoverPassword

@@ -4,7 +4,7 @@ import CardItem from './Card/Card'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
 
-function ListCards({ cards }) {
+function ListCards({ board, cards, handleClickOpenDialog, handleCloseDialog }) {
   return (
     <SortableContext items={cards?.map(c => c._id)} strategy={verticalListSortingStrategy}>
 
@@ -34,7 +34,7 @@ function ListCards({ cards }) {
 
         {/* card */}
         {cards?.map(card =>
-          <CardItem key={card._id} card={card}/>
+          <CardItem  key={card._id} board={board} card={card} handleClickOpenDialog={handleClickOpenDialog} handleCloseDialog={handleCloseDialog}/>
         )}
 
 

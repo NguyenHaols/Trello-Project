@@ -9,13 +9,13 @@ import TextField from '@mui/material/TextField'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 import { useSelector } from 'react-redux'
 
-function ListColumns({ columns, createNewColumn, createNewCard, deleteColumn }) {
+function ListColumns({ board, columns, createNewColumn, createNewCard, deleteColumn }) {
 
   const [openNewColumnForm, setopenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm = () => setopenNewColumnForm(!openNewColumnForm)
   const [newColumnTitle, setNewColumnTitle] = useState('')
-  const ownerBoard = useSelector(state=> state.user)
-
+  const user = useSelector(state=> state.user)
+  const ownerBoard = board.ownerId === user._id
 
   // tim hieu react hook cho form co nhieu input
   const addNewColumn = () => {
@@ -50,9 +50,8 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumn }) 
       }}>
 
         {/* box column */}
-        {columns?.map( column => <Column key={column._id} column={column} createNewCard={createNewCard} deleteColumn={deleteColumn} />)}
-
-        {ownerBoard &&
+        {columns?.map( column => <Column key={column._id} board={board} column={column} createNewCard={createNewCard} deleteColumn={deleteColumn} />)}
+        {ownerBoard ?
           (!openNewColumnForm
             ? <Box onClick={toggleOpenNewColumnForm} sx={{
               minWidth: '250px',
@@ -60,7 +59,7 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumn }) 
               mx: 2,
               borderRadius: '6px',
               height: 'fit-content',
-              bgcolor: '#ffffff3d'
+              bgcolor: (theme) => theme.palette.mode === 'dark' ? theme.palette.primary[800] :  '#ccc'
             }}>
               <Button
                 sx={{
@@ -82,7 +81,7 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumn }) 
               p:1,
               borderRadius:'6px',
               height:'fit-content',
-              bgcolor: '#ffffff3d',
+              bgcolor: '#ccc',
               display:'flex',
               flexDirection:'column',
               gap:'1'
@@ -142,6 +141,7 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumn }) 
               </Box>
             </Box>
           )
+          : null
         }
 
       </Box>

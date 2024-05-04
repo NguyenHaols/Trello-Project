@@ -25,19 +25,20 @@ function Menu() {
             display:'flex',
             marginBottom:'10px',
             justifyContent:'left',
-            bgcolor: (theme) => activeBtn === 'board' ? theme.trello.btnBackground : 'transparent',
+            bgcolor: (theme) => activeBtn === 'board' ? '#ccc' : 'transparent',
             border:'none',
-            '&:hover':{ bgcolor:(theme) => theme.palette.primary[300]}
+            '&:hover':{ bgcolor:(theme) => '#ccc'}
           }}
 
         >
-          <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:(theme) => theme.palette.text.primary }} />
+          <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:'#2196f3' }} />
           <Typography sx={{ marginLeft:'10px' }}>  Boards </Typography>
 
         </Button>
       </Link>
 
-      <Link className={style['a-none']} to='/home'>
+        {/* Chức năng new feed */}
+      {/* <Link className={style['a-none']} to='/home'>
         <Button
           onClick={() => handleButtonClick('home')}
           sx={{
@@ -45,16 +46,16 @@ function Menu() {
             width: '100%',
             display:'flex',
             justifyContent:'left',
-            bgcolor: (theme) => activeBtn === 'home' ? theme.trello.btnBackground : 'transparent',
+            bgcolor: (theme) => activeBtn === 'home' ? '#ccc' : 'transparent',
             borderBottom:'none',
-            '&:hover':{ bgcolor:(theme) => theme.palette.primary[300]}
+            '&:hover':{ bgcolor:(theme) => '#ccc'}
 
           }}
         >
-          <HomeIcon />
+          <HomeIcon sx={{color:'#f73378'}}/>
           <Typography sx={{ marginLeft:'10px' }}>  Home </Typography>
         </Button>
-      </Link>
+      </Link> */}
     </>
   )
 }

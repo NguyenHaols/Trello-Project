@@ -7,10 +7,10 @@ function TitleMember() {
       display:'flex',
       justifyContent:'left',
       alignItems:'center',
-      color:'white',
+      color:(theme)=> theme.palette.text.primary,
       marginTop:'40px'
     }}>
-      <GroupsIcon sx={{ marginRight:'10px', color:(theme) => theme.trello.iconColor }}></GroupsIcon>
+      <GroupsIcon sx={{ marginRight:'10px', color:(theme)=> theme.palette.text.primary }}></GroupsIcon>
       <Typography variant='h6' fontWeight={500}>MEMBERS</Typography>
     </Box>
   )

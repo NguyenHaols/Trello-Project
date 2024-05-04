@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux'
 function DashBoardContent() {
   const [data] = useOutletContext()
   const cloneData = { ...data }
-  const workspaces = cloneData.workspaces
+  const workspaces = cloneData?.workspaces
 
 
   const getStarredBoard = () => {
@@ -77,6 +77,7 @@ function DashBoardContent() {
           </Box>
           {workspaces && workspaces.map(workspace => (
             <Fragment key={workspace._id}>
+
               <Workspace key={workspace._id} data={workspace}/>
 
               <Box sx={{
@@ -85,9 +86,13 @@ function DashBoardContent() {
                 justifyContent: 'flex-start',
                 marginBottom:'20px'
               }}>
-                {workspace && workspace.boards.map(board => (
-                  <BoardCard key={board._id} data={board} />
-                ))}
+                {workspace && workspace?.boards ? (
+                  workspace.boards.map(board => (
+                    <BoardCard key={board._id} data={board} />
+                  ))
+                ) : (
+                  <Typography variant="body2">No boards available</Typography>
+                )}
 
               </Box>
             </Fragment>

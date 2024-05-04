@@ -45,7 +45,7 @@ function Login() {
         justifyContent:'space-around',
         flexDirection:'column',
         alignItems:'center',
-        boxShadow:3,
+        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
         width:'80%',
         height:'80%'
       }}>
@@ -54,7 +54,7 @@ function Login() {
             <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:'primary.main', width:'32px', height:'42px' }} />
             <Typography variant='h4'fontWeight='700' color='#44546f'>ItWorks</Typography>
           </Box>
-          <Typography variant='subtitle2' color='text.secondary' >Log in to continue</Typography>
+          <Typography variant='subtitle2' color={(theme) => theme.palette.text.primary} >Log in to continue</Typography>
         </Box>
         <form style={{ display:'flex', flexDirection:'column', width:'100%' }}>
           <TextField id="outlined-basic" label="Your email" variant="outlined" type='email'
@@ -76,7 +76,7 @@ function Login() {
           <Button type='submit' onClick={handleLogin} sx={{ marginTop:'15px', color:'white', bgcolor:'primary.main', '&:hover':{ bgcolor:'primary.dark' } }}>Login</Button>
         </form>
         <Box sx={{ width:'100%', display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', textAlign:'center' }}>
-          <Typography variant='subtitle2' color='text.secondary'>Login with:</Typography>
+          <Typography variant='subtitle2' color={(theme) => theme.palette.text.primary}>Login with:</Typography>
           <Button sx={{ marginTop:'10px', width:'100%', border:'1px solid #ccc', '&:hover':{ bgcolor:'#091E4224' } }}>
             <img src={googlePng} width='24px' style={{ marginRight:'15px' }} />
             <Typography variant='subtitle2' color='black'>Google</Typography>

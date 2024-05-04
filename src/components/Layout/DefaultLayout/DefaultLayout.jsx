@@ -28,6 +28,9 @@ function DefaultLayout() {
           dispatch(action)
           setIsLoading(false)
         })
+        .catch(()=>{
+          navigate('/auth/login')
+        })
     } else {
       navigate('/auth/login')
     }

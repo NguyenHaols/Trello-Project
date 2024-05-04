@@ -7,8 +7,13 @@ import WorkspaceContent from './pages/Home/WorkspaceContent/WorkspaceContent'
 import Auth from './pages/Auth/Auth'
 import Login from './pages/Auth/Login/Login'
 import Register from './pages/Auth/Register/Register'
+import RecoverPassword from './pages/Auth/RecoverPassword/RecoverPassword'
 import Forgot from './pages/Auth/Forgot/Forgot'
 import AppBarOnlyLayout from './components/Layout/AppBarOnlyLayout/AppBarOnlyLayout'
+import Members from './pages/Home/WorkspaceContent/Members/Member'
+import Settings from './pages/Home/WorkspaceContent/Settings/Settings'
+import UserProfile from './pages/User/UserProfile/UserProfile'
+import ChangePassword from './pages/User/ChangePassword/ChangePassword'
 
 function App() {
 
@@ -46,6 +51,20 @@ function App() {
       ]
     },
     {
+      path:'profile',
+      element:<AppBarOnlyLayout/>,
+      children:[
+        {
+          path:'',
+          element:<UserProfile/>
+        },
+        {
+          path:'changePassword',
+          element:<ChangePassword/>
+        }
+      ]
+    },
+    {
       path:'auth',
       element:<Auth/>,
       children:[
@@ -64,6 +83,10 @@ function App() {
         {
           path:'forgot',
           element:<Forgot />
+        },
+        {
+          path:'recover',
+          element: <RecoverPassword/>
         }
       ]
     }

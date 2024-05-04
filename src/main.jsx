@@ -8,14 +8,15 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { ConfirmProvider } from 'material-ui-confirm'
 import { Provider } from 'react-redux'
-import store from './redux/store'
+import { PersistGate } from 'redux-persist/integration/react'
+import { persistor, store } from './redux/store'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 
 
   <CssVarsProvider theme={theme}>
     <ConfirmProvider defaultOptions={{
-      dialogProps:{ maxWidth:'xs' },
+      dialogProps:{ maxWidth:'xs'},
       confirmationText:'Confirm',
       cancellationText:'Cancel'
     }}>

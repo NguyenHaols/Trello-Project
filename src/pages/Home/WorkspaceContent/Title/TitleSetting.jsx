@@ -7,10 +7,10 @@ function TitleSetting() {
       display:'flex',
       justifyContent:'left',
       alignItems:'center',
-      color:'white',
+      color:(theme)=> theme.palette.text.primary,
       marginTop:'40px'
     }}>
-      <SettingsIcon sx={{ marginRight:'10px', color:'white' }}></SettingsIcon>
+      <SettingsIcon sx={{ marginRight:'10px', color:(theme)=> theme.palette.text.primary }}></SettingsIcon>
       <Typography variant='h6' fontWeight={500}>SETTINGS</Typography>
     </Box>
   )

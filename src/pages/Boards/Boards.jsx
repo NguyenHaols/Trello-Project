@@ -13,18 +13,19 @@ import { Box } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-
+import { useDispatch, useSelector } from 'react-redux'
+import { removeBoardAction, setBoardAction } from '~/redux/actions/boardAction'
+import { store } from '~/redux/store'
 
 function Board() {
   let { id } = useParams()
-
-  const [board, setBoard] = useState()
-  // const { userData } = useContext(UserDataContext)
-  const userData = useSelector(state => state.user)
-
+  const dispath = useDispatch()
+  const board = useSelector(state => state.board)
+  const [loading, setLoading] = useState(false)
+  // const [board, setBoard] = useState()
 
   useEffect(() => {
+    setLoading(true)
     fetchBoardDetailsAPI(id).then((board) => {
       // Sắp xếp thứ tự column trong board luôn
       board.columns = mapOrder(board.columns, board.columnOrderIds, '_id')
@@ -38,10 +39,15 @@ function Board() {
           column.cards = mapOrder(column.cards, column.cardOrderIds, '_id')
         }
       })
-
-      setBoard(board)
+      const action = setBoardAction(board)
+      dispath(action)
+      setLoading(false)
     })
+    return () => {
+      dispath(removeBoardAction())
+    }
   }, [])
+
 
   // !important Learn redux to store board
 
@@ -62,7 +68,8 @@ function Board() {
     const newBoard = { ...board }
     newBoard.columns.push(createdColumn)
     newBoard.columnOrderIds.push(createdColumn._id)
-    setBoard(newBoard)
+    const action = setBoardAction(newBoard)
+    dispath(action)
   }
 
   // Call api tạo card và refesh lại dữ liệu state
@@ -82,7 +89,8 @@ function Board() {
       columnToUpdate.cardOrderIds.push(createdCard._id)
     }
     //update lại state board
-    setBoard(newBoard)
+    const action = setBoardAction(board)
+    dispath(action)
   }
 
   // Call api Update lại dữ liệu columnOrderIds sau khi thay đổi vị trí column
@@ -93,7 +101,8 @@ function Board() {
     const newBoard = { ...board }
     newBoard.columns = dndOrderedColumns
     newBoard.columnOrderIds = dndOrderedColumnsIds
-    setBoard(newBoard)
+    const action = setBoardAction(newBoard)
+    dispath(action)
 
     updateBoardDetailsAPI(newBoard._id, { columnOrderIds: dndOrderedColumnsIds })
   }
@@ -110,7 +119,8 @@ function Board() {
       columnToUpdate.cardOrderIds = dndOrderedCardIds
     }
     //update lại state board
-    setBoard(newBoard)
+    const action = setBoardAction(newBoard)
+    dispath(action)
 
 
     //Call api update columnOrderIds
@@ -127,7 +137,8 @@ function Board() {
     const newBoard = { ...board }
     newBoard.columns = dndOrderedColumns
     newBoard.columnOrderIds = dndOrderedColumnsIds
-    setBoard(newBoard)
+    const action = setBoardAction(newBoard)
+    dispath(action)
 
     // Call api
     let prevCardOrderIds = dndOrderedColumns.find(c => c._id === prevColumnId)?.cardOrderIds
@@ -150,7 +161,8 @@ function Board() {
     const newBoard = { ...board }
     newBoard.columns = newBoard.columns.filter(c => c._id !== columnId)
     newBoard.columnOrderIds = newBoard.columnOrderIds.filter(_id => _id !== columnId)
-    setBoard(newBoard)
+    const action = setBoardAction(newBoard)
+    dispath(action)
 
     // Call API delete column
     deleteColumnDetailsAPI(columnId)
@@ -162,7 +174,7 @@ function Board() {
       } )
   }
 
-  if (!board) {
+  if (loading) {
     return (
       <Box sx={{ height:'100vh', display: 'flex', justifyContent:'center', alignItems:'center' }}>
         <CircularProgress />
@@ -176,7 +188,7 @@ function Board() {
 
 
       <Box sx={{
-        background: board.avatar ? `url(${board.avatar}) center/cover no-repeat` : ((theme) => (theme.palette.mode === 'dark' ? theme.trello.backgroundDark : theme.trello.backgroundLight)),
+        background: board.avatar ? `url(${board.avatar}) center/cover no-repeat` : ((theme) => (theme.palette.mode === 'dark' ? theme.trello.backgroundDark : theme.trello.backgroundLight))
       }}>
         <BoardBar board ={board} />
         <BoardContent
