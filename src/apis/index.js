@@ -194,3 +194,15 @@ export const sendEmailAPI= async(data) => {
   return response.data
 }
 //
+
+// start code recover
+export const findCodeRecoverAPI= async(data) => {
+  const response = await asiox.post(`${API_ROOT}/v1/codeRecover/getOne`,data)
+  return response.data
+}
+
+export const createCodeRecoverAPI= async(data) => {
+  const response = await asiox.post(`${API_ROOT}/v1/codeRecover/create`,data)
+  return response.data
+}
+// end code recover

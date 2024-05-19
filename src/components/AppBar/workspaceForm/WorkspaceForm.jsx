@@ -116,7 +116,7 @@ function WorkspaceForm() {
         </ListItemIcon>
         <ListItemText sx={{ color:'white' }}>Create</ListItemText>
       </MenuItem>
-      <Dialog sx={{ margin:'0 auto', '& .MuiPaper-root':{ width:'50%' } }} open={open} onClose={handleClose}>
+      <Dialog sx={{ margin:'40px auto', '& .MuiPaper-root':{ width:'50%' } }} open={open} onClose={handleClose}>
         {loading && (
           <Box sx={{
             position: 'fixed',

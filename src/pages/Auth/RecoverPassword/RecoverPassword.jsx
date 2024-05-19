@@ -5,11 +5,21 @@ import Typography from '@mui/material/Typography'
 import SvgIcon from '@mui/material/SvgIcon'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import { findCodeRecoverAPI } from '~/apis'
 
 function RecoverPassword() {
   const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('')
+  const [code, setCode] = useState('')
   const handleUpdatePassword = () => {
-    
+    const data = {
+      email:email,
+      code:code
+    }
+    findCodeRecoverAPI(data)
+      .then( res => {
+        console.log(res, 'res')
+      })
   }
   return (
     <Box flex='1' display='flex' justifyContent='center' alignItems='center'>
@@ -31,12 +41,17 @@ function RecoverPassword() {
           <Typography textAlign='center' variant='subtitle2' color={(theme) => theme.palette.text.primary} > New password </Typography>
         </Box>
         <form style={{ display:'flex', flexDirection:'column', width:'100%' }}>
-        <TextField  onChange={(e) => setPassword(e.target.value)} id="outlined-basic" label="Email" variant="outlined" type='email' sx={{
+          <TextField onChange={(e) => setEmail(e.target.value)} id="outlined-basic" label="Email" variant="outlined" type='email' sx={{
             '& input':{ padding:'8px' },
             '& label':{ top:'-8px' },
             marginBottom:'20px'
           }} />
-          <TextField  onChange={(e) => setPassword(e.target.value)} id="outlined-basic" label="New password" variant="outlined" type='password' sx={{
+          <TextField onChange={(e) => setCode(e.target.value)} id="outlined-basic" label="Code" variant="outlined" type='text' sx={{
+            '& input':{ padding:'8px' },
+            '& label':{ top:'-8px' },
+            marginBottom:'20px'
+          }} />
+          <TextField onChange={(e) => setPassword(e.target.value)} id="outlined-basic" label="New password" variant="outlined" type='password' sx={{
             '& input':{ padding:'8px' },
             '& label':{ top:'-8px' }
 
@@ -45,7 +60,9 @@ function RecoverPassword() {
         </form>
 
         <Box display='flex' width='100%'>
-          <Button sx={{ border:'1px solid #ccc', marginRight:'10px', width:'100%' }}><Link to='/auth/login' style={{ textDecoration:'none', color:'#0C66E4', width:'100%' }}>Return to login</Link></Button>
+          <Button sx={{ border:'1px solid #ccc', marginRight:'10px', width:'100%' }}><Link to='/auth/login' style={{ textDecoration:'none', color:'#0C66E4', width:'100%' }}>
+            Return to login</Link>
+          </Button>
         </Box>
       </Box>
     </Box>
