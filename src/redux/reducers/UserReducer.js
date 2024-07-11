@@ -28,36 +28,6 @@ const userReducer = (state = initialState, action) => {
 
   }
 
-  case 'ADD_MEMBER' : {
-    const { workspaceId, user } = action.payload
-    const newState = cloneDeep(state)
-    newState.workspaces = newState.workspaces.map(w => {
-      if ( w._id === workspaceId ) {
-        const updateWorkspace = {...w}
-        updateWorkspace.members = updateWorkspace.members.concat(user)
-        return updateWorkspace
-      } else {
-        return w
-      }
-    })
-    return newState
-  }
-
-  case 'REMOVE_MEMBER' : {
-    const { workspaceId, userId } = action.payload
-    const newState = cloneDeep(state)
-    newState.workspaces = newState.workspaces.map(w => {
-      if ( w._id === workspaceId ) {
-        const updateWorkspace = {...w}
-        updateWorkspace.members = updateWorkspace.members.filter(member => member._id !== userId)
-        return updateWorkspace
-      } else {
-        return w
-      }
-    })
-    return newState
-  }
-
   case 'UPDATE_USER' : {
     const newInfor = action.payload
     const newUserState = {

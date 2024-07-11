@@ -185,8 +185,6 @@ function Board() {
   return (
 
     <Container disableGutters maxWidth={false} sx={{ height:(theme) => theme.trello.BOARD_CONTENT_HEIGHT, backgroundColor:'primary.main' }}>
-
-
       <Box sx={{
         background: board.avatar ? `url(${board.avatar}) center/cover no-repeat` : ((theme) => (theme.palette.mode === 'dark' ? theme.trello.backgroundDark : theme.trello.backgroundLight))
       }}>

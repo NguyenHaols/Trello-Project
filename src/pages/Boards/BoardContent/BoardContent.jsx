@@ -320,7 +320,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns, move
             width: '100%',
             height: '100%',
             background: 'rgba(0, 0, 0, 0.1)',
-            backdropFilter: 'blur(5px)', // Điều chỉnh giá trị 5px để thay đổi độ mờ
+            backdropFilter: 'blur(1px)', // Điều chỉnh giá trị 5px để thay đổi độ mờ
           }}>
 
             {/* {/* Box container column */}

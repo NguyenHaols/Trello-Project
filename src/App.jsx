@@ -14,6 +14,7 @@ import Members from './pages/Home/WorkspaceContent/Members/Member'
 import Settings from './pages/Home/WorkspaceContent/Settings/Settings'
 import UserProfile from './pages/User/UserProfile/UserProfile'
 import ChangePassword from './pages/User/ChangePassword/ChangePassword'
+import ErrorPage from './pages/Error/ErrorPage'
 
 function App() {
 
@@ -38,7 +39,8 @@ function App() {
           path:'workspace/:id',
           element:<WorkspaceContent />
         }
-      ]
+      ],
+      errorElement: <ErrorPage />
     },
     {
       path:'board/:id',

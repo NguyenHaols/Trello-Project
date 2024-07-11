@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { removeMemberAPI } from '~/apis'
-import { removeMemberAction } from '~/redux/actions/userAction'
+import { removeMemberAction } from '~/redux/actions/memberAction'
 
 
 function Members({ workspace, currentUserId, member }) {
@@ -19,7 +19,7 @@ function Members({ workspace, currentUserId, member }) {
       removeMemberAPI(data)
         .then( data => {
           toast.success('Remove member successfully')
-          const action = removeMemberAction(workspace._id, member._id)
+          const action = removeMemberAction(member._id)
           if (currentUserId === member._id) {
             navigate('/')
           }
