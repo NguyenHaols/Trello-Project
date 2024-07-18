@@ -20,7 +20,7 @@ import LibraryAddIcon from '@mui/icons-material/LibraryAdd'
 import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import style from '~/CSS/CSSGlobal.module.scss'
 import { useSelector } from 'react-redux'
 import WorkspaceForm from './workspaceForm/WorkspaceForm'
@@ -32,7 +32,7 @@ function AppBar() {
   const [searchValue, setSearchValue] = useState('')
   const [open, setOpen] = useState(null)
   const [searchResults, setSearchResults] = useState(user.workspaces.flatMap(workspace => workspace.boards))
-
+  const navigate = useNavigate()
   const allBoards = user.workspaces.flatMap(workspace => workspace.boards)
 
   const handleOpenSearch = (event) => {
@@ -43,7 +43,7 @@ function AppBar() {
     setOpen(null)
     setSearchValue('')
   }
-  
+
   const handleSearchResult = (e) => {
     let value = e.target.value
     setSearchValue(value)
@@ -55,7 +55,15 @@ function AppBar() {
     )
     setSearchResults(filteredResults)
   }
-
+  const params = useParams()
+  const handleNavigateToBoard = (id) => {
+    if (params) {
+      const newBoardPath = `/board/${id}`
+      window.location.href = newBoardPath
+    } else {
+      navigate(`board/${id}`)
+    }
+  }
 
   return (
 
@@ -155,19 +163,19 @@ function AppBar() {
             }} />
           <Popper open={Boolean(open)} anchorEl={open}>
             <Box sx={{
-              backgroundColor:(theme) => theme.palette.mode === 'dark' ? '#333' : '#fff' ,
+              backgroundColor:(theme) => theme.palette.mode === 'dark' ? '#333' : '#fff',
               width:'180px',
               boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
               padding:'10px',
               maxHeight:'170px',
-              overflow:'hidden',
+              overflow:'hidden'
             }}>
               {searchResults.map(board => (
-                <Box key={board._id} sx={{ display:'flex', alignItems:'center', margin:'10px 0 5px 0' }}>
+                <Box onClick={() => handleNavigateToBoard(board._id)} key={board._id} sx={{ display:'flex', alignItems:'center', margin:'10px 0 5px 0', cursor:'pointer' }} >
                   <Box sx={{ width:'40px', marginRight:'10px', height:'40px', backgroundImage: board.avatar ? `url(${board.avatar})`: 'linear-gradient(#c9372c,#fea362)', borderRadius:'4px', color:'white', textAlign:'center', lineHeight:'40px' }}>
                     { board.avatar ? '' : board.title[0]}
                   </Box>
-                  <Box>
+                  <Box >
                     <Typography variant='body2' fontWeight='450'>{board.title}</Typography>
                   </Box>
                 </Box>
@@ -182,7 +190,7 @@ function AppBar() {
             <NotificationsNoneIcon sx={{ color:(theme) => theme.palette.text.primary }} />
           </Badge>
         </Tooltip>
-        <Tooltip title="Notification">
+        <Tooltip title="Help">
           <HelpOutlineIcon sx={{ cursor:'pointer' }}/>
         </Tooltip>
         <Profiles />

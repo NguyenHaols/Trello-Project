@@ -1,5 +1,5 @@
 import Board from '~/pages/Boards/Boards'
-import {RouterProvider,createBrowserRouter } from 'react-router-dom'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import DefaultLayout from './components/Layout/DefaultLayout/DefaultLayout'
 import DashBoardContent from './pages/Home/DashBoardContent/DashBoardContent'
 import HomeContent from './pages/Home/HomeContent/HomeContent'
@@ -50,7 +50,8 @@ function App() {
           path:'',
           element:<Board/>
         }
-      ]
+      ],
+      errorElement: <ErrorPage />
     },
     {
       path:'profile',
@@ -64,7 +65,8 @@ function App() {
           path:'changePassword',
           element:<ChangePassword/>
         }
-      ]
+      ],
+      errorElement: <ErrorPage />
     },
     {
       path:'auth',

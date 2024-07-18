@@ -20,20 +20,17 @@ function DefaultLayout() {
   const [isLoading, setIsLoading] = useState(true)
   // const data = MocDataUserAPI
   useEffect(() => {
-    const token = Cookies.get('accessToken')
-    if (token) {
-      getUser()
-        .then(data => {
-          const action = setUser(data)
-          dispatch(action)
-          setIsLoading(false)
-        })
-        .catch(()=>{
-          navigate('/auth/login')
-        })
-    } else {
-      navigate('/auth/login')
-    }
+
+    getUser()
+      .then(data => {
+        const action = setUser(data)
+        dispatch(action)
+        setIsLoading(false)
+      })
+      .catch(() => {
+        navigate('/auth/login')
+      })
+
   }, [])
 
 

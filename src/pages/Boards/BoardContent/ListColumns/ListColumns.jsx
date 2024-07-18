@@ -59,7 +59,7 @@ function ListColumns({ board, columns, createNewColumn, createNewCard, deleteCol
               mx: 2,
               borderRadius: '6px',
               height: 'fit-content',
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? theme.palette.primary[800] :  '#ccc'
+              bgcolor: (theme) => theme.palette.mode === 'dark' ? theme.palette.primary[800] : '#ccc'
             }}>
               <Button
                 sx={{

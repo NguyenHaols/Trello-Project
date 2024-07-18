@@ -10,7 +10,11 @@ import { Link, Outlet } from 'react-router-dom'
 
 function Auth() {
   return (
-    <Box display='flex' height='100vh' >
+    <Box display='flex' height='100vh'
+      sx={{
+        background: ((theme) => (theme.palette.mode === 'dark' ? theme.trello.backgroundDark : theme.trello.backgroundLight))
+      }}
+    >
       <Box flex='1' sx={{
         display:{ xs:'none', md:'flex' },
         flexDirection:'column',

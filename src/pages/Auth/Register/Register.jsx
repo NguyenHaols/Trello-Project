@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material'
+import { Box, Button, useTheme } from '@mui/material'
 import { ReactComponent as trelloIcon } from '~/assets/trello.svg'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
@@ -6,7 +6,7 @@ import googlePng from '~/assets/google.png'
 import fbPng from '~/assets/facebook.png'
 import SvgIcon from '@mui/material/SvgIcon'
 import { Link, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { registerApi } from '~/apis'
 import { toast } from 'react-toastify'
 
@@ -18,7 +18,9 @@ function Register() {
   const [password, setPassword] = useState('')
   const [confirmpassword, setConfirmPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
-  console.log('🚀 ~ Register ~ errorMessage:', errorMessage)
+  const theme = useTheme()
+  const textColor = theme.palette.text.primary
+  const mainColor = theme.palette.primary.main
   const handleRegister = (e) => {
     e.preventDefault()
     if (!(password === confirmpassword)) {
@@ -42,6 +44,7 @@ function Register() {
       })
   }
 
+
   return (
     <Box flex='1' display='flex' justifyContent='center' alignItems='center'>
       <Box sx={{
@@ -56,10 +59,10 @@ function Register() {
       }}>
         <Box>
           <Box sx={{ display:'flex' }}>
-            <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:'primary.main', width:'32px', height:'42px' }} />
-            <Typography variant='h4'fontWeight='700' color='#44546f'>ItWorks</Typography>
+            <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:(theme) => theme.palette.mode === 'light' ? mainColor : textColor, width:'32px', height:'42px' }} />
+            <Typography variant='h4'fontWeight='700' color={(theme) => theme.palette.mode === 'light' ? mainColor : textColor}>ItWorks</Typography>
           </Box>
-          <Typography variant='subtitle2' color={(theme) => theme.palette.text.primary} >Register to continue</Typography>
+          <Typography variant='subtitle2' color={(theme) => theme.palette.text.primary} textAlign={'center'}>Register to continue</Typography>
         </Box>
         <form style={{ display:'flex', flexDirection:'column', width:'100%' }}>
           <TextField id="outlined-basic" label="Your email" variant="outlined" type='email'
@@ -102,15 +105,15 @@ function Register() {
           <Typography variant='subtitle2' color={(theme) => theme.palette.text.primary}>Register with:</Typography>
           <Button sx={{ marginTop:'10px', width:'100%', border:'1px solid #ccc', '&:hover':{ bgcolor:'#091E4224' } }}>
             <img src={googlePng} width='24px' style={{ marginRight:'15px' }} />
-            <Typography variant='subtitle2' color='black'>Google</Typography>
+            <Typography variant='subtitle2' color={textColor}>Google</Typography>
           </Button>
           <Button sx={{ marginTop:'10px', width:'100%', border:'1px solid #ccc', '&:hover':{ bgcolor:'#091E4224' } }}>
             <img src={fbPng} width='24px' style={{ marginRight:'15px' }} />
-            <Typography variant='subtitle2' color='black'>Facebook</Typography>
+            <Typography variant='subtitle2' color={textColor}>Facebook</Typography>
           </Button>
         </Box>
         <Box display='flex' width='100%'>
-          <Button sx={{ border:'1px solid #ccc', width:'100%' }}><Link to='/auth/login' style={{ textDecoration:'none', color:'#0C66E4', width:'100%' }}>I aready have an account!</Link></Button>
+          <Button sx={{ border:'1px solid #ccc', width:'100%' }}><Link to='/auth/login' style={{ textDecoration:'none', color:textColor, width:'100%' }}>I aready have an account!</Link></Button>
         </Box>
       </Box>
     </Box>

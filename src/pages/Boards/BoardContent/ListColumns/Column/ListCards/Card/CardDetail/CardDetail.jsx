@@ -1,4 +1,4 @@
-import { Avatar, AvatarGroup, Box, Button, Checkbox, Dialog, DialogContent, DialogTitle, InputAdornment, MenuItem, Popover, Select, TextField, Tooltip, Typography } from '@mui/material'
+import { Avatar, AvatarGroup, Box, Button, Checkbox, colors, Dialog, DialogContent, DialogTitle, InputAdornment, MenuItem, Popover, Select, TextField, Tooltip, Typography } from '@mui/material'
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import PeopleIcon from '@mui/icons-material/People'
@@ -265,7 +265,7 @@ function CardDetail({ board, card, open, handleClose }) {
                 <NotesIcon sx={{ marginRight:'4px' }} />
                 <Typography>DESCRIPTION</Typography>
               </Box>
-              <Box sx={{ whiteSpace:'pre-line' ,paddingLeft:'25px' }}>
+              <Box sx={{ whiteSpace:'pre-line', paddingLeft:'25px' }}>
                 {card.description}
               </Box>
             </Box>
@@ -329,10 +329,10 @@ function CardDetail({ board, card, open, handleClose }) {
           </Box>
           {ownerBoard && (
             <Box sx={{ flex:'2' }}>
-              EDIT CARD
-
+              <Box sx={{ color:(theme) => theme.palette.primary[800], fontWeight:'600', fontSize:'18px' }} >Management</Box>
+              <hr></hr>
               <Box id='add-members' onClick={(event) => handleClick(event, 'add-members')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800] } }}>
-                <Box sx={{ cursor:'pointer' }}>Add Members</Box>
+                <Box sx={{ cursor:'pointer',textAlign:'center' }}>Add Members</Box>
                 <Popover
                   sx={{
                     '& .MuiPopover-paper': {
@@ -365,7 +365,7 @@ function CardDetail({ board, card, open, handleClose }) {
               </Box>
 
               <Box id='status-task' onClick={(event) => handleClick(event, 'status-task')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                <Box sx={{ cursor:'pointer' }}>Status Task</Box>
+                <Box sx={{ cursor:'pointer' ,textAlign:'center'}}>Status Task</Box>
                 <Popover
                   sx={{
                     '& .MuiPopover-paper': {
@@ -415,7 +415,7 @@ function CardDetail({ board, card, open, handleClose }) {
                 </Popover>
               </Box>
               <Box id='deadline-card' onClick={(event) => handleClick(event, 'deadline-card')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                <Box sx={{ cursor:'pointer' }}>Deadline</Box>
+                <Box sx={{ cursor:'pointer', textAlign:'center' }}>Deadline</Box>
                 <Popover
                   sx={{
                     '& .MuiPopover-paper': {
@@ -448,7 +448,7 @@ function CardDetail({ board, card, open, handleClose }) {
                 </Popover>
               </Box>
               <Box id='description-card' onClick={(event) => handleClick(event, 'description-card')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                <Box sx={{ cursor:'pointer' }}>Description</Box>
+                <Box sx={{ cursor:'pointer', textAlign:'center' }}>Description</Box>
                 <Popover
                   sx={{
                     '& .MuiPopover-paper': {
@@ -481,7 +481,7 @@ function CardDetail({ board, card, open, handleClose }) {
                 </Popover>
               </Box>
               <Box id='taskList-card' onClick={(event) => handleClick(event, 'taskList-card')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                <Box sx={{ cursor:'pointer' }}>Add Task</Box>
+                <Box sx={{ cursor:'pointer', textAlign:'center' }}>Add Task</Box>
                 <Popover
                   sx={{
                     '& .MuiPopover-paper': {
@@ -513,7 +513,7 @@ function CardDetail({ board, card, open, handleClose }) {
                   </Box>
                 </Popover>
               </Box>
-              <Box onClick={handleDeleteCardSubmit} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
+              <Box onClick={handleDeleteCardSubmit} sx={{ backgroundColor:(theme) => theme.palette.primary[500],textAlign:'center', marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
               Delete Card
               </Box>
             </Box>

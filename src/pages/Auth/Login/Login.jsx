@@ -8,14 +8,17 @@ import SvgIcon from '@mui/material/SvgIcon'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { loginApi } from '~/apis'
-import Cookies from 'js-cookie'
+import { useTheme } from '@emotion/react'
+
 
 function Login() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
-
+  const theme = useTheme()
+  const textColor = theme.palette.text.primary
+  const mainColor = theme.palette.primary.main
   const handleLogin = (e) => {
     e.preventDefault()
     const user = {
@@ -25,25 +28,21 @@ function Login() {
     loginApi(user)
       .then((data) => {
         if (data.user._id) {
-          Cookies.set('accessToken', data.accessToken, {
-            expires: 30,
-            path: '/',
-            secure: true,
-            sameSite: 'None'
-          })
           navigate('/boards')
         } else {
           setErrorMessage('Sorry, your email or password was incorrect')
         }
       })
       .catch((error) => {
+        console.log(error)
         const err = error.response.data.message.split(' ').slice(1).join(' ')
         setErrorMessage(err)
       })
   }
 
   return (
-    <Box flex='1' display='flex' justifyContent='center' alignItems='center'>
+    <Box flex='1' display='flex' justifyContent='center' alignItems='center'
+      >
       <Box
         sx={{
           display: 'flex',
@@ -57,19 +56,20 @@ function Login() {
         }}
       >
         <Box>
-          <Box sx={{ display: 'flex' }}>
+          <Box sx={{ display: 'flex' }} >
             <SvgIcon
               component={trelloIcon}
               inheritViewBox
-              sx={{ color: 'primary.main', width: '32px', height: '42px' }}
+              sx={{ color:(theme) => theme.palette.mode === 'light' ? mainColor : textColor, width: '32px', height: '42px' }}
             />
-            <Typography variant='h4' fontWeight='700' color='#44546f'>
+            <Typography variant='h4' fontWeight='700' color={(theme) => theme.palette.mode === 'light' ? mainColor : textColor}>
               ItWorks
             </Typography>
           </Box>
           <Typography
             variant='subtitle2'
-            color={(theme) => theme.palette.text.primary}
+            color={(theme) => theme.palette.mode === 'light' ? mainColor : textColor}
+            textAlign={'center'}
           >
             Log in to continue
           </Typography>
@@ -148,7 +148,7 @@ function Login() {
             }}
           >
             <img src={googlePng} width='24px' style={{ marginRight: '15px' }} />
-            <Typography variant='subtitle2' color='black'>
+            <Typography variant='subtitle2' color={textColor}>
               Google
             </Typography>
           </Button>
@@ -161,7 +161,7 @@ function Login() {
             }}
           >
             <img src={fbPng} width='24px' style={{ marginRight: '15px' }} />
-            <Typography variant='subtitle2' color='black'>
+            <Typography variant='subtitle2' color={textColor}>
               Facebook
             </Typography>
           </Button>
@@ -174,7 +174,7 @@ function Login() {
               to='/auth/forgot'
               style={{
                 textDecoration: 'none',
-                color: '#0C66E4',
+                color: textColor,
                 width: '100%'
               }}
             >
@@ -186,7 +186,7 @@ function Login() {
               to='/auth/register'
               style={{
                 textDecoration: 'none',
-                color: '#0C66E4',
+                color: textColor,
                 width: '100%'
               }}
             >

@@ -1,32 +1,32 @@
 import axios from 'axios'
-import asiox from 'axios'
 import { API_ROOT } from '~/utils/constants'
+axios.defaults.withCredentials = true
 
 // Tim hieu them interceptors
 
 // Board
 export const fetchBoardDetailsAPI = async(boardId) => {
-  const response = await asiox.get(`${API_ROOT}/v1/boards/${boardId}`)
+  const response = await axios.get(`${API_ROOT}/v1/boards/${boardId}`)
   return response.data
 }
 
 export const createNewBoardAPI = async(boardData) => {
-  const response = await asiox.post(`${API_ROOT}/v1/boards`, boardData)
+  const response = await axios.post(`${API_ROOT}/v1/boards`, boardData)
   return response.data
 }
 
 export const updateBoardDetailsAPI = async(boardId, updateData) => {
-  const response = await asiox.put(`${API_ROOT}/v1/boards/${boardId}`, updateData)
+  const response = await axios.put(`${API_ROOT}/v1/boards/${boardId}`, updateData)
   return response.data
 }
 
 export const moveCardToDifferentColumnAPI = async(updateData) => {
-  const response = await asiox.put(`${API_ROOT}/v1/boards/supports/movingCard`, updateData)
+  const response = await axios.put(`${API_ROOT}/v1/boards/supports/movingCard`, updateData)
   return response.data
 }
 
 export const deleteBoardAPI = async(boardId) => {
-  const response = await asiox.post(`${API_ROOT}/v1/boards/delete`, boardId)
+  const response = await axios.post(`${API_ROOT}/v1/boards/delete`, boardId)
   return response.data
 }
 // end board
@@ -39,12 +39,12 @@ export const createNewColumnApi = async (newColumnData) => {
 }
 
 export const updateColumnDetailsAPI = async(columnId, updateData) => {
-  const response = await asiox.put(`${API_ROOT}/v1/columns/${columnId}`, updateData)
+  const response = await axios.put(`${API_ROOT}/v1/columns/${columnId}`, updateData)
   return response.data
 }
 
 export const deleteColumnDetailsAPI = async(columnId) => {
-  const response = await asiox.delete(`${API_ROOT}/v1/columns/${columnId}`)
+  const response = await axios.delete(`${API_ROOT}/v1/columns/${columnId}`)
   return response.data
 }
 
@@ -89,7 +89,9 @@ export const addTaskCardAPI = async (data) => {
 // user
 
 export const loginApi = async (userData) => {
-  const response = await axios.post(`${API_ROOT}/v1/users/login`, userData)
+  const response = await axios.post(`${API_ROOT}/v1/users/login`, userData, {
+    withCredentials: true
+  })
   return response.data
 }
 
@@ -155,31 +157,31 @@ export const uploadImageAPI = async (image) => {
 // Workspace
 
 export const addMemberAPI = async(data) => {
-  const response = await asiox.post(`${API_ROOT}/v1/workspace/member/addMember`, data, {
+  const response = await axios.post(`${API_ROOT}/v1/workspace/member/addMember`, data, {
     withCredentials: true
   })
   return response.data
 }
 
 export const removeMemberAPI = async(data) => {
-  const response = await asiox.post(`${API_ROOT}/v1/workspace/member/removeMember`, data,{
+  const response = await axios.post(`${API_ROOT}/v1/workspace/member/removeMember`, data,{
     withCredentials: true
   })
   return response.data
 }
 
 export const createNewWorkspaceAPI = async(workspaceData) => {
-  const response = await asiox.post(`${API_ROOT}/v1/workspaces/createWorkspace`, workspaceData)
+  const response = await axios.post(`${API_ROOT}/v1/workspaces/createWorkspace`, workspaceData)
   return response.data
 }
 
 export const updateWorkspaceAPI = async(newData) => {
-  const response = await asiox.post(`${API_ROOT}/v1/workspaces/update`, newData)
+  const response = await axios.post(`${API_ROOT}/v1/workspaces/update`, newData)
   return response.data
 }
 
 export const deleteWorkspaceAPI = async(id) => {
-  const response = await asiox.post(`${API_ROOT}/v1/workspaces/delete`, id)
+  const response = await axios.post(`${API_ROOT}/v1/workspaces/delete`, id)
   return response.data
 }
 
@@ -187,7 +189,7 @@ export const deleteWorkspaceAPI = async(id) => {
 
 // start comments
 export const addCommentAPI = async(data) => {
-  const response = await asiox.post(`${API_ROOT}/v1/comments/postComment`, data)
+  const response = await axios.post(`${API_ROOT}/v1/comments/postComment`, data)
   return response.data
 }
 
@@ -195,19 +197,19 @@ export const addCommentAPI = async(data) => {
 
 // send email
 export const sendEmailAPI= async(data) => {
-  const response = await asiox.post(`${API_ROOT}/v1/email/sendEmail`, data)
+  const response = await axios.post(`${API_ROOT}/v1/email/sendEmail`, data)
   return response.data
 }
 //
 
 // start code recover
 export const findCodeRecoverAPI= async(data) => {
-  const response = await asiox.post(`${API_ROOT}/v1/codeRecover/getOne`, data)
+  const response = await axios.post(`${API_ROOT}/v1/codeRecover/getOne`, data)
   return response.data
 }
 
 export const createCodeRecoverAPI= async(data) => {
-  const response = await asiox.post(`${API_ROOT}/v1/codeRecover/create`, data)
+  const response = await axios.post(`${API_ROOT}/v1/codeRecover/create`, data)
   return response.data
 }
 // end code recover
@@ -215,7 +217,7 @@ export const createCodeRecoverAPI= async(data) => {
 
 // start workspace-members
 export const getMembersByWorkspaceIdAPI= async(workspaceId) => {
-  const response = await asiox.get(`${API_ROOT}/v1/workspace/member/getMembersByWorkspaceId/${workspaceId}`, {
+  const response = await axios.get(`${API_ROOT}/v1/workspace/member/getMembersByWorkspaceId/${workspaceId}`, {
     withCredentials: true
   })
   return response.data
