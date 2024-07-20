@@ -202,17 +202,13 @@ export const sendEmailAPI= async(data) => {
 }
 //
 
-// start code recover
-export const findCodeRecoverAPI= async(data) => {
-  const response = await axios.post(`${API_ROOT}/v1/codeRecover/getOne`, data)
+// start recover password
+export const recoverPasswordAPI= async(data) => {
+  const response = await axios.post(`${API_ROOT}/v1/users/recoverPassword`, data)
   return response.data
 }
 
-export const createCodeRecoverAPI= async(data) => {
-  const response = await axios.post(`${API_ROOT}/v1/codeRecover/create`, data)
-  return response.data
-}
-// end code recover
+// end  recover
 
 
 // start workspace-members

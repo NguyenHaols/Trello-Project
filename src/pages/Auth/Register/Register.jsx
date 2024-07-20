@@ -9,6 +9,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { registerApi } from '~/apis'
 import { toast } from 'react-toastify'
+import * as Yup from 'yup'
+import { useFormik } from 'formik'
 
 
 function Register() {
@@ -17,32 +19,46 @@ function Register() {
   const [fullName, setFullName] = useState('')
   const [password, setPassword] = useState('')
   const [confirmpassword, setConfirmPassword] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
   const theme = useTheme()
   const textColor = theme.palette.text.primary
   const mainColor = theme.palette.primary.main
-  const handleRegister = (e) => {
-    e.preventDefault()
-    if (!(password === confirmpassword)) {
-      return setErrorMessage('Your password and confirm password is not match')
-    }
-    const user = {
-      'email' : email,
-      'password' : password,
-      'username' : fullName
-    }
-    registerApi(user)
-      .then(data => {
-        if (data._id) {
-          navigate('/auth/login')
-          toast.success('Register success')
+
+  const registerFormik = useFormik({
+    initialValues: {
+      email: '',
+      fullName: '',
+      password:'',
+    },
+    validationSchema: Yup.object({
+      fullName: Yup.string().min(5, 'Minimum 5 characters').max(30, 'Maximum 30 characters').required('Required!'),
+      email: Yup.string().min(5, 'Minimum 5 characters').max(30, 'Maximum 30 characters').required('Required!'),
+      password: Yup.string().min(6, 'Minimum 6 characters').max(30, 'Maximum 30 characters').required('Required!'),
+      confirmPassword: Yup.string()
+        .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        .required('Required!')
+    }),
+    onSubmit: (values, { setSubmitting }) => {
+      try {
+        const user = {
+          'email' : values.email,
+          'username': values.fullName,
+          'password' : values.password,
         }
-      })
-      .catch(error => {
-        const err = error.response.data.message.split(' ').slice(1).join(' ')
-        setErrorMessage(err)
-      })
-  }
+        registerApi(user)
+          .then(data => {
+            if (data._id) {
+              navigate('/auth/login')
+              toast.success('Register success')
+            }
+          })
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setSubmitting(false)
+      }
+
+    }
+  })
 
 
   return (
@@ -55,7 +71,7 @@ function Register() {
         alignItems:'center',
         boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
         width:'80%',
-        height:'80%'
+        height:'90%'
       }}>
         <Box>
           <Box sx={{ display:'flex' }}>
@@ -64,42 +80,64 @@ function Register() {
           </Box>
           <Typography variant='subtitle2' color={(theme) => theme.palette.text.primary} textAlign={'center'}>Register to continue</Typography>
         </Box>
-        <form style={{ display:'flex', flexDirection:'column', width:'100%' }}>
-          <TextField id="outlined-basic" label="Your email" variant="outlined" type='email'
-            onChange={(e) => {setEmail(e.target.value)}}
+        <form onSubmit={registerFormik.handleSubmit} style={{ display:'flex', flexDirection:'column', width:'100%' }}>
+          <TextField name='email' id="email" label="Your email" variant="outlined" type='email'
+            onChange={registerFormik.handleChange}
+            onBlur={registerFormik.handleBlur}
             sx={{
               '& input':{ padding:'8px' },
               '& label':{ top:'-8px' }
 
             }} />
-          <TextField id="outlined-basic" label="Your full name" variant="outlined"
-            onChange={(e) => {setFullName(e.target.value)}}
-            sx={{
-              marginTop:'20px',
-              '& input':{ padding:'8px' },
-              '& label':{ top:'-8px' }
-
-            }} />
-          <TextField id="outlined-basic" label="Your password" variant="outlined" type="password" autoComplete="current-password"
-            onChange={(e) => {setPassword(e.target.value)}}
-            sx={{
-              marginTop:'20px',
-              '& input':{ padding:'8px' },
-              '& label':{ top:'-8px' }
-
-            }} />
-          <TextField id="outlined-basic" label="Confirm password" variant="outlined" type="password" autoComplete="current-password"
-            onChange={(e) => {setConfirmPassword(e.target.value)}}
+          {registerFormik.errors.email && registerFormik.touched.email && (
+            <Typography variant='caption' color='error' >
+              {registerFormik.errors.email}
+            </Typography>
+          )}
+          <TextField name='fullName' id="fullName" label="Your full name" variant="outlined"
+            onChange={registerFormik.handleChange}
+            onBlur={registerFormik.handleBlur}
             sx={{
               marginTop:'20px',
               '& input':{ padding:'8px' },
               '& label':{ top:'-8px' }
 
             }} />
+          {registerFormik.errors.fullName && registerFormik.touched.fullName && (
+            <Typography variant='caption' color='error' >
+              {registerFormik.errors.fullName}
+            </Typography>
+          )}
+          <TextField name='password' id="password" label="Your password" variant="outlined" type="password" autoComplete="current-password"
+            onChange={registerFormik.handleChange}
+            onBlur={registerFormik.handleBlur}
+            sx={{
+              marginTop:'20px',
+              '& input':{ padding:'8px' },
+              '& label':{ top:'-8px' }
 
-          {errorMessage && <Typography variant="caption" color="error" marginTop='5px'>{errorMessage}</Typography>}
+            }} />
+          {registerFormik.errors.password && registerFormik.touched.password && (
+            <Typography variant='caption' color='error' >
+              {registerFormik.errors.password}
+            </Typography>
+          )}
+          <TextField name='confirmPassword' id="confirmPassword" label="Confirm password" variant="outlined" type="password" autoComplete="current-password"
+            onChange={registerFormik.handleChange}
+            onBlur={registerFormik.handleBlur}
+            sx={{
+              marginTop:'20px',
+              '& input':{ padding:'8px' },
+              '& label':{ top:'-8px' }
 
-          <Button onClick={handleRegister} type='submit' sx={{ marginTop:'15px', color:'white', bgcolor:'primary.main', '&:hover':{ bgcolor:'primary.dark' } }}>Register</Button>
+            }} />
+          {registerFormik.errors.confirmPassword && registerFormik.touched.confirmPassword && (
+            <Typography variant='caption' color='error' >
+              {registerFormik.errors.confirmPassword}
+            </Typography>
+          )}
+
+          <Button type='submit' sx={{ marginTop:'15px', color:'white', bgcolor:'primary.main', '&:hover':{ bgcolor:'primary.dark' } }}>Register</Button>
         </form>
         <Box sx={{ width:'100%', display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', textAlign:'center' }}>
           <Typography variant='subtitle2' color={(theme) => theme.palette.text.primary}>Register with:</Typography>
