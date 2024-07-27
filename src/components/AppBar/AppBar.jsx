@@ -172,7 +172,7 @@ function AppBar() {
             }}>
               {searchResults.map(board => (
                 <Box onClick={() => handleNavigateToBoard(board._id)} key={board._id} sx={{ display:'flex', alignItems:'center', margin:'10px 0 5px 0', cursor:'pointer' }} >
-                  <Box sx={{ width:'40px', marginRight:'10px', height:'40px', backgroundImage: board.avatar ? `url(${board.avatar})`: 'linear-gradient(#c9372c,#fea362)', borderRadius:'4px', color:'white', textAlign:'center', lineHeight:'40px' }}>
+                  <Box sx={{ width:'40px', marginRight:'10px', height:'40px',backgroundSize:'cover', backgroundImage: board.avatar ? `url(${board.avatar})`: 'linear-gradient(#c9372c,#fea362)', borderRadius:'4px', color:'white', textAlign:'center', lineHeight:'40px' }}>
                     { board.avatar ? '' : board.title[0]}
                   </Box>
                   <Box >

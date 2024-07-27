@@ -1,4 +1,5 @@
 import { Box, Button, Typography } from '@mui/material'
+import { useConfirm } from 'material-ui-confirm'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -10,24 +11,34 @@ function Members({ workspace, currentUserId, member }) {
   const currentWorkspace = workspace
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const leaveConfirm = useConfirm()
   const handleRemoveSubmit = () => {
     if ( currentUserId === member._id || currentUserId === currentWorkspace.ownerId ) {
       const data = {
         workspaceId: currentWorkspace._id,
         email : member.email
       }
-      removeMemberAPI(data)
-        .then( data => {
-          toast.success('Remove member successfully')
-          const action = removeMemberAction(member._id)
-          if (currentUserId === member._id) {
-            navigate('/')
-          }
-          dispatch(action)
+      leaveConfirm({
+        title:'Remove from workspace',
+        content: 'Are you sure ?'
+      })
+        .then(() => {
+          removeMemberAPI(data)
+            .then( data => {
+              toast.success('Remove member successfully')
+              const action = removeMemberAction(member._id)
+              if (currentUserId === member._id) {
+                navigate('/')
+              }
+              dispatch(action)
+            })
         })
-    } else {
+        .catch(() => {})
+    }
+    else {
       toast.error('you don\'t have permission to delete')
     }
+
   }
 
   return (

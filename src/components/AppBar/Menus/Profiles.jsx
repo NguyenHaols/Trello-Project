@@ -30,6 +30,7 @@ function Profiles() {
 
   const handleNavigationLogOut = () => {
     Cookies.remove('accessToken')
+    Cookies.remove('refreshToken')
     navigate('/auth/login')
   }
 

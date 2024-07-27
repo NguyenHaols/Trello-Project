@@ -37,7 +37,7 @@ function Settings({ workspace }) {
   return (
     <>
       <TitleSetting />
-      <Box sx={{ marginTop:'15px' }}>
+      {/* <Box sx={{ marginTop:'15px' }}>
         <Typography variant='h7' color={(theme) => theme.palette.text.primary} >Workspace visibility :</Typography>
         <Box>
           {workspace.type === 'Private' ?
@@ -74,9 +74,9 @@ function Settings({ workspace }) {
           }
 
         </Box>
-      </Box>
+      </Box> */}
       <Box sx={{ marginTop:'15px' }}>
-        <Typography variant='h7' color={(theme) => theme.palette.text.primary} >Workspace destroy :</Typography>
+        <Typography variant='h7' color={(theme) => theme.palette.text.primary} >Workspace destroy </Typography>
         <Typography onClick={handleDeleteWorkspace} sx={{
           cursor:'pointer',
           '&:hover':{ color:'#bb2124' }
