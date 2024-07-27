@@ -89,7 +89,7 @@ function App() {
           element:<Forgot />
         },
         {
-          path:'recover',
+          path:'recover/:token',
           element: <RecoverPassword/>
         }
       ]

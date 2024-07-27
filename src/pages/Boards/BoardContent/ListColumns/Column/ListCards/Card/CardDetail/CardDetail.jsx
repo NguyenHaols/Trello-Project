@@ -1,4 +1,4 @@
-import { Avatar, AvatarGroup, Box, Button, Checkbox, colors, Dialog, DialogContent, DialogTitle, InputAdornment, MenuItem, Popover, Select, TextField, Tooltip, Typography } from '@mui/material'
+import { Avatar, AvatarGroup, Box, Button, Checkbox, colors, Dialog, DialogContent, DialogTitle, InputAdornment, Menu, MenuItem, Popover, Select, TextField, Tooltip, Typography } from '@mui/material'
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import PeopleIcon from '@mui/icons-material/People'
@@ -7,7 +7,7 @@ import CommentIcon from '@mui/icons-material/Comment'
 import SendIcon from '@mui/icons-material/Send'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import { useDispatch, useSelector } from 'react-redux'
-import { addCommentAPI, addMemberCardAPI, addTaskCardAPI, deleteCardAPI, updateCardAPI, updateTaskCardAPI } from '~/apis'
+import { addCommentAPI, addMemberCardAPI, addTaskCardAPI, deleteCardAPI, deleteCommentAPI, updateCardAPI, updateTaskCardAPI } from '~/apis'
 import { useRef, useState } from 'react'
 import { addCommentAction, addMemberCardAction, addTaskCardAction, removeCardAction, updateDeadlineCardAction, updateDescriptionCardAction, updateStatusCardAction, updateTaskListCardAction } from '~/redux/actions/boardAction'
 import CloseIcon from '@mui/icons-material/Close'
@@ -15,6 +15,8 @@ import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
 import Datepicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import { useTheme } from '@emotion/react'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 
 function CardDetail({ board, card, open, handleClose }) {
   const dispath = useDispatch()
@@ -23,7 +25,7 @@ function CardDetail({ board, card, open, handleClose }) {
   const dayIndex = date.getDay()
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thurday', 'Friday', 'Saturday']
   const day = days[dayIndex]
-  const formattedDate = `${day} ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+  const formattedDate = `${date.getHours()}:${date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()} ${day} ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
   const oldBoard = { ...board }
   const currentBoard = useRef(oldBoard)
   const ownerBoard = currentBoard.current.ownerId === user._id
@@ -34,8 +36,27 @@ function CardDetail({ board, card, open, handleClose }) {
   const [description, setDescription] = useState('')
   const [selectedDate, setSelectedDate] = useState(date)
   const [task, setTask] = useState('')
+  const [menuCmtId, setMenuCmtId] = useState(null)
   const confirmDeleteCard = useConfirm()
   const dispatch = useDispatch()
+  const theme = useTheme()
+  const textColor = theme.palette.text.primary
+  const textSecondColor = theme.palette.text.secondary
+  const mainColor = theme.palette.primary.main
+  const secondaryColor = theme.palette.secondary.main
+  const deleteCmtConfirm = useConfirm()
+
+  const handleOpenMenuCmt = (e, id) => {
+    if (menuCmtId) {
+      setMenuCmtId(null)
+    } else {
+      setMenuCmtId(id)
+    }
+  }
+
+  const handleCloseMenuCmt = () => {
+    setMenuCmtId(null)
+  }
 
   const handleClick = (event, popoverType) => {
     setPopoverInfo({ anchorEl: event.currentTarget, type: popoverType })
@@ -136,7 +157,6 @@ function CardDetail({ board, card, open, handleClose }) {
     addTaskCardAPI(data)
       .then( () => {
         const action = addTaskCardAction(data)
-        console.log('🚀 ~ .then ~ action:', action)
         dispatch(action)
         handleClosePopover()
         setTask('')
@@ -215,12 +235,29 @@ function CardDetail({ board, card, open, handleClose }) {
     }
   }
 
+  const handleDeleteComment = (cmtId) => {
+    handleCloseMenuCmt()
+    deleteCmtConfirm({
+      title:'Delete comment',
+      content:'Are you sure you want to delete this comment?',
+      dialogProps: {
+        sx:{ zIndex:1500 }
+      }
+    })
+      .then(() => {
+        deleteCommentAPI({commentId:cmtId})
+          .then(data => {
+            // redux comment bị xóa
+          })
+      })
+  }
+
 
   return (
     <Dialog sx={{ zIndex:1000, margin:'0 auto', '& .MuiPaper-root':{ minWidth:'700px' } }} open={open} onClose={handleClose}>
       <Box>
         <DialogTitle> {card.title} </DialogTitle>
-        <DialogContent sx={{ display:'flex' }}>
+        <DialogContent sx={{ display:'flex', overflow:'hidden', pb:'70px' }}>
           <Box sx={{ flex:'8', paddingRight:'15px' }}>
 
             <Box sx={{ marginBottom:'30px' }}>
@@ -239,8 +276,6 @@ function CardDetail({ board, card, open, handleClose }) {
                   )
                 })}
               </Box>
-
-
             </Box>
 
             <Box sx={{ display:'flex', marginBottom:'30px' }}>
@@ -312,14 +347,27 @@ function CardDetail({ board, card, open, handleClose }) {
                   const date = new Date(comment.createdAt)
                   const formattedDate = `${date.getHours()}:${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}  ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
                   return (
-                    <Box key={comment._id} sx={{ display:'flex', marginBottom:'15px' }}>
-                      <Avatar src={comment.user.avatar} sx={{ marginRight:'8px' }} />
-                      <Box>
-                        <Typography sx={{ display:'flex', alignItems:'center' }} >
-                          <strong > {comment.user.username} </strong>
-                          <span style={{ marginLeft:'10px', fontSize:'12px', fontStyle:'italic' }}> {formattedDate} </span>
-                        </Typography>
-                        <Typography> {comment.content} </Typography>
+                    <Box key={comment._id} sx={{ display:'flex', justifyContent: 'space-between' }} >
+                      <Box sx={{ display:'flex', marginBottom:'15px' }}>
+                        <Avatar src={comment.user.avatar} sx={{ marginRight:'8px' }} />
+                        <Box>
+                          <Typography sx={{ display:'flex', alignItems:'center' }} >
+                            <strong > {comment.user.username} </strong>
+                            <span style={{ marginLeft:'10px', fontSize:'12px', fontStyle:'italic' }}> {formattedDate} </span>
+                          </Typography>
+                          <Typography> {comment.content} </Typography>
+                        </Box>
+                      </Box>
+                      <Box sx={{ position:'relative' }}>
+                        <MoreHorizIcon onClick={(e) => handleOpenMenuCmt(e, comment._id)} sx={{ cursor:'pointer', '&:hover': { opacity:0.3 } }} />
+                        {menuCmtId === comment._id && (
+
+                          <Box sx={{ position:'absolute', right:'0', bottom:'-50px', minWidth:'200px', boxShadow:'0 4px 10px rgb(0,0,0,0.4)', bgcolor:mainColor, zIndex:'2', p:'10px 10px', borderRadius:'10px', color:'white' }}
+                          >
+                            <Box onClick={handleCloseMenuCmt} sx={{ p:'5px 10px', borderRadius:'5px', '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] }, cursor:'pointer' }}> Edit </Box>
+                            <Box onClick={() => {handleDeleteComment(comment._id)}} sx={{ p:'5px 10px', borderRadius:'5px', '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] }, cursor:'pointer' }}> Delete </Box>
+                          </Box>
+                        )}
                       </Box>
                     </Box>
                   )
@@ -329,10 +377,10 @@ function CardDetail({ board, card, open, handleClose }) {
           </Box>
           {ownerBoard && (
             <Box sx={{ flex:'2' }}>
-              <Box sx={{ color:(theme) => theme.palette.primary[800], fontWeight:'600', fontSize:'18px' }} >Management</Box>
+              <Box sx={{ color:(theme) => theme.palette.mode =='light' ? theme.palette.primary[800] : textColor, fontWeight:'600', fontSize:'18px' }} >Management</Box>
               <hr></hr>
               <Box id='add-members' onClick={(event) => handleClick(event, 'add-members')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800] } }}>
-                <Box sx={{ cursor:'pointer',textAlign:'center' }}>Add Members</Box>
+                <Box sx={{ cursor:'pointer', textAlign:'center' }}>Add Members</Box>
                 <Popover
                   sx={{
                     '& .MuiPopover-paper': {
@@ -365,7 +413,7 @@ function CardDetail({ board, card, open, handleClose }) {
               </Box>
 
               <Box id='status-task' onClick={(event) => handleClick(event, 'status-task')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                <Box sx={{ cursor:'pointer' ,textAlign:'center'}}>Status Task</Box>
+                <Box sx={{ cursor:'pointer', textAlign:'center' }}>Status Task</Box>
                 <Popover
                   sx={{
                     '& .MuiPopover-paper': {
@@ -513,7 +561,7 @@ function CardDetail({ board, card, open, handleClose }) {
                   </Box>
                 </Popover>
               </Box>
-              <Box onClick={handleDeleteCardSubmit} sx={{ backgroundColor:(theme) => theme.palette.primary[500],textAlign:'center', marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
+              <Box onClick={handleDeleteCardSubmit} sx={{ backgroundColor:(theme) => theme.palette.primary[500], textAlign:'center', marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
               Delete Card
               </Box>
             </Box>

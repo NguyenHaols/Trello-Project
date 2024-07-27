@@ -193,6 +193,10 @@ export const addCommentAPI = async(data) => {
   return response.data
 }
 
+export const deleteCommentAPI = async(data) => {
+  const response = await axios.post(`${API_ROOT}/v1/comments/deleteComment`, data)
+  return response.data
+}
 // end comments
 
 // send email
@@ -202,17 +206,13 @@ export const sendEmailAPI= async(data) => {
 }
 //
 
-// start code recover
-export const findCodeRecoverAPI= async(data) => {
-  const response = await axios.post(`${API_ROOT}/v1/codeRecover/getOne`, data)
+// start recover password
+export const recoverPasswordAPI= async(data) => {
+  const response = await axios.post(`${API_ROOT}/v1/users/recoverPassword`, data)
   return response.data
 }
 
-export const createCodeRecoverAPI= async(data) => {
-  const response = await axios.post(`${API_ROOT}/v1/codeRecover/create`, data)
-  return response.data
-}
-// end code recover
+// end  recover
 
 
 // start workspace-members

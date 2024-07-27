@@ -19,7 +19,8 @@ import { createNewBoardAPI, uploadImageAPI } from '~/apis'
 import { toast } from 'react-toastify'
 import { useDispatch, useSelector } from 'react-redux'
 import { addBoardToWorkspace } from '~/redux/actions/userAction'
-
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 
 function Workspace( { data, currentUserId } ) {
 
@@ -62,52 +63,108 @@ function Workspace( { data, currentUserId } ) {
     }
   }
 
-  const handleSubmitCreateBoard = () => {
-    setLoading(true)
-    const image = {
-      image:ImageFile
+  const boardFormik = useFormik({
+    initialValues: {
+      boardTitle:'',
+      description:''
+    },
+    validationSchema: Yup.object({
+      boardTitle: Yup.string().min(4, 'Minimum 4 characters').max(30, 'Maximum 30 characters').required('Requiured!'),
+      description: Yup.string().min(4, 'Minimum 4 characters').max(150, 'Maximum 150 characters').required('Requiured!')
+    }),
+    onSubmit:(values, { setSubmitting }) => {
+      setLoading(true)
+      const image = {
+        image:ImageFile
+      }
+      const workspaceId = data._id
+      const ownerId = data.ownerId
+      const newboard = {
+        workspaceId: workspaceId,
+        ownerId: ownerId,
+        title: values.boardTitle,
+        description: values.description,
+        type:type
+      }
+      uploadImageAPI(image)
+        .then(data => {
+          setBoardImage(data.data.url)
+          if (data.data.url) {
+            newboard.avatar = data.data.url
+          }
+        })
+        .finally(() => {
+          createNewBoardAPI(newboard)
+            .then(res => {
+              toast.success('Board created successfully')
+              const action = addBoardToWorkspace(data._id, res)
+              dispatch(action)
+              handleClose()
+              setLoading(false)
+
+              // clear input
+              setSelectedImage(null)
+              setBoardImage(null)
+              setImageFile(null)
+            })
+            .catch(error => {
+              setLoading(false)
+              const message = error.response.data.message.split(':')
+              setErrorMessage(message[1])
+              toast.error('Board create failure')
+            })
+          setSubmitting(false)
+          setErrorMessage('')
+        })
     }
-    const workspaceId = data._id
-    const ownerId = data.ownerId
-    const newboard = {
-      workspaceId: workspaceId,
-      ownerId: ownerId,
-      title: boardTitle,
-      description: description,
-      type:type
-    }
-    uploadImageAPI(image)
-      .then(data => {
-        setBoardImage(data.data.url)
-        if (data.data.url) {
-          newboard.avatar = data.data.url
-        }
-      })
-      .finally(() => {
-        createNewBoardAPI(newboard)
-          .then(res => {
-            toast.success('Board created successfully')
-            const action = addBoardToWorkspace(data._id, res)
-            dispatch(action)
-            handleClose()
-            setLoading(false)
+  })
 
-            // clear input
-            setSelectedImage(null)
-            setBoardImage(null)
-            setImageFile(null)
-          })
-          .catch(error => {
-            setLoading(false)
-            const message = error.response.data.message.split(':')
-            setErrorMessage(message[1])
-            toast.error('Board create failure')
-          })
+  // const handleSubmitCreateBoard = () => {
+  //   setLoading(true)
+  //   const image = {
+  //     image:ImageFile
+  //   }
+  //   const workspaceId = data._id
+  //   const ownerId = data.ownerId
+  //   const newboard = {
+  //     workspaceId: workspaceId,
+  //     ownerId: ownerId,
+  //     title: boardTitle,
+  //     description: description,
+  //     type:type
+  //   }
+  //   uploadImageAPI(image)
+  //     .then(data => {
+  //       setBoardImage(data.data.url)
+  //       if (data.data.url) {
+  //         newboard.avatar = data.data.url
+  //       }
+  //     })
+  //     .finally(() => {
+  //       createNewBoardAPI(newboard)
+  //         .then(res => {
+  //           toast.success('Board created successfully')
+  //           const action = addBoardToWorkspace(data._id, res)
+  //           dispatch(action)
+  //           handleClose()
+  //           setLoading(false)
 
-        setErrorMessage('')
-      })
+  //           // clear input
+  //           setSelectedImage(null)
+  //           setBoardImage(null)
+  //           setImageFile(null)
+  //         })
+  //         .catch(error => {
+  //           setLoading(false)
+  //           const message = error.response.data.message.split(':')
+  //           setErrorMessage(message[1])
+  //           toast.error('Board create failure')
+  //         })
 
-  }
+  //       setErrorMessage('')
+  //     })
+
+  // }
 
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -182,50 +239,62 @@ function Workspace( { data, currentUserId } ) {
                       <CircularProgress sx={{ color:'2196f3' }} />
                     </Box>
                   )}
-                  <DialogTitle sx={{ color:(theme) => theme.palette.text.primary }}>CREATE BOARD</DialogTitle>
-                  <DialogContent sx={{ display:'flex', flexDirection:'column' }}>
-                    <TextField onChange={(e) => {setBoardTitle(e.target.value)}} sx={{ margin:'5px 0' }} size='small' id="outlined-basic" label="Board title" variant="outlined" />
-                    <TextField onChange={(e) => {setDescription(e.target.value)}} sx={{ margin:'5px 0' }} multiline maxRows={4} size='large' id="outlined-basic" label="Description" variant="outlined" />
-                    <Select
-                      size='small'
-                      labelId="demo-select-small-label"
-                      id="demo-select-small"
-                      value={type}
-                      onChange={(e) => {setType(e.target.value)}}
-                      sx={{ margin:'10px 0' }}
-                    >
-                      <MenuItem value={'Public'}>
-                        Public
-                      </MenuItem>
-                      <MenuItem value={'Private'}>
-                        Private
-                      </MenuItem>
-                    </Select>
-                    {errorMessage && (
-                      <Typography color='error'>{errorMessage}</Typography>
-                    )}
-                    <Button
-                      component="label"
-                      role={undefined}
-                      variant="contained"
-                      tabIndex={-1}
-                      startIcon={<CloudUploadIcon />}
-                      sx={{ bgcolor:(theme) => theme.palette.primary }}
-                    >
-                        Upload background image
-                      <VisuallyHiddenInput type="file" accept='image/*' onChange={handleImageChange} />
-                    </Button>
-                    {selectedImage && (
-                      <Box sx={{ marginTop:'10px' }}>
-                        <img src={selectedImage} alt="Selected" style={{ maxWidth: '100%' }} />
-                      </Box>
-                    )}
+                  <form onSubmit={boardFormik.handleSubmit}>
+                    <DialogTitle sx={{ color:(theme) => theme.palette.text.primary }}>CREATE BOARD</DialogTitle>
+                    <DialogContent sx={{ display:'flex', flexDirection:'column' }}>
+                      <TextField name='boardTitle' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} size='small' id="outlined-basic" label="Board title" variant="outlined" />
+                      {boardFormik.errors.boardTitle && boardFormik.touched.boardTitle && (
+                        <Typography variant='caption' color='error' marginTop='5px' >
+                          {boardFormik.errors.boardTitle}
+                        </Typography>
+                      )}
+                      <TextField name='description' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} multiline maxRows={4} size='large' id="outlined-basic" label="Description" variant="outlined" />
+                      {boardFormik.errors.description && boardFormik.touched.description && (
+                        <Typography variant='caption' color='error' marginTop='5px' >
+                          {boardFormik.errors.description}
+                        </Typography>
+                      )}
+                      <Select
+                        size='small'
+                        labelId="demo-select-small-label"
+                        id="demo-select-small"
+                        value={type}
+                        onChange={(e) => {setType(e.target.value)}}
+                        sx={{ margin:'10px 0' }}
+                      >
+                        <MenuItem value={'Public'}>
+                          Public
+                        </MenuItem>
+                        <MenuItem value={'Private'}>
+                          Private
+                        </MenuItem>
+                      </Select>
+                      {errorMessage && (
+                        <Typography color='error'>{errorMessage}</Typography>
+                      )}
+                      <Button
+                        component="label"
+                        role={undefined}
+                        variant="contained"
+                        tabIndex={-1}
+                        startIcon={<CloudUploadIcon />}
+                        sx={{ bgcolor:(theme) => theme.palette.primary }}
+                      >
+                          Upload background image
+                        <VisuallyHiddenInput type="file" accept='image/*' onChange={handleImageChange} />
+                      </Button>
+                      {selectedImage && (
+                        <Box sx={{ marginTop:'10px' }}>
+                          <img src={selectedImage} alt="Selected" style={{ maxWidth: '100%' }} />
+                        </Box>
+                      )}
 
-                  </DialogContent>
-                  <DialogActions >
-                    <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} onClick={handleClose}>Cancel</Button>
-                    <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} onClick={handleSubmitCreateBoard}>Create</Button>
-                  </DialogActions>
+                    </DialogContent>
+                    <DialogActions >
+                      <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} onClick={handleClose}>Cancel</Button>
+                      <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} type='submit' >Create</Button>
+                    </DialogActions>
+                  </form>
                 </Dialog>
               </>
             )}

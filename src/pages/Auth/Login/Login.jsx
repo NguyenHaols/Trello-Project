@@ -9,40 +9,58 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { loginApi } from '~/apis'
 import { useTheme } from '@emotion/react'
-
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { toast } from 'react-toastify'
 
 function Login() {
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const theme = useTheme()
   const textColor = theme.palette.text.primary
   const mainColor = theme.palette.primary.main
-  const handleLogin = (e) => {
-    e.preventDefault()
+  const formikHandleChange = (e) => {
+    loginFormik.handleChange(e)
+    setErrorMessage('')
+  }
+  const handleLogin = (values, { setSubmitting }) => {
     const user = {
-      email: email,
-      password: password
+      email: values.email,
+      password: values.password
     }
     loginApi(user)
       .then((data) => {
         if (data.user._id) {
           navigate('/boards')
+          toast.success('Login successful')
         } else {
           setErrorMessage('Sorry, your email or password was incorrect')
         }
       })
       .catch((error) => {
-        console.log(error)
-        const err = error.response.data.message.split(' ').slice(1).join(' ')
+        const err = error.response.data.message
         setErrorMessage(err)
+      })
+      .finally(() => {
+        setSubmitting(false)
       })
   }
 
+  const loginFormik = useFormik({
+    initialValues:{
+      email:'',
+      password:''
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().min(2, 'Minimum 2 characters').max(30, 'Maximum 30 characters').required('Required!'),
+      password: Yup.string().min(6, 'Minimum 6 characters').max(15, 'Maximum 15 characters').required('Required!')
+    }),
+    onSubmit: handleLogin
+  })
+
   return (
     <Box flex='1' display='flex' justifyContent='center' alignItems='center'
-      >
+    >
       <Box
         sx={{
           display: 'flex',
@@ -76,35 +94,48 @@ function Login() {
         </Box>
         <form
           style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
+          onSubmit={loginFormik.handleSubmit}
         >
           <TextField
+            name='email'
             id='outlined-basic'
             label='Your email'
             variant='outlined'
             type='email'
-            onChange={(e) => {
-              setEmail(e.target.value)
-            }}
+            value={loginFormik.values.email}
+            onChange={formikHandleChange}
+            onBlur={loginFormik.handleBlur}
             sx={{
               '& input': { padding: '8px' },
               '& label': { top: '-8px' }
             }}
           />
+          {loginFormik.errors.email && loginFormik.touched.email && (
+            <Typography variant='caption' color='error' marginTop='5px'>
+              {loginFormik.errors.email}
+            </Typography>
+          )}
           <TextField
+            name='password'
             id='outlined-basic'
             label='Your password'
             variant='outlined'
             type='password'
             autoComplete='current-password'
-            onChange={(e) => {
-              setPassword(e.target.value)
-            }}
+            value={loginFormik.values.password}
+            onChange={formikHandleChange}
+            onBlur={loginFormik.handleBlur}
             sx={{
               marginTop: '20px',
               '& input': { padding: '8px' },
               '& label': { top: '-8px' }
             }}
           />
+          {loginFormik.errors.password && loginFormik.touched.password && (
+            <Typography variant='caption' color='error' marginTop='5px'>
+              {loginFormik.errors.password}
+            </Typography>
+          )}
           {errorMessage && (
             <Typography variant='caption' color='error' marginTop='5px'>
               {errorMessage}
@@ -112,7 +143,7 @@ function Login() {
           )}
           <Button
             type='submit'
-            onClick={handleLogin}
+            disabled={loginFormik.isSubmitting}
             sx={{
               marginTop: '15px',
               color: 'white',

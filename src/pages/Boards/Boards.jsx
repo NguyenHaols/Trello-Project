@@ -49,8 +49,6 @@ function Board() {
   }, [])
 
 
-  // !important Learn redux to store board
-
   // Call api tạo column và refesh lại dữ liệu state
   const createNewColumn = async( newColumnData ) => {
 
