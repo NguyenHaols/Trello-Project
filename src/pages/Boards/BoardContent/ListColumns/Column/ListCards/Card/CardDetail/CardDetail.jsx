@@ -7,9 +7,9 @@ import CommentIcon from '@mui/icons-material/Comment'
 import SendIcon from '@mui/icons-material/Send'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import { useDispatch, useSelector } from 'react-redux'
-import { addCommentAPI, addMemberCardAPI, addTaskCardAPI, deleteCardAPI, deleteCommentAPI, updateCardAPI, updateTaskCardAPI } from '~/apis'
-import { useRef, useState } from 'react'
-import { addCommentAction, addMemberCardAction, addTaskCardAction, removeCardAction, updateDeadlineCardAction, updateDescriptionCardAction, updateStatusCardAction, updateTaskListCardAction } from '~/redux/actions/boardAction'
+import { addCommentAPI, addMemberCardAPI, addTaskCardAPI, deleteCardAPI, deleteCommentAPI, updateCardAPI, updateCommentAPI, updateTaskCardAPI } from '~/apis'
+import { useEffect, useRef, useState } from 'react'
+import { addCommentAction, addMemberCardAction, addTaskCardAction, removeCardAction, removeCommentAction, updateCommentAction, updateDeadlineCardAction, updateDescriptionCardAction, updateStatusCardAction, updateTaskListCardAction } from '~/redux/actions/boardAction'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
@@ -33,7 +33,7 @@ function CardDetail({ board, card, open, handleClose }) {
   const [memberEmail, setMemberEmail] = useState('')
   const [popoverInfo, setPopoverInfo] = useState(null)
   const [statusCard, setStatusCard] = useState('Still Good')
-  const [description, setDescription] = useState('')
+  const [description, setDescription] = useState(card.description)
   const [selectedDate, setSelectedDate] = useState(date)
   const [task, setTask] = useState('')
   const [menuCmtId, setMenuCmtId] = useState(null)
@@ -45,6 +45,25 @@ function CardDetail({ board, card, open, handleClose }) {
   const mainColor = theme.palette.primary.main
   const secondaryColor = theme.palette.secondary.main
   const deleteCmtConfirm = useConfirm()
+  const moreHorizIconRef = useRef(null)
+  const optionsCommentRef = useRef(null)
+  const [commentEditing, setCommentEditing] = useState(false)
+  const cmtId = useRef(menuCmtId)
+  const [contentEditingCmt, setContentEditingCmt] = useState('')
+  const [buttonSubmit, setButtonSubmit] = useState(true)
+
+  const handleEditCmt = (content) => {
+    setCommentEditing(true)
+    handleCloseMenuCmt()
+    setContentEditingCmt(content)
+  }
+
+  const handleClickOutSide = (e) => {
+    if ( optionsCommentRef.current && !moreHorizIconRef.current.contains(e.target) && !optionsCommentRef.current.contains(e.target)) {
+      setMenuCmtId(null)
+    }
+  }
+
 
   const handleOpenMenuCmt = (e, id) => {
     if (menuCmtId) {
@@ -52,6 +71,7 @@ function CardDetail({ board, card, open, handleClose }) {
     } else {
       setMenuCmtId(id)
     }
+    cmtId.current = id
   }
 
   const handleCloseMenuCmt = () => {
@@ -73,7 +93,7 @@ function CardDetail({ board, card, open, handleClose }) {
     }
     updateCardAPI(data)
       .then(res => {
-        setDescription('')
+        // setDescription('')
         toast.success('Update successfully')
         handleClosePopover()
         const action = updateDeadlineCardAction(res._id, res.deadline)
@@ -183,7 +203,6 @@ function CardDetail({ board, card, open, handleClose }) {
     }
     updateCardAPI(data)
       .then(res => {
-        setDescription('')
         toast.success('Update successfully')
         const action = updateDescriptionCardAction(res._id, res.description)
         dispath(action)
@@ -199,8 +218,10 @@ function CardDetail({ board, card, open, handleClose }) {
       _id: card._id,
       status : statusCard
     }
+    setButtonSubmit(false)
     updateCardAPI(data)
       .then(res => {
+        setButtonSubmit(true)
         toast.success('Update successfully')
         const action = updateStatusCardAction(res._id, res.status)
         dispath(action)
@@ -245,10 +266,27 @@ function CardDetail({ board, card, open, handleClose }) {
       }
     })
       .then(() => {
-        deleteCommentAPI({commentId:cmtId})
+        deleteCommentAPI({ commentId:cmtId })
           .then(data => {
-            // redux comment bị xóa
+            const cardId = card._id
+            const commentId = cmtId
+            const action = removeCommentAction(cardId, commentId)
+            dispath(action)
           })
+      })
+  }
+
+  const handleUpdateComment = (cmtId, newContent) => {
+    setCommentEditing(false)
+    if ( !newContent ) return
+    const data = {
+      commentId: cmtId,
+      newContent: newContent
+    }
+    updateCommentAPI(data)
+      .then(data => {
+        const action = updateCommentAction(card._id, cmtId, newContent)
+        dispath(action)
       })
   }
 
@@ -257,7 +295,7 @@ function CardDetail({ board, card, open, handleClose }) {
     <Dialog sx={{ zIndex:1000, margin:'0 auto', '& .MuiPaper-root':{ minWidth:'700px' } }} open={open} onClose={handleClose}>
       <Box>
         <DialogTitle> {card.title} </DialogTitle>
-        <DialogContent sx={{ display:'flex', overflow:'hidden', pb:'70px' }}>
+        <DialogContent onClick={(e) => {handleClickOutSide(e)}} sx={{ display:'flex', overflow:'hidden', pb:'70px' }}>
           <Box sx={{ flex:'8', paddingRight:'15px' }}>
 
             <Box sx={{ marginBottom:'30px' }}>
@@ -342,29 +380,54 @@ function CardDetail({ board, card, open, handleClose }) {
                   size='small'
                 />
               </Box>
-              <Box>
+              <Box sx={{ width:'100%' }}>
                 {card.comments.map(comment => {
                   const date = new Date(comment.createdAt)
                   const formattedDate = `${date.getHours()}:${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}  ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
                   return (
-                    <Box key={comment._id} sx={{ display:'flex', justifyContent: 'space-between' }} >
-                      <Box sx={{ display:'flex', marginBottom:'15px' }}>
+                    <Box key={comment._id} sx={{ width:'100%', display:'flex', justifyContent: 'space-between' }} >
+                      <Box sx={{ width:'100%', display:'flex', marginBottom:'15px' }}>
                         <Avatar src={comment.user.avatar} sx={{ marginRight:'8px' }} />
-                        <Box>
+                        <Box sx={{ width:'100%' }}>
                           <Typography sx={{ display:'flex', alignItems:'center' }} >
                             <strong > {comment.user.username} </strong>
                             <span style={{ marginLeft:'10px', fontSize:'12px', fontStyle:'italic' }}> {formattedDate} </span>
                           </Typography>
-                          <Typography> {comment.content} </Typography>
+                          { (commentEditing && cmtId.current === comment._id) ? (
+                            <Box >
+                              <Box >
+                                <TextField
+                                  value={contentEditingCmt}
+                                  placeholder='Type your comment'
+                                  onChange={(e) => setContentEditingCmt(e.target.value)}
+                                  sx={{ width:'100%' }}
+                                  // InputProps={{
+                                  // endAdornment:(
+                                  // <InputAdornment position="end">
+                                  // <SendIcon onClick={handleCommentSubmit} sx={{ color:(theme) => theme.palette.primary[500], cursor:'pointer', '&:hover':{ 'color':(theme) => theme.palette.primary[800] } }} ></SendIcon>
+                                  // </InputAdornment>
+                                  // )
+                                  // }}
+                                  multiline
+                                  size='small'
+                                />
+                              </Box>
+                              <Box>
+                                <Button onClick={() => {handleUpdateComment(cmtId.current, contentEditingCmt)}}>Save</Button>
+                                <Button onClick={() => {setCommentEditing(false)}}>Cancel</Button>
+                              </Box>
+                            </Box>
+                          ) : (<Typography> {comment.content} </Typography>)
+                          }
+
                         </Box>
                       </Box>
                       <Box sx={{ position:'relative' }}>
-                        <MoreHorizIcon onClick={(e) => handleOpenMenuCmt(e, comment._id)} sx={{ cursor:'pointer', '&:hover': { opacity:0.3 } }} />
+                        {(!commentEditing && user._id === comment.user._id ) && (<MoreHorizIcon ref={moreHorizIconRef} onClick={(e) => handleOpenMenuCmt(e, comment._id)} sx={{ cursor:'pointer', '&:hover': { opacity:0.3 } }} />)}
                         {menuCmtId === comment._id && (
-
-                          <Box sx={{ position:'absolute', right:'0', bottom:'-50px', minWidth:'200px', boxShadow:'0 4px 10px rgb(0,0,0,0.4)', bgcolor:mainColor, zIndex:'2', p:'10px 10px', borderRadius:'10px', color:'white' }}
+                          <Box ref={optionsCommentRef} sx={{ position:'absolute', right:'0', bottom:'-50px', minWidth:'200px', boxShadow:'0 4px 10px rgb(0,0,0,0.4)', bgcolor:mainColor, zIndex:'2', p:'10px 10px', borderRadius:'10px', color:'white' }}
                           >
-                            <Box onClick={handleCloseMenuCmt} sx={{ p:'5px 10px', borderRadius:'5px', '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] }, cursor:'pointer' }}> Edit </Box>
+                            <Box onClick={() => {handleEditCmt(comment.content)}} sx={{ p:'5px 10px', borderRadius:'5px', '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] }, cursor:'pointer' }}> Edit </Box>
                             <Box onClick={() => {handleDeleteComment(comment._id)}} sx={{ p:'5px 10px', borderRadius:'5px', '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] }, cursor:'pointer' }}> Delete </Box>
                           </Box>
                         )}
@@ -520,7 +583,8 @@ function CardDetail({ board, card, open, handleClose }) {
                       <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
                     </Box>
                     <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 20px' }}>
-                      <TextField multiline rows={3} onChange={(e) => setDescription(e.target.value)} size='small' value={description}/>
+                      {/* {console.log(description)} */}
+                      <TextField  multiline rows={3} onChange={(e) => setDescription(e.target.value)} size='small' value={description}/>
                       <Button onClick={handleUpdateCardDescriptionSubmit} sx={{ flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
                         Update
                       </Button>

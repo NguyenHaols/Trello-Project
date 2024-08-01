@@ -197,6 +197,11 @@ export const deleteCommentAPI = async(data) => {
   const response = await axios.post(`${API_ROOT}/v1/comments/deleteComment`, data)
   return response.data
 }
+
+export const updateCommentAPI = async(data) => {
+  const response = await axios.post(`${API_ROOT}/v1/comments/updateContent`, data)
+  return response.data
+}
 // end comments
 
 // send email

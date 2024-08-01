@@ -6,7 +6,7 @@ const boardReducer = (state = initialState, action) => {
   switch (action.type) {
 
   case 'SET_BOARD':{
-    return {...action.payload}
+    return { ...action.payload }
   }
   case 'ADD_COMMENT':{
     const { cardId, comment } = action.payload
@@ -19,6 +19,54 @@ const boardReducer = (state = initialState, action) => {
             return {
               ...card,
               comments: [comment, ...card.comments]
+            }
+          }
+          return card
+        })
+      }))
+    }
+    return newState
+  }
+
+  case 'REMOVE_COMMENT': {
+    const { cardId, commentId } = action.payload
+    const newState = {
+      ...state,
+      columns: state.columns.map(column => ({
+        ...column,
+        cards: column.cards.map(card => {
+          if (card._id === cardId) {
+            return {
+              ...card,
+              comments: card.comments.filter(comment => comment._id !== commentId)
+            }
+          }
+          return card
+        })
+      }))
+    }
+    return newState
+  }
+
+  case 'UPDATE_COMMENT': {
+    const { cardId, commentId, newContent } = action.payload
+    const newState = {
+      ...state,
+      columns: state.columns.map(column => ({
+        ...column,
+        cards: column.cards.map(card => {
+          if (card._id === cardId) {
+            return {
+              ...card,
+              comments: card.comments.map(comment => {
+                if (comment._id === commentId) {
+                  return {
+                    ...comment,
+                    content : newContent
+                  }
+                }
+                return comment
+              })
             }
           }
           return card
@@ -133,7 +181,7 @@ const boardReducer = (state = initialState, action) => {
   }
 
   case 'UPDATE_CARD_TASK_LIST': {
-    const {cardId, taskName, taskStatus } = action.payload
+    const { cardId, taskName, taskStatus } = action.payload
     const newState = {
       ...state,
       columns: state.columns.map(column => ({

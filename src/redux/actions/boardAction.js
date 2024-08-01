@@ -12,6 +12,20 @@ export const addCommentAction = (cardId, comment) => {
   }
 }
 
+export const removeCommentAction = (cardId, commentId) => {
+  return {
+    type: 'REMOVE_COMMENT',
+    payload: {cardId, commentId}
+  }
+}
+
+export const updateCommentAction = (cardId, commentId, newContent) => {
+  return {
+    type: 'UPDATE_COMMENT',
+    payload: {cardId, commentId, newContent}
+  }
+}
+
 export const removeBoardAction = () => {
   return {
     type : 'REMOVE_BOARD'
