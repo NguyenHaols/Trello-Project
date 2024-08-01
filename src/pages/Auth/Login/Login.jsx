@@ -31,6 +31,7 @@ function Login() {
     loginApi(user)
       .then((data) => {
         if (data.user._id) {
+          localStorage.setItem('accessToken', data.accessToken)
           navigate('/boards')
           toast.success('Login successful')
         } else {

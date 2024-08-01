@@ -30,8 +30,8 @@ function Register() {
       password:'',
     },
     validationSchema: Yup.object({
-      fullName: Yup.string().min(5, 'Minimum 5 characters').max(30, 'Maximum 30 characters').required('Required!'),
-      email: Yup.string().min(5, 'Minimum 5 characters').max(30, 'Maximum 30 characters').required('Required!'),
+      fullName: Yup.string().transform(value => value.toLowerCase()).min(5, 'Minimum 5 characters').max(30, 'Maximum 30 characters').required('Required!'),
+      email: Yup.string().transform(value => value.toLowerCase()).min(5, 'Minimum 5 characters').max(30, 'Maximum 30 characters').required('Required!'),
       password: Yup.string().min(6, 'Minimum 6 characters').max(30, 'Maximum 30 characters').required('Required!'),
       confirmPassword: Yup.string()
         .oneOf([Yup.ref('password'), null], 'Passwords must match')

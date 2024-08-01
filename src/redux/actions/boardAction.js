@@ -53,6 +53,13 @@ export const addTaskCardAction = ({cardId,newTask}) => {
   }
 }
 
+export const removeTaskCardAction = (cardId,taskName) => {
+  return {
+    type : 'REMOVE_TASK_CARD',
+    payload: {cardId, taskName}
+  }
+}
+
 export const updateStatusCardAction = (cardId,status) => {
   return {
     type : 'UPDATE_CARD_STATUS',

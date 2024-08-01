@@ -116,6 +116,26 @@ const boardReducer = (state = initialState, action) => {
     return newState
   }
 
+  case 'REMOVE_TASK_CARD' : {
+    const { cardId, taskName } = action.payload
+    const newState = {
+      ...state,
+      columns: state.columns.map(column => ({
+        ...column,
+        cards: column.cards.map(card => {
+          if (card._id === cardId) {
+            return {
+              ...card,
+              tasks: card.tasks.filter(task => task.taskName !== taskName)
+            }
+          }
+          return card
+        })
+      }))
+    }
+    return newState
+  }
+
   case 'REMOVE_BOARD':{
     return {}
   }

@@ -191,7 +191,7 @@ function WorkspaceForm() {
               startIcon={<CloudUploadIcon />}
               sx={{ bgcolor:(theme) => theme.palette.primary }}
             >
-                          Upload avatar image
+                          Upload avatar workspace
               <VisuallyHiddenInput type="file" accept='image/*' onChange={handleImageChange} />
             </Button>
             {selectedImage && (

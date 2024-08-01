@@ -1,4 +1,4 @@
-import { Avatar, AvatarGroup, Box, Button, Checkbox, colors, Dialog, DialogContent, DialogTitle, InputAdornment, Menu, MenuItem, Popover, Select, TextField, Tooltip, Typography } from '@mui/material'
+import { Avatar, AvatarGroup, Box, Button, Checkbox, colors, Dialog, DialogContent, DialogTitle, IconButton, InputAdornment, Menu, MenuItem, Popover, Select, TextField, Tooltip, Typography } from '@mui/material'
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import PeopleIcon from '@mui/icons-material/People'
@@ -7,9 +7,9 @@ import CommentIcon from '@mui/icons-material/Comment'
 import SendIcon from '@mui/icons-material/Send'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import { useDispatch, useSelector } from 'react-redux'
-import { addCommentAPI, addMemberCardAPI, addTaskCardAPI, deleteCardAPI, deleteCommentAPI, updateCardAPI, updateCommentAPI, updateTaskCardAPI } from '~/apis'
+import { addCommentAPI, addMemberCardAPI, addTaskCardAPI, deleteCardAPI, deleteCommentAPI, removeTaskCardAPI, updateCardAPI, updateCommentAPI, updateTaskCardAPI } from '~/apis'
 import { useEffect, useRef, useState } from 'react'
-import { addCommentAction, addMemberCardAction, addTaskCardAction, removeCardAction, removeCommentAction, updateCommentAction, updateDeadlineCardAction, updateDescriptionCardAction, updateStatusCardAction, updateTaskListCardAction } from '~/redux/actions/boardAction'
+import { addCommentAction, addMemberCardAction, addTaskCardAction, removeCardAction, removeCommentAction, removeTaskCardAction, updateCommentAction, updateDeadlineCardAction, updateDescriptionCardAction, updateStatusCardAction, updateTaskListCardAction } from '~/redux/actions/boardAction'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
@@ -29,6 +29,7 @@ function CardDetail({ board, card, open, handleClose }) {
   const oldBoard = { ...board }
   const currentBoard = useRef(oldBoard)
   const ownerBoard = currentBoard.current.ownerId === user._id
+  const isMembersInCard = card.members.some(member => member._id === user._id)
   const [cmtContent, setCmtContent] = useState('')
   const [memberEmail, setMemberEmail] = useState('')
   const [popoverInfo, setPopoverInfo] = useState(null)
@@ -38,6 +39,7 @@ function CardDetail({ board, card, open, handleClose }) {
   const [task, setTask] = useState('')
   const [menuCmtId, setMenuCmtId] = useState(null)
   const confirmDeleteCard = useConfirm()
+  const confirmDeleteTask = useConfirm()
   const dispatch = useDispatch()
   const theme = useTheme()
   const textColor = theme.palette.text.primary
@@ -51,7 +53,7 @@ function CardDetail({ board, card, open, handleClose }) {
   const cmtId = useRef(menuCmtId)
   const [contentEditingCmt, setContentEditingCmt] = useState('')
   const [buttonSubmit, setButtonSubmit] = useState(true)
-
+  // console.log('first',card)
   const handleEditCmt = (content) => {
     setCommentEditing(true)
     handleCloseMenuCmt()
@@ -91,9 +93,10 @@ function CardDetail({ board, card, open, handleClose }) {
       _id: card._id,
       deadline : selectedDate
     }
+    setButtonSubmit(false)
     updateCardAPI(data)
       .then(res => {
-        // setDescription('')
+        setButtonSubmit(true)
         toast.success('Update successfully')
         handleClosePopover()
         const action = updateDeadlineCardAction(res._id, res.deadline)
@@ -174,8 +177,10 @@ function CardDetail({ board, card, open, handleClose }) {
         taskStatus: false
       }
     }
+    setButtonSubmit(false)
     addTaskCardAPI(data)
       .then( () => {
+        setButtonSubmit(true)
         const action = addTaskCardAction(data)
         dispatch(action)
         handleClosePopover()
@@ -201,8 +206,10 @@ function CardDetail({ board, card, open, handleClose }) {
       _id: card._id,
       description : description
     }
+    setButtonSubmit(false)
     updateCardAPI(data)
       .then(res => {
+        setButtonSubmit(true)
         toast.success('Update successfully')
         const action = updateDescriptionCardAction(res._id, res.description)
         dispath(action)
@@ -290,6 +297,27 @@ function CardDetail({ board, card, open, handleClose }) {
       })
   }
 
+  const handleRemoveTask = (cardId, taskName) => {
+    const data = {
+      cardId,
+      taskName
+    }
+    confirmDeleteTask({
+      title:'Delete task',
+      content:'Are you sure you want to delete this task',
+      dialogProps: {
+        sx:{ zIndex:1500 }
+      }
+    })
+      .then(() => {
+        removeTaskCardAPI(data)
+          .then(res => {
+            const action = removeTaskCardAction(cardId, taskName)
+            dispath(action)
+          })
+      })
+  }
+
 
   return (
     <Dialog sx={{ zIndex:1000, margin:'0 auto', '& .MuiPaper-root':{ minWidth:'700px' } }} open={open} onClose={handleClose}>
@@ -300,7 +328,7 @@ function CardDetail({ board, card, open, handleClose }) {
 
             <Box sx={{ marginBottom:'30px' }}>
               <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
-                <PeopleIcon sx={{ marginRight:'4px' }} />
+                <PeopleIcon sx={{ marginRight:'4px',color:(theme) => theme.palette.primary[500] }} />
                 <Typography>JOINED MEMBERS</Typography>
               </Box>
               <Box sx={{ display:'flex' }}>
@@ -319,7 +347,7 @@ function CardDetail({ board, card, open, handleClose }) {
             <Box sx={{ display:'flex', marginBottom:'30px' }}>
               <Box sx={{ marginRight:'20px' }}>
                 <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
-                  <HourglassBottomIcon sx={{ marginRight:'2px' }} />
+                  <HourglassBottomIcon sx={{ marginRight:'2px',color:(theme) => theme.palette.primary[500] }} />
                   <Typography>STATUS TASK</Typography>
                 </Box>
                 <Box sx={{ bgcolor:setStatusColor(), maxWidth:'100px', textAlign:'center', color:'white', borderRadius:'4px' }}>{card.status}</Box>
@@ -327,7 +355,7 @@ function CardDetail({ board, card, open, handleClose }) {
               <Box>
                 <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
                   <AccessTimeIcon sx={{ marginRight:'2px', color:'red' }} />
-                  <Typography color='red'>DEADLINE</Typography>
+                  <Typography >DEADLINE</Typography>
                 </Box>
                 <Box sx={{ border:'1px solid #ccc', borderRadius:'4px', minWidth:'100px', textAlign:'center', padding:'0 5px' }}> {formattedDate} </Box>
               </Box>
@@ -335,7 +363,7 @@ function CardDetail({ board, card, open, handleClose }) {
 
             <Box sx={{ marginBottom:'30px' }}>
               <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
-                <NotesIcon sx={{ marginRight:'4px' }} />
+                <NotesIcon sx={{ marginRight:'4px', color:(theme) => theme.palette.primary[500] }} />
                 <Typography>DESCRIPTION</Typography>
               </Box>
               <Box sx={{ whiteSpace:'pre-line', paddingLeft:'25px' }}>
@@ -350,9 +378,19 @@ function CardDetail({ board, card, open, handleClose }) {
               </Box>
               {card.tasks.map((task, index) => {
                 return (
-                  <Box key={index} sx={{ display:'flex', alignItems:'center' }}>
-                    <Checkbox onChange={(event) => handleTaskList(task.taskName, task.taskStatus, event)} checked={task.taskStatus} sx={{ color:'#ccc' }} />
-                    <Typography> {task.taskName} </Typography>
+                  <Box key={index} sx={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                    <Box sx={{ display:'flex', alignItems:'center' }}>
+                      <Checkbox onChange={(event) => handleTaskList(task.taskName, task.taskStatus, event)} checked={task.taskStatus} sx={{ color:'#ccc' }} />
+                      <Typography> {task.taskName} </Typography>
+                    </Box>
+                    {isMembersInCard && (
+                      <Box>
+                        <IconButton onClick={() => {handleRemoveTask(card._id, task.taskName)}}>
+                          <CloseIcon />
+                        </IconButton>
+                      </Box>
+                    )}
+
                   </Box>
                 )
               })}
@@ -360,7 +398,7 @@ function CardDetail({ board, card, open, handleClose }) {
             </Box>
             <Box>
               <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'15px' }}>
-                <CommentIcon sx={{ marginRight:'10px' }} />
+                <CommentIcon sx={{ marginRight:'10px',color:(theme) => theme.palette.primary[500] }} />
                 <Typography>COMMENTS</Typography>
               </Box>
               <Box sx={{ display:'flex', marginBottom:'20px' }}>
@@ -438,42 +476,45 @@ function CardDetail({ board, card, open, handleClose }) {
               </Box>
             </Box>
           </Box>
-          {ownerBoard && (
+          {(isMembersInCard || ownerBoard) && (
             <Box sx={{ flex:'2' }}>
               <Box sx={{ color:(theme) => theme.palette.mode =='light' ? theme.palette.primary[800] : textColor, fontWeight:'600', fontSize:'18px' }} >Management</Box>
               <hr></hr>
-              <Box id='add-members' onClick={(event) => handleClick(event, 'add-members')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800] } }}>
-                <Box sx={{ cursor:'pointer', textAlign:'center' }}>Add Members</Box>
-                <Popover
-                  sx={{
-                    '& .MuiPopover-paper': {
-                      minWidth:'300px',
-                      boxShadow: '0px 2px 4px rgba(0,0,0,0.3)'
-                    }
-                  }}
-                  open={Boolean(popoverInfo && popoverInfo.type === 'add-members')}
-                  anchorEl={popoverInfo?.anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right'
-                  }}
-                  onClose={handleClosePopover}
-                  container={() => document.getElementById('add-members')}
-                >
-                  <Box onClick={(event) => event.stopPropagation()}>
-                    <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }} >
-                      <Typography sx={{ flex:'8', textAlign:'center' }}>Members</Typography>
-                      <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
-                    </Box>
-                    <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }}>
-                      <TextField onChange={(e) => setMemberEmail(e.target.value)} value={memberEmail} placeholder='Enter email' size='small'/>
-                      <Button onClick={handleMemberSubmit} sx={{ marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
+              {ownerBoard && (
+                <Box id='add-members' onClick={(event) => handleClick(event, 'add-members')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800] } }}>
+                  <Box sx={{ cursor:'pointer', textAlign:'center' }}>Add Members</Box>
+                  <Popover
+                    sx={{
+                      '& .MuiPopover-paper': {
+                        minWidth:'300px',
+                        boxShadow: '0px 2px 4px rgba(0,0,0,0.3)'
+                      }
+                    }}
+                    open={Boolean(popoverInfo && popoverInfo.type === 'add-members')}
+                    anchorEl={popoverInfo?.anchorEl}
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right'
+                    }}
+                    onClose={handleClosePopover}
+                    container={() => document.getElementById('add-members')}
+                  >
+                    <Box onClick={(event) => event.stopPropagation()}>
+                      <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }} >
+                        <Typography sx={{ flex:'8', textAlign:'center' }}>Members</Typography>
+                        <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
+                      </Box>
+                      <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }}>
+                        <TextField onChange={(e) => setMemberEmail(e.target.value)} value={memberEmail} placeholder='Enter email' size='small'/>
+                        <Button onClick={handleMemberSubmit} sx={{ marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
                         Add
-                      </Button>
+                        </Button>
+                      </Box>
                     </Box>
-                  </Box>
-                </Popover>
-              </Box>
+                  </Popover>
+                </Box>
+              )}
+
 
               <Box id='status-task' onClick={(event) => handleClick(event, 'status-task')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
                 <Box sx={{ cursor:'pointer', textAlign:'center' }}>Status Task</Box>
@@ -518,7 +559,7 @@ function CardDetail({ board, card, open, handleClose }) {
                           Over Time
                         </option>
                       </select>
-                      <Button onClick={handleUpdateCardStatusSubmit} sx={{ flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
+                      <Button disabled={!buttonSubmit} onClick={handleUpdateCardStatusSubmit} sx={{ flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
                         Update
                       </Button>
                     </Box>
@@ -551,7 +592,7 @@ function CardDetail({ board, card, open, handleClose }) {
                     </Box>
                     <Box sx={{ display:'flex', alignItems:'center', justifyContent:'center', padding:'15px 20px', height:'280px' }}>
                       <Datepicker selected={selectedDate} inline onChange={data => setSelectedDate(data)} popperPlacement='bottom-start'/>
-                      <Button onClick={handleUpdateCardDeadlineSubmit} sx={{ flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
+                      <Button disabled={!buttonSubmit} onClick={handleUpdateCardDeadlineSubmit} sx={{ flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
                         Update
                       </Button>
                     </Box>
@@ -584,8 +625,8 @@ function CardDetail({ board, card, open, handleClose }) {
                     </Box>
                     <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 20px' }}>
                       {/* {console.log(description)} */}
-                      <TextField  multiline rows={3} onChange={(e) => setDescription(e.target.value)} size='small' value={description}/>
-                      <Button onClick={handleUpdateCardDescriptionSubmit} sx={{ flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
+                      <TextField multiline rows={3} onChange={(e) => setDescription(e.target.value)} size='small' value={description}/>
+                      <Button disabled={!buttonSubmit} onClick={handleUpdateCardDescriptionSubmit} sx={{ flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
                         Update
                       </Button>
                     </Box>

@@ -2,7 +2,16 @@ import axios from 'axios'
 import { API_ROOT } from '~/utils/constants'
 axios.defaults.withCredentials = true
 
-// Tim hieu them interceptors
+
+axios.interceptors.request.use(config => {
+  const token = localStorage.getItem('accessToken')
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`
+  }
+  return config
+}, error => {
+  return Promise.reject(error);
+})
 
 // Board
 export const fetchBoardDetailsAPI = async(boardId) => {
@@ -81,6 +90,11 @@ export const updateTaskCardAPI = async (data) => {
 
 export const addTaskCardAPI = async (data) => {
   const response = await axios.post(`${API_ROOT}/v1/cards/addTask`, data)
+  return response.data
+}
+
+export const removeTaskCardAPI = async (data) => {
+  const response = await axios.post(`${API_ROOT}/v1/cards/removeTask`, data)
   return response.data
 }
 

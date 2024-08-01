@@ -34,6 +34,9 @@ function UserProfile() {
   }
 
   const handleSubmitUpdateUser = () => {
+    if (!/^\d+$/.test(phoneNumber)|| phoneNumber.length > 11) {
+      return toast.error('Phone number is not valid')
+    }
     setLoading(true)
     const image = {
       image:ImageFile
@@ -131,7 +134,7 @@ function UserProfile() {
               <Typography sx={{ flex:'6', textAlign:'left', paddingRight:'15px' }}> <Link to='/profile/changePassword'>Change password</Link> </Typography>
             </Box>
           </Box>
-          <Box sx={{ display:'flex', flex:'1', flexDirection:'column', alignItems:'center',  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', padding:'20px 0', marginLeft:'20px' }}>
+          <Box sx={{ display:'flex', flex:'1', flexDirection:'column', alignItems:'center', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', padding:'20px 0', marginLeft:'20px' }}>
             <Box>
               <Avatar sx={{ width:'100px', height:'100px' }} src={selectedImage} />
             </Box>
