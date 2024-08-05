@@ -69,7 +69,7 @@ function Members({ workspace, currentUserId, member }) {
       <Box sx={{
         flex:'1'
       }}>
-        <Typography variant='strong' fontWeight='bold' color={(theme) => theme.palette.text.primary} > {member.username} </Typography>
+        <Typography variant='strong' fontWeight='bold' color={(theme) => theme.palette.text.primary} > {member.username} {currentWorkspace.ownerId === member._id ? '(ADMIN)' : ''} </Typography>
         <Typography color={(theme) => theme.palette.text.primary}>{member.email}</Typography>
       </Box>
       <Box sx={{

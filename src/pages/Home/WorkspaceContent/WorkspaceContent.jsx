@@ -196,7 +196,7 @@ function WorkspaceContent() {
     }
   })
 
-  console.log(workspaceFormik.initialValues)
+  // console.log(workspaceFormik.initialValues)
 
   return (
     <Box sx={{ paddingLeft: '20px', paddingBottom: '80px' }}>

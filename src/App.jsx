@@ -15,6 +15,7 @@ import Settings from './pages/Home/WorkspaceContent/Settings/Settings'
 import UserProfile from './pages/User/UserProfile/UserProfile'
 import ChangePassword from './pages/User/ChangePassword/ChangePassword'
 import ErrorPage from './pages/Error/ErrorPage'
+import Auth20 from './pages/Auth/auth20/Auth20'
 
 function App() {
 
@@ -91,6 +92,10 @@ function App() {
         {
           path:'recover/:token',
           element: <RecoverPassword/>
+        },
+        {
+          path:'login-success/:token',
+          element: <Auth20 />
         }
       ]
     }

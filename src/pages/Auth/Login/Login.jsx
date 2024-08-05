@@ -12,6 +12,8 @@ import { useTheme } from '@emotion/react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { toast } from 'react-toastify'
+import { API_ROOT } from '~/utils/constants'
+import Cookies from 'js-cookie'
 
 function Login() {
   const navigate = useNavigate()
@@ -32,6 +34,7 @@ function Login() {
       .then((data) => {
         if (data.user._id) {
           localStorage.setItem('accessToken', data.accessToken)
+          Cookies.set('accessToken', data.accessToken)
           navigate('/boards')
           toast.success('Login successful')
         } else {
@@ -58,6 +61,10 @@ function Login() {
     }),
     onSubmit: handleLogin
   })
+
+  const handleAuth = (name) => {
+    window.location.href = `${API_ROOT}/v1/auth/${name}`
+  }
 
   return (
     <Box flex='1' display='flex' justifyContent='center' alignItems='center'
@@ -172,6 +179,7 @@ function Login() {
             Login with:
           </Typography>
           <Button
+            onClick={() => {handleAuth('google')}}
             sx={{
               marginTop: '10px',
               width: '100%',
@@ -185,6 +193,7 @@ function Login() {
             </Typography>
           </Button>
           <Button
+           onClick={() => {handleAuth('facebook')}}
             sx={{
               marginTop: '10px',
               width: '100%',

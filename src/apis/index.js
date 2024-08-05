@@ -73,6 +73,11 @@ export const addMemberCardAPI = async (data) => {
   return response.data
 }
 
+export const removeMemberCardAPI = async (data) => {
+  const response = await axios.post(`${API_ROOT}/v1/cards/removeMember`, data)
+  return response.data
+}
+
 export const updateCardAPI = async (data) => {
   const response = await axios.post(`${API_ROOT}/v1/cards/update`, data)
   return response.data
@@ -242,3 +247,5 @@ export const getMembersByWorkspaceIdAPI= async(workspaceId) => {
   return response.data
 }
 // end workspace-members
+
+

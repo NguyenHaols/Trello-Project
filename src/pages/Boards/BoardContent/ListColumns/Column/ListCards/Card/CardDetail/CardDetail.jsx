@@ -17,6 +17,7 @@ import Datepicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useTheme } from '@emotion/react'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import Member from './Member/Member'
 
 function CardDetail({ board, card, open, handleClose }) {
   const dispath = useDispatch()
@@ -29,7 +30,7 @@ function CardDetail({ board, card, open, handleClose }) {
   const oldBoard = { ...board }
   const currentBoard = useRef(oldBoard)
   const ownerBoard = currentBoard.current.ownerId === user._id
-  const isMembersInCard = card.members.some(member => member._id === user._id)
+  const isMembersInCard = Array.isArray(card?.members) && card?.members.some(member => member._id === user._id)
   const [cmtContent, setCmtContent] = useState('')
   const [memberEmail, setMemberEmail] = useState('')
   const [popoverInfo, setPopoverInfo] = useState(null)
@@ -328,7 +329,7 @@ function CardDetail({ board, card, open, handleClose }) {
 
             <Box sx={{ marginBottom:'30px' }}>
               <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
-                <PeopleIcon sx={{ marginRight:'4px',color:(theme) => theme.palette.primary[500] }} />
+                <PeopleIcon sx={{ marginRight:'4px', color:(theme) => theme.palette.primary[500] }} />
                 <Typography>JOINED MEMBERS</Typography>
               </Box>
               <Box sx={{ display:'flex' }}>
@@ -347,7 +348,7 @@ function CardDetail({ board, card, open, handleClose }) {
             <Box sx={{ display:'flex', marginBottom:'30px' }}>
               <Box sx={{ marginRight:'20px' }}>
                 <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
-                  <HourglassBottomIcon sx={{ marginRight:'2px',color:(theme) => theme.palette.primary[500] }} />
+                  <HourglassBottomIcon sx={{ marginRight:'2px', color:(theme) => theme.palette.primary[500] }} />
                   <Typography>STATUS TASK</Typography>
                 </Box>
                 <Box sx={{ bgcolor:setStatusColor(), maxWidth:'100px', textAlign:'center', color:'white', borderRadius:'4px' }}>{card.status}</Box>
@@ -383,7 +384,7 @@ function CardDetail({ board, card, open, handleClose }) {
                       <Checkbox onChange={(event) => handleTaskList(task.taskName, task.taskStatus, event)} checked={task.taskStatus} sx={{ color:'#ccc' }} />
                       <Typography> {task.taskName} </Typography>
                     </Box>
-                    {isMembersInCard && (
+                    {isMembersInCard || ownerBoard && (
                       <Box>
                         <IconButton onClick={() => {handleRemoveTask(card._id, task.taskName)}}>
                           <CloseIcon />
@@ -398,26 +399,28 @@ function CardDetail({ board, card, open, handleClose }) {
             </Box>
             <Box>
               <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'15px' }}>
-                <CommentIcon sx={{ marginRight:'10px',color:(theme) => theme.palette.primary[500] }} />
+                <CommentIcon sx={{ marginRight:'10px', color:(theme) => theme.palette.primary[500] }} />
                 <Typography>COMMENTS</Typography>
               </Box>
-              <Box sx={{ display:'flex', marginBottom:'20px' }}>
-                <Avatar src={user.avatar} sx={{ marginRight:'8px' }} />
-                <TextField
-                  value={cmtContent}
-                  placeholder='Type your comment'
-                  onChange={(e) => setCmtContent(e.target.value)}
-                  sx={{ width:'100%' }}
-                  InputProps={{
-                    endAdornment:(
-                      <InputAdornment position="end">
-                        <SendIcon onClick={handleCommentSubmit} sx={{ color:(theme) => theme.palette.primary[500], cursor:'pointer', '&:hover':{ 'color':(theme) => theme.palette.primary[800] } }} ></SendIcon>
-                      </InputAdornment>
-                    )
-                  }}
-                  size='small'
-                />
-              </Box>
+              {(ownerBoard || isMembersInCard) && (
+                <Box sx={{ display:'flex', marginBottom:'20px' }}>
+                  <Avatar src={user.avatar} sx={{ marginRight:'8px' }} />
+                  <TextField
+                    value={cmtContent}
+                    placeholder='Type your comment'
+                    onChange={(e) => setCmtContent(e.target.value)}
+                    sx={{ width:'100%' }}
+                    InputProps={{
+                      endAdornment:(
+                        <InputAdornment position="end">
+                          <SendIcon onClick={handleCommentSubmit} sx={{ color:(theme) => theme.palette.primary[500], cursor:'pointer', '&:hover':{ 'color':(theme) => theme.palette.primary[800] } }} ></SendIcon>
+                        </InputAdornment>
+                      )
+                    }}
+                    size='small'
+                  />
+                </Box>
+              )}
               <Box sx={{ width:'100%' }}>
                 {card.comments.map(comment => {
                   const date = new Date(comment.createdAt)
@@ -482,7 +485,7 @@ function CardDetail({ board, card, open, handleClose }) {
               <hr></hr>
               {ownerBoard && (
                 <Box id='add-members' onClick={(event) => handleClick(event, 'add-members')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800] } }}>
-                  <Box sx={{ cursor:'pointer', textAlign:'center' }}>Add Members</Box>
+                  <Box sx={{ cursor:'pointer', textAlign:'center' }}>Members</Box>
                   <Popover
                     sx={{
                       '& .MuiPopover-paper': {
@@ -499,16 +502,24 @@ function CardDetail({ board, card, open, handleClose }) {
                     onClose={handleClosePopover}
                     container={() => document.getElementById('add-members')}
                   >
-                    <Box onClick={(event) => event.stopPropagation()}>
-                      <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }} >
-                        <Typography sx={{ flex:'8', textAlign:'center' }}>Members</Typography>
+                    <Box onClick={(event) => event.stopPropagation()} sx={{ padding:'15px 15px' }}>
+                      <Box sx={{ display:'flex', justifyContent:'center', padding: '10px 0' }} >
+                        <Typography sx={{ flex:'8', textAlign:'center', pl:'40px' }}>Members</Typography>
                         <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
                       </Box>
-                      <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }}>
+                      <Box sx={{ display:'flex', justifyContent:'center', padding: '10px 0' }}>
                         <TextField onChange={(e) => setMemberEmail(e.target.value)} value={memberEmail} placeholder='Enter email' size='small'/>
                         <Button onClick={handleMemberSubmit} sx={{ marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
                         Add
                         </Button>
+                      </Box>
+                      <Box>
+                        <Box sx={{ textAlign:'center', pt:'15px' }}>
+                          <Typography variant='caption'>JOINED MEMBERS</Typography>
+                        </Box>
+                        {card.members.map(member =>
+                          (<Member key={member._id} member={member} card={card}/>)
+                        )}
                       </Box>
                     </Box>
                   </Popover>

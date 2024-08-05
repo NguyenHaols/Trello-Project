@@ -46,6 +46,13 @@ export const addMemberCardAction = (cardId,user) => {
   }
 }
 
+export const removeMemberCardAction = (cardId,userId) => {
+  return {
+    type : 'REMOVE_MEMBER_CARD',
+    payload: {cardId, userId}
+  }
+}
+
 export const addTaskCardAction = ({cardId,newTask}) => {
   return {
     type : 'ADD_TASK_CARD',

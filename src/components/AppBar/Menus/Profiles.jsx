@@ -31,6 +31,7 @@ function Profiles() {
   const handleNavigationLogOut = () => {
     Cookies.remove('accessToken')
     Cookies.remove('refreshToken')
+    localStorage.removeItem('accessToken')
     navigate('/auth/login')
   }
 
