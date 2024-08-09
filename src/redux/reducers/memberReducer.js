@@ -14,10 +14,8 @@ const memberReducer = ( state = initialState, action) => {
   case 'REMOVE_MEMBER' : {
     const userId = action.payload
     const members = state.filter(member => {
-        console.log(member._id, userId )
       return member._id !== userId
     })
-    console.log(members)
     return members
   }
   case 'CLEAR_MEMBER':{

@@ -248,4 +248,12 @@ export const getMembersByWorkspaceIdAPI= async(workspaceId) => {
 }
 // end workspace-members
 
+// Notification
+
+export const getNotifiAPI = async(data) => {
+  const response = await axios.post(`${API_ROOT}/v1/notifications/getNotificationsByReceiver`, data)
+  return response.data
+}
+
+// End notification
 

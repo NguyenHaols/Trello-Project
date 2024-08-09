@@ -4,8 +4,9 @@ import BoardCard from './BoardCard/BoardCard'
 import Workspace from './Workspace/Workspace'
 import LaptopMacIcon from '@mui/icons-material/LaptopMac'
 import { Link, useOutletContext } from 'react-router-dom'
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+
 
 function DashBoardContent() {
   const [data] = useOutletContext()

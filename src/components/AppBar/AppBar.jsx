@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import ModeSelect from '~/components/ModeSelect/ModeSelect'
 import Box from '@mui/material/Box'
 import AppsIcon from '@mui/icons-material/Apps'
@@ -22,9 +22,15 @@ import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import style from '~/CSS/CSSGlobal.module.scss'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import WorkspaceForm from './workspaceForm/WorkspaceForm'
-import { Dialog, DialogContent, Popover, Popper } from '@mui/material'
+import { Avatar, Dialog, DialogContent, IconButton, Popover, Popper } from '@mui/material'
+import { useTheme } from '@emotion/react'
+import { getNotifiAPI, getUser } from '~/apis'
+import { formatDistanceToNow } from 'date-fns'
+import { toast } from 'react-toastify'
+import socket from '~/socket/socket'
+import { setUser } from '~/redux/actions/userAction'
 
 function AppBar() {
   const user = useSelector(state => state.user)
@@ -32,8 +38,30 @@ function AppBar() {
   const [searchValue, setSearchValue] = useState('')
   const [open, setOpen] = useState(null)
   const [searchResults, setSearchResults] = useState(user.workspaces.flatMap(workspace => workspace.boards))
+  const [notificationEl, setNotificationEl] = useState(null)
+  const [notifications, setNotifications] = useState(null)
+  const [activeNotification, setActiveNotification] = useState(false)
+  const openNotification = Boolean(notificationEl)
+  const idNotification = openNotification ? 'Notification-popover' : undefined
   const navigate = useNavigate()
   const allBoards = user.workspaces.flatMap(workspace => workspace.boards)
+  const theme = useTheme()
+  const textColor = theme.palette.text.primary
+  const mainColor = theme.palette.primary.main
+  const dispatch = useDispatch()
+
+  const handleClickNotificationEl = (e) => {
+    setActiveNotification(false)
+    if (notificationEl) {
+      setNotificationEl(null)
+    } else {
+      setNotificationEl(e.currentTarget)
+    }
+  }
+
+  const handleCloseNotificationEl = (e) => {
+    setNotificationEl(null)
+  }
 
   const handleOpenSearch = (event) => {
     setOpen(open ? null : event.currentTarget)
@@ -64,6 +92,62 @@ function AppBar() {
       navigate(`board/${id}`)
     }
   }
+
+  useEffect(() => {
+    socket.on('connection', () => {
+      console.log('Connected to server')
+    })
+
+
+    socket.on('disconnect', () => {
+      console.log('Disconnect from server')
+    })
+
+    socket.on('invited-Notification', (data) => {
+      console.log('data')
+      toast.success(data.message)
+      getUser()
+        .then(data => {
+          const action = setUser(data)
+          dispatch(action)
+        })
+        .catch(() => {
+          navigate('/auth/login')
+        })
+    })
+
+    socket.on('remove-Nofication', (data) => {
+      toast.info(data.message)
+      getUser()
+        .then(data => {
+          const action = setUser(data)
+          dispatch(action)
+        })
+        .catch(() => {
+          navigate('/auth/login')
+        })
+    })
+
+    return () => {
+      socket.off('connect')
+      socket.off('disconnect')
+      socket.off('invited-Notification')
+      socket.off('remove-Nofication')
+    }
+  })
+
+  useEffect(() => {
+    const data = {
+      receiverId:user._id
+    }
+    getNotifiAPI(data)
+      .then(res => {
+        if (res.data.length > 0) {
+          setNotifications(res.data)
+          setActiveNotification(true)
+        }
+      })
+  }, [user])
 
   return (
 
@@ -172,7 +256,7 @@ function AppBar() {
             }}>
               {searchResults.map(board => (
                 <Box onClick={() => handleNavigateToBoard(board._id)} key={board._id} sx={{ display:'flex', alignItems:'center', margin:'10px 0 5px 0', cursor:'pointer' }} >
-                  <Box sx={{ width:'40px', marginRight:'10px', height:'40px',backgroundSize:'cover', backgroundImage: board.avatar ? `url(${board.avatar})`: 'linear-gradient(#c9372c,#fea362)', borderRadius:'4px', color:'white', textAlign:'center', lineHeight:'40px' }}>
+                  <Box sx={{ width:'40px', marginRight:'10px', height:'40px', backgroundSize:'cover', backgroundImage: board.avatar ? `url(${board.avatar})`: 'linear-gradient(#c9372c,#fea362)', borderRadius:'4px', color:'white', textAlign:'center', lineHeight:'40px' }}>
                     { board.avatar ? '' : board.title[0]}
                   </Box>
                   <Box >
@@ -186,12 +270,56 @@ function AppBar() {
 
         <ModeSelect />
         <Tooltip title="Notification">
-          <Badge color="warning" variant="dot" sx={{ cursor:'pointer' }}>
-            <NotificationsNoneIcon sx={{ color:(theme) => theme.palette.text.primary }} />
-          </Badge>
+          <IconButton aria-describedby={idNotification} onClick={handleClickNotificationEl}>
+            <Badge color="warning" invisible={!activeNotification} variant="dot" sx={{ cursor:'pointer' }}>
+              <NotificationsNoneIcon sx={{ color:(theme) => theme.palette.text.primary }} />
+            </Badge>
+          </IconButton>
         </Tooltip>
+        <Popover
+          id={idNotification}
+          open={openNotification}
+          anchorEl={notificationEl}
+          onClose={handleCloseNotificationEl}
+          PaperProps={{
+            sx: {
+              overflow: 'visible', // Đảm bảo overflow của Popover là visible để shadow hiển thị
+              borderRadius: '8px', // Đảm bảo border-radius của Popover đồng bộ với Box
+              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.3)', // Đảm bảo shadow hiển thị đúng
+              marginTop:'42px'
+            }
+          }}
+        >
+          <Box sx={{ width:'400px', minHeight:'330px', maxHeight:'78vh', borderRadius:'8px', overflow:'auto', p:'20px 10px 10px 10px' }}>
+            <Box>
+              <Typography variant='h5' sx={{ borderBottom:'1px solid #ccc', pb:'10px' }}>Notifications</Typography>
+            </Box>
+            {notifications && notifications.map(noti => {
+              return (
+                <Button key={noti._id} sx={{
+                  width:'100%',
+                  display:'Block',
+                  p:'10px 0',
+                  color:(theme) => theme.palette.text.primary,
+                  '&:hover':{
+                    bgcolor: 'var(--mui-palette-action-hover)'
+                  } }}>
+                  <Box sx={{ display:'block' }}>
+                    <Typography sx={{ textAlign: 'right', width: '100%', pr:'10px', color:mainColor }}>
+                      {formatDistanceToNow(new Date(noti.createdAt), { addSuffix: true }).replace('about', '')}
+                    </Typography></Box>
+                  <Box sx={{ display:'flex', alignItems:'center', textAlign:'left', pl:'5px', width:'100%' }}>
+                    <Avatar src={noti?.senderInfo?.avatar}/>
+                    <Typography sx={{ pl:'10px' }}>{noti.content} by <b>{noti.senderInfo.username}</b> </Typography>
+                  </Box>
+                </Button>
+              )
+            })}
+
+          </Box>
+        </Popover>
         <Tooltip title="Help">
-          <HelpOutlineIcon sx={{ cursor:'pointer' }}/>
+          <IconButton><HelpOutlineIcon sx={{ cursor:'pointer' }}/></IconButton>
         </Tooltip>
         <Profiles />
       </Box>

@@ -33,6 +33,8 @@ import { addMemberAction, clearMemberAction, setMemberAction } from '~/redux/act
 import { useTheme } from '@emotion/react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import socket from '~/socket/socket'
+
 
 function WorkspaceContent() {
   const dispatch = useDispatch()
@@ -45,7 +47,7 @@ function WorkspaceContent() {
   const [ImageFile, setImageFile] = useState('')
   const [workspaceImage, setworkspaceImage] = useState('')
   const [editWorkspace, setEditWorkspace] = useState(false)
-
+  const user = useSelector(state => state.user)
   const cloneData = { ...data }
   const workspaces = cloneData.workspaces
   const workspace = workspaces.filter((w) => w._id === id)
@@ -55,6 +57,7 @@ function WorkspaceContent() {
   const theme = useTheme()
   const textColor = theme.palette.text.primary
   const mainColor = theme.palette.primary.main
+
 
   const getStarredBoard = () => {
     const starredBoards = []
@@ -91,6 +94,11 @@ function WorkspaceContent() {
           dispatch(action)
           toast.success('Add member successfully')
           setEmailInvite('')
+          socket.emit('invite', {
+            inviterId : user._id,
+            emailInvite,
+            workspaceId : id
+          })
         })
         .catch((err) => {
           toast.error(`Fail to invite ${emailInvite}`)
@@ -456,7 +464,6 @@ function WorkspaceContent() {
 
       {/* Member in this workspace */}
       <TitleMember />
-
       {members.map(member => (
         <Members key={member._id} workspace={workspace[0]} member={member} ownerId={workspace[0].OwnerId} currentUserId={currentUserId} />
       ))}

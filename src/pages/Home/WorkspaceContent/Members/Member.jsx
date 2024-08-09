@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { removeMemberAPI } from '~/apis'
 import { removeMemberAction } from '~/redux/actions/memberAction'
+import socket from '~/socket/socket'
 
 
 function Members({ workspace, currentUserId, member }) {
@@ -27,6 +28,11 @@ function Members({ workspace, currentUserId, member }) {
             .then( data => {
               toast.success('Remove member successfully')
               const action = removeMemberAction(member._id)
+              socket.emit('removeMember', {
+                senderId: currentUserId,
+                emailRemove : member.email,
+                workspaceId: currentWorkspace._id
+              })
               if (currentUserId === member._id) {
                 navigate('/')
               }

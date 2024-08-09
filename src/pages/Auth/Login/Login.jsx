@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material'
+import { Box, Button, IconButton } from '@mui/material'
 import { ReactComponent as trelloIcon } from '~/assets/trello.svg'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
@@ -14,10 +14,13 @@ import * as Yup from 'yup'
 import { toast } from 'react-toastify'
 import { API_ROOT } from '~/utils/constants'
 import Cookies from 'js-cookie'
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 
 function Login() {
   const navigate = useNavigate()
   const [errorMessage, setErrorMessage] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const theme = useTheme()
   const textColor = theme.palette.text.primary
   const mainColor = theme.palette.primary.main
@@ -25,6 +28,7 @@ function Login() {
     loginFormik.handleChange(e)
     setErrorMessage('')
   }
+
   const handleLogin = (values, { setSubmitting }) => {
     const user = {
       email: values.email,
@@ -48,6 +52,10 @@ function Login() {
       .finally(() => {
         setSubmitting(false)
       })
+  }
+
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword)
   }
 
   const loginFormik = useFormik({
@@ -103,11 +111,11 @@ function Login() {
         <form
           style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
           onSubmit={loginFormik.handleSubmit}
-        >
+        > 
+          <Typography variant='caption'>Your email</Typography>
           <TextField
             name='email'
             id='outlined-basic'
-            label='Your email'
             variant='outlined'
             type='email'
             value={loginFormik.values.email}
@@ -123,20 +131,30 @@ function Login() {
               {loginFormik.errors.email}
             </Typography>
           )}
+          <Typography variant='caption' sx={{marginTop:'20px'}}>Your password</Typography>
           <TextField
             name='password'
             id='outlined-basic'
-            label='Your password'
             variant='outlined'
-            type='password'
+            type={showPassword ? 'text' : 'password'}
             autoComplete='current-password'
             value={loginFormik.values.password}
             onChange={formikHandleChange}
             onBlur={loginFormik.handleBlur}
             sx={{
-              marginTop: '20px',
               '& input': { padding: '8px' },
               '& label': { top: '-8px' }
+            }}
+            InputProps={{
+              endAdornment: (
+                <Box>
+                  {showPassword ? (
+                    <IconButton onClick={() => {setShowPassword(false)}}> <RemoveRedEyeIcon /> </IconButton>
+                  ) : (
+                    <IconButton onClick={() => {setShowPassword(true)}}> <VisibilityOffIcon /> </IconButton>
+                  )}
+                </Box>
+              )
             }}
           />
           {loginFormik.errors.password && loginFormik.touched.password && (

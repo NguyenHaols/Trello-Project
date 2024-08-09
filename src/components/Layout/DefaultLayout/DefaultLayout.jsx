@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUser } from '~/redux/actions/userAction'
+import socket from '~/socket/socket'
+import { toast } from 'react-toastify'
 
 
 function DefaultLayout() {
@@ -18,12 +20,16 @@ function DefaultLayout() {
   const data = user
   const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(true)
+  const [notification, setNotification] = useState(null)
+  const userRef = useRef()
   // const data = MocDataUserAPI
   useEffect(() => {
 
     getUser()
       .then(data => {
         const action = setUser(data)
+        userRef.current = data
+        socket.emit('newUser', userRef.current?.email)
         dispatch(action)
         setIsLoading(false)
       })
@@ -31,6 +37,7 @@ function DefaultLayout() {
         navigate('/auth/login')
       })
 
+  
   }, [])
 
 

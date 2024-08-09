@@ -27,7 +27,7 @@ function Register() {
     initialValues: {
       email: '',
       fullName: '',
-      password:'',
+      password:''
     },
     validationSchema: Yup.object({
       fullName: Yup.string().transform(value => value.toLowerCase()).min(5, 'Minimum 5 characters').max(30, 'Maximum 30 characters').required('Required!'),
@@ -42,7 +42,7 @@ function Register() {
         const user = {
           'email' : values.email,
           'username': values.fullName,
-          'password' : values.password,
+          'password' : values.password
         }
         registerApi(user)
           .then(data => {
@@ -81,7 +81,8 @@ function Register() {
           <Typography variant='subtitle2' color={(theme) => theme.palette.text.primary} textAlign={'center'}>Register to continue</Typography>
         </Box>
         <form onSubmit={registerFormik.handleSubmit} style={{ display:'flex', flexDirection:'column', width:'100%' }}>
-          <TextField name='email' id="email" label="Your email" variant="outlined" type='email'
+          <Typography variant='caption' >Your email</Typography>
+          <TextField name='email' id="email" variant="outlined" type='email'
             onChange={registerFormik.handleChange}
             onBlur={registerFormik.handleBlur}
             sx={{
@@ -94,11 +95,12 @@ function Register() {
               {registerFormik.errors.email}
             </Typography>
           )}
-          <TextField name='fullName' id="fullName" label="Your full name" variant="outlined"
+          <Typography variant='caption' sx={{ marginTop:'10px' }}>Your full name</Typography>
+          <TextField name='fullName' id="fullName" variant="outlined"
             onChange={registerFormik.handleChange}
             onBlur={registerFormik.handleBlur}
             sx={{
-              marginTop:'20px',
+
               '& input':{ padding:'8px' },
               '& label':{ top:'-8px' }
 
@@ -108,11 +110,12 @@ function Register() {
               {registerFormik.errors.fullName}
             </Typography>
           )}
-          <TextField name='password' id="password" label="Your password" variant="outlined" type="password" autoComplete="current-password"
+          <Typography variant='caption' sx={{ marginTop:'10px' }}>Your password</Typography>
+          <TextField name='password' id="password" variant="outlined" type="password" autoComplete="current-password"
             onChange={registerFormik.handleChange}
             onBlur={registerFormik.handleBlur}
             sx={{
-              marginTop:'20px',
+
               '& input':{ padding:'8px' },
               '& label':{ top:'-8px' }
 
@@ -122,11 +125,12 @@ function Register() {
               {registerFormik.errors.password}
             </Typography>
           )}
-          <TextField name='confirmPassword' id="confirmPassword" label="Confirm password" variant="outlined" type="password" autoComplete="current-password"
+          <Typography variant='caption' sx={{ marginTop:'10px' }}>Confirm password</Typography>
+          <TextField name='confirmPassword' id="confirmPassword" variant="outlined" type="password" autoComplete="current-password"
             onChange={registerFormik.handleChange}
             onBlur={registerFormik.handleBlur}
             sx={{
-              marginTop:'20px',
+
               '& input':{ padding:'8px' },
               '& label':{ top:'-8px' }
 
