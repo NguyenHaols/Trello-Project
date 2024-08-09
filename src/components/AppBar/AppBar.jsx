@@ -93,6 +93,10 @@ function AppBar() {
     }
   }
 
+  const handleNavigateWorkspace = (id) => {
+    navigate(`workspace/${id}`)
+  }
+
   useEffect(() => {
     socket.on('connection', () => {
       console.log('Connected to server')
@@ -144,7 +148,6 @@ function AppBar() {
       .then(res => {
         if (res.data.length > 0) {
           setNotifications(res.data)
-          setActiveNotification(true)
         }
       })
   }, [user])
@@ -296,7 +299,7 @@ function AppBar() {
             </Box>
             {notifications && notifications.map(noti => {
               return (
-                <Button key={noti._id} sx={{
+                <Button onClick={() => {handleNavigateWorkspace(noti.workspaceId)}} key={noti._id} sx={{
                   width:'100%',
                   display:'Block',
                   p:'10px 0',

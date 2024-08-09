@@ -3,8 +3,9 @@ import { useConfirm } from 'material-ui-confirm'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { removeMemberAPI } from '~/apis'
+import { getUser, removeMemberAPI } from '~/apis'
 import { removeMemberAction } from '~/redux/actions/memberAction'
+import { setUser } from '~/redux/actions/userAction'
 import socket from '~/socket/socket'
 
 
@@ -34,6 +35,11 @@ function Members({ workspace, currentUserId, member }) {
                 workspaceId: currentWorkspace._id
               })
               if (currentUserId === member._id) {
+                getUser()
+                  .then(data => {
+                    const action = setUser(data)
+                    dispatch(action)
+                  })
                 navigate('/')
               }
               dispatch(action)

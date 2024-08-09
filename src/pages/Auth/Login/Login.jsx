@@ -54,9 +54,6 @@ function Login() {
       })
   }
 
-  const handleShowPassword = () => {
-    setShowPassword(!showPassword)
-  }
 
   const loginFormik = useFormik({
     initialValues:{

@@ -38,7 +38,8 @@ function App() {
         },
         {
           path:'workspace/:id',
-          element:<WorkspaceContent />
+          element:<WorkspaceContent />,
+          errorElement: <ErrorPage />
         }
       ],
       errorElement: <ErrorPage />
