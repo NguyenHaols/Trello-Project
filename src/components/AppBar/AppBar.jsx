@@ -31,8 +31,9 @@ import { formatDistanceToNow } from 'date-fns'
 import { toast } from 'react-toastify'
 import socket from '~/socket/socket'
 import { setUser } from '~/redux/actions/userAction'
+import MenuIcon from '@mui/icons-material/Menu';
 
-function AppBar() {
+function AppBar({sideBarMobileActive}) {
   const user = useSelector(state => state.user)
   const workspaces = user?.workspaces
   const [searchValue, setSearchValue] = useState('')
@@ -94,7 +95,7 @@ function AppBar() {
   }
 
   const handleNavigateWorkspace = (id) => {
-    navigate(`workspace/${id}`)
+    navigate(`workspace/${id}/boards`)
   }
 
   useEffect(() => {
@@ -171,7 +172,8 @@ function AppBar() {
 
 
       <Box sx={{ display:'flex', alignItems:'center', gap:2 }}>
-        <AppsIcon sx={{ color:'#2196f3', cursor:'pointer' }}/>
+        <AppsIcon sx={{ color:'#2196f3', cursor:'pointer', display:['none', 'block'] }}/>
+        <MenuIcon onClick={sideBarMobileActive} sx={{ color:'#2196f3', cursor:'pointer', display:['block', 'none'] }}/>
         <Link className={style['a-none']} to='/'>
           <Box sx={{ display:'flex', alignItems:'center', gap:0.5 }}>
             <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:'#2196f3' }} />
@@ -213,19 +215,20 @@ function AppBar() {
             InputProps={{
               startAdornment:(
                 <InputAdornment position="start">
-                  <SearchIcon sx={{ color:(theme) => theme.palette.text.primary }} />
+                  <SearchIcon sx={{color:(theme) => theme.palette.text.primary }} />
                 </InputAdornment>
               ),
               endAdornment:(
                 <InputAdornment position="end">
                   <CloseIcon
-                    sx={{ fontSize:'small', color:searchValue? (theme) => theme.palette.text.primary: 'transparent', cursor:'pointer' }}
+                    sx={{fontSize:'small', color:searchValue? (theme) => theme.palette.text.primary: 'transparent', cursor:'pointer' }}
                     onClick={handleCloseSearch}
                   />
                 </InputAdornment>
               )
             }}
             sx={{
+              display:['none', 'block'],
               position:'relative',
               minWidth: 120,
               maxWidth: 180,

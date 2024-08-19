@@ -191,7 +191,7 @@ function Workspace( { data, currentUserId } ) {
             color:(theme) => theme.palette.text.primary,
             justifyContent:'left',
             bgcolor: (theme) => activeBtn === data._id ? '#ccc' : 'transparent',
-            width:{ md:'100%', xs:'0' },
+            width:{ md:'100%',xs:'100%' },
             '&:hover':{
               bgcolor:(theme) => '#ccc'
             }
@@ -207,7 +207,7 @@ function Workspace( { data, currentUserId } ) {
             backgroundPosition:'center'
 
           }}> {data.avatar ? '' : data.title[0]} </Box>
-          <Typography sx={{ display:{ xs:'none', md:'block' }, marginLeft:'10px', color:(theme) => theme.palette.text.primary }}> {data.title} </Typography>
+          <Typography sx={{ display: 'block', marginLeft:'10px', color:(theme) => theme.palette.text.primary }}> {data.title} </Typography>
         </Button>
 
         {activeBtn === data._id &&
@@ -299,7 +299,7 @@ function Workspace( { data, currentUserId } ) {
               </>
             )}
 
-            <Link to={`workspace/${data._id}/`} style={{ textDecoration:'none' }}>
+            <Link to={`workspace/${data._id}/boards`} style={{ textDecoration:'none' }}>
               <MenuItem >
                 <ListItemIcon >
                   <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:'#2196f3' }} />
@@ -308,7 +308,7 @@ function Workspace( { data, currentUserId } ) {
               </MenuItem>
             </Link>
 
-            <Link to={`workspace/${data._id}`} style={{ textDecoration:'none' }}>
+            <Link to={`workspace/${data._id}/members`} style={{ textDecoration:'none' }}>
               <MenuItem>
                 <ListItemIcon >
                   <PeopleIcon sx={{ color:'#2196f3' }}/>
@@ -318,7 +318,7 @@ function Workspace( { data, currentUserId } ) {
             </Link>
 
             {ownerWorkspace && (
-              <Link to={`workspace/${data._id}`} style={{ textDecoration:'none' }}>
+              <Link to={`workspace/${data._id}/settings`} style={{ textDecoration:'none' }}>
                 <MenuItem>
                   <ListItemIcon >
                     <SettingsIcon sx={{ color:'#2196f3' }}/>

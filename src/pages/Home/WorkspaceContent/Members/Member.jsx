@@ -58,7 +58,8 @@ function Members({ workspace, currentUserId, member }) {
       display:'flex',
       alignItems:'center',
       borderBottom:'1px solid #ccc',
-      padding:'15px 0'
+      padding:'15px 0px',
+      pr:['10px', '0']
     }}>
 
       <Box
@@ -87,14 +88,18 @@ function Members({ workspace, currentUserId, member }) {
       <Box sx={{
         flex:'1'
       }}>
-        <Button onClick={handleRemoveSubmit} sx={{
-          width:'115px',
-          height:'32px',
-          background:(theme) => theme.palette.primary[500],
-          color:'white',
-          float:'right',
-          '&:hover':{ backgroundColor:(theme) => theme.palette.primary[800] }
-        }}> {member._id === currentUserId ? 'Leave' : 'Remove'} </Button>
+        {(currentUserId === currentWorkspace.ownerId || member._id === currentUserId) && (
+          <Button onClick={handleRemoveSubmit} sx={{
+            width:'115px',
+            height:'32px',
+            background:(theme) => theme.palette.primary[500],
+            color:'white',
+            float:'right',
+            '&:hover':{ backgroundColor:(theme) => theme.palette.primary[800] }
+          }}> 
+            {member._id === currentUserId ? 'Leave' : 'Remove'} 
+          </Button>
+        )}
       </Box>
     </Box>
   )

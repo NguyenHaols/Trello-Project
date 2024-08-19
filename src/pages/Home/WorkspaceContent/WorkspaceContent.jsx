@@ -8,8 +8,7 @@ import {
   Typography,
   styled
 } from '@mui/material'
-import { useOutletContext, useParams } from 'react-router-dom'
-import StarIcon from '@mui/icons-material/Star'
+import { Outlet, useOutletContext, useParams } from 'react-router-dom'
 import BoardCard from '../DashBoardContent/BoardCard/BoardCard'
 import Members from './Members/Member'
 import TitleAllBoard from './Title/TitleAllBoard'
@@ -34,13 +33,13 @@ import { useTheme } from '@emotion/react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import socket from '~/socket/socket'
+import MemberPage from './Members/MemberPage'
 
 
 function WorkspaceContent() {
   const dispatch = useDispatch()
   const { id } = useParams()
   const [data] = useOutletContext()
-  const [emailInvite, setEmailInvite] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [type, setType] = useState('Public')
   const [selectedImage, setSelectedImage] = useState(null)
@@ -80,31 +79,6 @@ function WorkspaceContent() {
     setEditWorkspace(!editWorkspace)
   }
 
-
-  const handleInviteSubmit = () => {
-    if (ownerWorkspace) {
-      const data = {
-        email: emailInvite,
-        workspaceId: id
-      }
-      addMemberAPI(data)
-        .then((data) => {
-          const newMember = data.user
-          const action = addMemberAction(newMember)
-          dispatch(action)
-          toast.success('Add member successfully')
-          setEmailInvite('')
-          socket.emit('invite', {
-            inviterId : user._id,
-            emailInvite,
-            workspaceId : id
-          })
-        })
-        .catch((err) => {
-          toast.error(`Fail to invite ${emailInvite}`)
-        })
-    }
-  }
 
   const handleImageChange = (e) => {
     const file = e.target.files[0] // Lấy ra file ảnh đầu tiên từ event
@@ -406,108 +380,17 @@ function WorkspaceContent() {
       </Box>
 
       {/* starred board  */}
-      {starredBoards.length ? (
-        <>
-          <TitleStarred />
-          <Box
-            sx={{
-              display: 'flex',
-              flexWrap: 'wrap'
-            }}
-          >
-            {starredBoards.map((board) => (
-              <BoardCard key={board._id} data={board} />
-            ))}
-          </Box>
-        </>
-      ) : (
-        <></>
-      )}
+      
       {/* all boards in this workspace */}
-      {workspace[0].boards.length ? (
-        <>
-          <TitleAllBoard />
-          <Box
-            sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'flex-start',
-              marginBottom: '20px'
-            }}
-          >
-            {workspace[0].boards.map((b) => (
-              <BoardCard key={b._id} data={b} />
-            ))}
-          </Box>
-        </>
-      ) : (
-        <>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'left',
-              alignItems: 'center',
-              color: 'white'
-            }}
-          >
-            <StarIcon sx={{ marginRight: '10px', color: '#e2b203' }}></StarIcon>
-            <Typography
-              color={(theme) => theme.palette.text.primary}
-              variant='h6'
-              fontWeight={500}
-            >
-              Create some board to use
-            </Typography>
-          </Box>
-        </>
-      )}
+      
 
       {/* Member in this workspace */}
-      <TitleMember />
-      {members.map(member => (
-        <Members key={member._id} workspace={workspace[0]} member={member} ownerId={workspace[0].OwnerId} currentUserId={currentUserId} />
-      ))}
-      {ownerWorkspace && (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'right',
-            padding: '20px 0'
-          }}
-        >
-          <Box>
-            <TextField
-              onChange={(e) => {
-                setEmailInvite(e.target.value)
-              }}
-              value={emailInvite}
-              sx={{ marginRight: '10px', width: '300px' }}
-              size='small'
-              placeholder='Enter email to invite'
-            />
-          </Box>
-          <Button
-            onClick={handleInviteSubmit}
-            sx={{
-              minWidth: '115px',
-              height: '32px',
-              color: 'white',
-              bgcolor: (theme) => theme.palette.primary[500],
-              '&:hover': { bgcolor: (theme) => theme.palette.primary[800] }
-            }}
-          >
-            Invite
-          </Button>
-        </Box>
-      )}
+      {/* <MemberPage members={members} workspace={workspace} ownerWorkspace={ownerWorkspace} currentUserId={currentUserId} user={user} /> */}
+      <Outlet context={{ members, workspace, ownerWorkspace, currentUserId, user, starredBoards }} />
 
       {/* Setting in this workspace*/}
-      {ownerWorkspace && (
-        <>
-          <Settings workspace={workspace[0]} />
-        </>
-      )}
+      {/* <Settings workspace={workspace[0]} ownerWorkspace={ownerWorkspace} /> */}
+
     </Box>
   )
 }

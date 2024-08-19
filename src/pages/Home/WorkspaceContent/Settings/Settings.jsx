@@ -8,10 +8,11 @@ import { removeWorkspaceAction } from '~/redux/actions/userAction'
 import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useOutletContext } from 'react-router-dom'
 
 
-function Settings({ workspace }) {
+function Settings() {
+  const { workspace, ownerWorkspace } = useOutletContext()
   const dispatch = useDispatch()
   const confirmDeleteWorkspace = useConfirm()
   const navigate = useNavigate()
@@ -36,55 +37,58 @@ function Settings({ workspace }) {
   }
   return (
     <>
-      <TitleSetting />
-      {/* <Box sx={{ marginTop:'15px' }}>
-        <Typography variant='h7' color={(theme) => theme.palette.text.primary} >Workspace visibility :</Typography>
-        <Box>
-          {workspace.type === 'Private' ?
-            <Box sx={{ display:'flex', justifyContent:'space-between' }}>
-              <Typography variant='subtitle2' color={(theme) => theme.palette.text.primary} display='flex' marginTop='5px'>
-                <LockIcon sx={{ width:'18px', height:'22px', marginRight:'5px' }}/>
-                Private - This Workspace is private.It&apos;s not indexed or visible to those outside the Workspace.
-              </Typography>
+      { ownerWorkspace &&
+          <> <TitleSetting />
+            {/* <Box sx={{ marginTop:'15px' }}>
+            <Typography variant='h7' color={(theme) => theme.palette.text.primary} >Workspace visibility :</Typography>
+            <Box>
+              {workspace.type === 'Private' ?
+                <Box sx={{ display:'flex', justifyContent:'space-between' }}>
+                  <Typography variant='subtitle2' color={(theme) => theme.palette.text.primary} display='flex' marginTop='5px'>
+                    <LockIcon sx={{ width:'18px', height:'22px', marginRight:'5px' }}/>
+                    Private - This Workspace is private.It&apos;s not indexed or visible to those outside the Workspace.
+                  </Typography>
 
-              <Button sx={{
-                width:'115px',
-                minWidth:'115px',
-                height:'32px',
-                background:(theme) => theme.trello.btnBackground,
-                color:(theme) => theme.palette.text.primary,
-                '&:hover':{ backgroundColor:(theme) => theme.trello.btnBackgroundHover }
-              }}>Change</Button>
+                  <Button sx={{
+                    width:'115px',
+                    minWidth:'115px',
+                    height:'32px',
+                    background:(theme) => theme.trello.btnBackground,
+                    color:(theme) => theme.palette.text.primary,
+                    '&:hover':{ backgroundColor:(theme) => theme.trello.btnBackgroundHover }
+                  }}>Change</Button>
 
-            </Box> :
-            <Box sx={{ display:'flex', justifyContent:'space-between' }}>
-              <Typography variant='subtitle2' color={(theme) => theme.palette.text.primary} display='flex' marginTop='5px'>
-                <PublicIcon sx={{ width:'18px', height:'22px', marginRight:'5px' }}/>
-                Public - This Workspace is public. It&apos;s visible to anyone with the link or invited.
-              </Typography>
-              <Button sx={{
-                width:'115px',
-                minWidth:'115px',
-                height:'32px',
-                background:(theme) => theme.palette.primary[500],
-                color:'white',
-                '&:hover':{ backgroundColor:(theme) => theme.palette.primary[800] }
-              }}>Change</Button>
+                </Box> :
+                <Box sx={{ display:'flex', justifyContent:'space-between' }}>
+                  <Typography variant='subtitle2' color={(theme) => theme.palette.text.primary} display='flex' marginTop='5px'>
+                    <PublicIcon sx={{ width:'18px', height:'22px', marginRight:'5px' }}/>
+                    Public - This Workspace is public. It&apos;s visible to anyone with the link or invited.
+                  </Typography>
+                  <Button sx={{
+                    width:'115px',
+                    minWidth:'115px',
+                    height:'32px',
+                    background:(theme) => theme.palette.primary[500],
+                    color:'white',
+                    '&:hover':{ backgroundColor:(theme) => theme.palette.primary[800] }
+                  }}>Change</Button>
+                </Box>
+              }
+
             </Box>
-          }
+          </Box> */}
+            <Box sx={{ marginTop:'15px' }}>
+              <Typography variant='h7' color={(theme) => theme.palette.text.primary} >Workspace destroy </Typography>
+              <Typography onClick={handleDeleteWorkspace} sx={{
+                cursor:'pointer',
+                '&:hover':{ color:'#bb2124' }
+              }} variant='subtitle2' color={(theme) => theme.palette.text.primary} display='flex' marginTop='5px'>
+                <DeleteOutlineIcon sx={{ width:'18px', height:'22px', marginRight:'5px' }}/>
+              Delete this workspace ?
+              </Typography>
+            </Box> </>
+      }
 
-        </Box>
-      </Box> */}
-      <Box sx={{ marginTop:'15px' }}>
-        <Typography variant='h7' color={(theme) => theme.palette.text.primary} >Workspace destroy </Typography>
-        <Typography onClick={handleDeleteWorkspace} sx={{
-          cursor:'pointer',
-          '&:hover':{ color:'#bb2124' }
-        }} variant='subtitle2' color={(theme) => theme.palette.text.primary} display='flex' marginTop='5px'>
-          <DeleteOutlineIcon sx={{ width:'18px', height:'22px', marginRight:'5px' }}/>
-          Delete this workspace ?
-        </Typography>
-      </Box>
     </>
   )
 }

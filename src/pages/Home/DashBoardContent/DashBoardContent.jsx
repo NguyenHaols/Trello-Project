@@ -54,7 +54,6 @@ function DashBoardContent() {
           }}>
             {starredBoards.map(board => (
               <BoardCard key={board._id} data={board}>
-
               </BoardCard>
             ))}
 
@@ -94,7 +93,6 @@ function DashBoardContent() {
                 ) : (
                   <Typography variant="body2">No boards available</Typography>
                 )}
-
               </Box>
             </Fragment>
           ))}

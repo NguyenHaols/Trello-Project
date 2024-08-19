@@ -20,8 +20,14 @@ function DefaultLayout() {
   const data = user
   const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(true)
-  const [notification, setNotification] = useState(null)
+  const [sideBarMobile, setSideBarMobile] = useState(false)
   const userRef = useRef()
+  const sideBarMobileClose = () => {
+    setSideBarMobile(false)
+  }
+  const sideBarMobileActive = () => {
+    setSideBarMobile(true)
+  }
   // const data = MocDataUserAPI
   useEffect(() => {
 
@@ -50,7 +56,7 @@ function DefaultLayout() {
   }
   return (
     <Box >
-      <AppBar data={data} />
+      <AppBar data={data} sideBarMobileActive={sideBarMobileActive} />
       <Box className='Container' sx={{
         width: '100%',
         height:'100%',
@@ -61,16 +67,16 @@ function DefaultLayout() {
 
       }}>
         <Box sx={{
-          width: '80%',
+          width: ['100%', '80%'],
           height:'100%',
           display:'flex',
           justifyContent:'center',
           paddingTop: '40px'
 
         }}>
-          <SideBar />
+          <SideBar sideBarMobileClose={sideBarMobileClose} isSideBarMobileOpen={sideBarMobile} />
           <Box className='content' sx={{
-            width:'75%'
+            width:['100%', '75%']
           }}>
             <Outlet context={[data]}/>
           </Box>

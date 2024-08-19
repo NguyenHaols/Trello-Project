@@ -15,7 +15,7 @@ function BoardCard({ data }) {
 
     <Card onClick={handleLinkBoard} sx={{
       boxSizing:'border-box',
-      width: { xs:'48%', md:'23%' },
+      width: { xs:'96%', md:'23%' },
       margin:'10px 2% 15px 0',
       minWidth: '200px',
       maxHeight:'120px',

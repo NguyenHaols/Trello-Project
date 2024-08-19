@@ -321,10 +321,13 @@ function CardDetail({ board, card, open, handleClose }) {
 
 
   return (
-    <Dialog sx={{ zIndex:1000, margin:'0 auto', '& .MuiPaper-root':{ minWidth:'700px' } }} open={open} onClose={handleClose}>
+    <Dialog sx={{ zIndex:1000, margin:'0 auto', '& .MuiPaper-root':{ minWidth:['100%', '700px'], minHeight: ['100vh', '0'] } }} open={open} onClose={handleClose}>
       <Box>
-        <DialogTitle> {card.title} </DialogTitle>
-        <DialogContent onClick={(e) => {handleClickOutSide(e)}} sx={{ display:'flex', overflow:'hidden', pb:'70px' }}>
+        <DialogTitle sx={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+          {card.title}
+          <IconButton onClick={(e) => {handleClose()}} ><CloseIcon  sx={{ display:['block', 'none'] }} /> </IconButton>
+        </DialogTitle>
+        <DialogContent  sx={{ display:'flex', overflow:'hidden', pb:'70px' }}>
           <Box sx={{ flex:'8', paddingRight:'15px' }}>
 
             <Box sx={{ marginBottom:'30px' }}>

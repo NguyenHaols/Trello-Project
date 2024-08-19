@@ -16,6 +16,8 @@ import UserProfile from './pages/User/UserProfile/UserProfile'
 import ChangePassword from './pages/User/ChangePassword/ChangePassword'
 import ErrorPage from './pages/Error/ErrorPage'
 import Auth20 from './pages/Auth/auth20/Auth20'
+import MemberPage from './pages/Home/WorkspaceContent/Members/MemberPage'
+import Boards from './pages/Home/WorkspaceContent/Boards/Boards'
 
 function App() {
 
@@ -39,7 +41,21 @@ function App() {
         {
           path:'workspace/:id',
           element:<WorkspaceContent />,
-          errorElement: <ErrorPage />
+          errorElement: <div></div>,
+          children: [
+            {
+              path:'boards',
+              element: <Boards />
+            },
+            {
+              path:'members',
+              element: <MemberPage />
+            },
+            {
+              path:'settings',
+              element: <Settings />
+            }
+          ]
         }
       ],
       errorElement: <ErrorPage />

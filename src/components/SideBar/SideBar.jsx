@@ -1,30 +1,42 @@
-import { Box } from '@mui/material'
+import { Box, IconButton, Typography } from '@mui/material'
 import Menu from './Menu/Menu'
 import Workspace from './Menu/Workspace'
 import { useState } from 'react'
 import { ActiveContextBtn } from '~/Contexts/Context'
 import { useSelector } from 'react-redux'
+import CloseIcon from '@mui/icons-material/Close'
 
-
-function SideBar() {
+function SideBar({sideBarMobileClose, isSideBarMobileOpen}) {
   const [activeBtn, setActiveBtn] = useState('board')
   const user = useSelector(state => state.user)
   const data = user
-  const currentUserId = data._id 
+  const currentUserId = data._id
   const workspaces = [...data.workspaces]
   return (
     <ActiveContextBtn.Provider value={{ activeBtn, setActiveBtn }}>
 
       <Box className='sideBar'
         sx={{
-          width:'25%',
-          height:'85vh',
-          padding: '0 16px',
-          position:'sticky',
-          top:'100px',
-          overflow:'hidden'
+          width:['100%', '25%'],
+          height:['100vh','85vh'],
+          padding: ['16px 16px', '0 16px'],
+          position:['fixed', 'sticky'],
+          top:['0', '100px'],
+          left:{ xs:'0' },
+          overflow:'hidden',
+          zIndex:['1000', '0'],
+          bgcolor:['white', 'none'],
+          display:[`${isSideBarMobileOpen? 'block' : 'none'}`, 'block']
         }}
       >
+        <Box sx={{
+          display:['block', 'none'],
+          textAlign:'right'
+        }}>
+          <IconButton onClick={sideBarMobileClose}>
+            <CloseIcon sx={{fontSize:'32px'}} />
+          </IconButton>
+        </Box>
         <Menu />
         {workspaces.length ?
           <>

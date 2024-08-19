@@ -90,7 +90,7 @@ function Column({ board, column, createNewCard, deleteColumn }) {
   })
 
   const dndKitColumnStyle = {
-    touchAction:'none',
+    // touchAction:'none',
     transform: CSS.Translate.toString(transform),
     transition,
     height:'100%',

@@ -19,7 +19,7 @@ function Forgot() {
   const handleSendEmail = () => {
     sendEmailAPI({ email:email })
       .then(res => {
-        console.log(res)
+        // console.log(res)
       })
       .catch((error) => {
         console.log('🚀 ~ handleSendEmail ~ error:', error)
@@ -35,7 +35,7 @@ function Forgot() {
         justifyContent:'space-around',
         flexDirection:'column',
         alignItems:'center',
-        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
+        boxShadow: ['unset', '0px 4px 10px rgba(0, 0, 0, 0.2)'],
         width:'80%',
         height:'80%'
       }}>
