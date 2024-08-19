@@ -13,6 +13,7 @@ import { useNavigate, useOutletContext } from 'react-router-dom'
 
 function Settings() {
   const { workspace, ownerWorkspace } = useOutletContext()
+  console.log('🚀 ~ Settings ~ workspace:', workspace)
   const dispatch = useDispatch()
   const confirmDeleteWorkspace = useConfirm()
   const navigate = useNavigate()
@@ -25,9 +26,9 @@ function Settings() {
     })
       .then( () => {
         navigate('/')
-        deleteWorkspaceAPI({ _id:workspace._id })
+        deleteWorkspaceAPI({ _id:workspace[0]._id })
           .then( () => {
-            const action = removeWorkspaceAction(workspace._id)
+            const action = removeWorkspaceAction(workspace[0]._id)
             dispatch(action)
             toast.success('Delete successfully')
           } )

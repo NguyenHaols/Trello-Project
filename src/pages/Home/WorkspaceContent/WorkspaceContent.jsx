@@ -34,6 +34,7 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import socket from '~/socket/socket'
 import MemberPage from './Members/MemberPage'
+import { useConfirm } from 'material-ui-confirm'
 
 
 function WorkspaceContent() {
@@ -110,8 +111,18 @@ function WorkspaceContent() {
     getMembersByWorkspaceIdAPI(workspace[0]._id)
       .then(data => {
         const action = setMemberAction(data)
+        setType(workspace[0].type)
+        setEditWorkspace(false)
         dispatch(action)
       })
+
+    workspaceFormik.resetForm({
+      values: {
+        workspaceTitle: workspace[0].title || '',
+        description: workspace[0].description || ''
+      }
+    })
+
 
     return () => {
       const action = clearMemberAction()
@@ -177,6 +188,21 @@ function WorkspaceContent() {
         })
     }
   })
+
+  const updateConfirm = useConfirm()
+  const handleSubmitUpdate = () => {
+    console.log("first")
+    updateConfirm({
+      title: 'Update workspace',
+      content: 'Are you sure you want to update ?'
+    })
+      .then(() => {
+        workspaceFormik.handleSubmit()
+      })
+      .catch(() => {
+
+      })
+  }
 
   // console.log(workspaceFormik.initialValues)
 
@@ -369,7 +395,7 @@ function WorkspaceContent() {
                     bgcolor: (theme) => theme.palette.primary[500],
                     '&:hover': { bgcolor: (theme) => theme.palette.primary[800] }
                   }}
-                  type='submit'
+                  onClick={() => {handleSubmitUpdate()}}
                 >
                   Update
                 </Button>
@@ -380,9 +406,9 @@ function WorkspaceContent() {
       </Box>
 
       {/* starred board  */}
-      
+
       {/* all boards in this workspace */}
-      
+
 
       {/* Member in this workspace */}
       {/* <MemberPage members={members} workspace={workspace} ownerWorkspace={ownerWorkspace} currentUserId={currentUserId} user={user} /> */}
