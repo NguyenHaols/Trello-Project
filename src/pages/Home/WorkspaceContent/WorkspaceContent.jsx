@@ -191,7 +191,6 @@ function WorkspaceContent() {
 
   const updateConfirm = useConfirm()
   const handleSubmitUpdate = () => {
-    console.log("first")
     updateConfirm({
       title: 'Update workspace',
       content: 'Are you sure you want to update ?'

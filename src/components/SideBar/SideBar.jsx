@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { ActiveContextBtn } from '~/Contexts/Context'
 import { useSelector } from 'react-redux'
 import CloseIcon from '@mui/icons-material/Close'
+import { useTheme } from '@emotion/react'
 
 function SideBar({sideBarMobileClose, isSideBarMobileOpen}) {
   const [activeBtn, setActiveBtn] = useState('board')
@@ -12,6 +13,9 @@ function SideBar({sideBarMobileClose, isSideBarMobileOpen}) {
   const data = user
   const currentUserId = data._id
   const workspaces = [...data.workspaces]
+  const theme = useTheme()
+  const textColor = theme.palette.text.primary
+  const mainColor = theme.palette.primary.main
   return (
     <ActiveContextBtn.Provider value={{ activeBtn, setActiveBtn }}>
 
@@ -23,10 +27,10 @@ function SideBar({sideBarMobileClose, isSideBarMobileOpen}) {
           position:['fixed', 'sticky'],
           top:['0', '100px'],
           left:{ xs:'0' },
-          overflow:'hidden',
+          overflow:'auto',
           zIndex:['1000', '0'],
-          bgcolor:['white', 'none'],
-          display:[`${isSideBarMobileOpen? 'block' : 'none'}`, 'block']
+          bgcolor:['white', 'unset'],
+          display:[`${isSideBarMobileOpen? 'block' : 'none'}`, 'block'],
         }}
       >
         <Box sx={{

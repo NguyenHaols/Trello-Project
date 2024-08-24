@@ -54,7 +54,7 @@ function CardItem({ board, card, handleClickOpenDialog, handleCloseDialog }) {
 
 
   const shouldShowCardActions = () => {
-    return !!card?.members?.length || !!card?.comments?.length || !!card?.attachments?.length
+    return !!card?.members?.length || !!card?.comments?.length || !!card?.tasks?.length
   }
 
   return (

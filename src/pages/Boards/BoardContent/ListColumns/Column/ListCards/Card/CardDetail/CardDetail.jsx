@@ -1,4 +1,4 @@
-import { Avatar, AvatarGroup, Box, Button, Checkbox, colors, Dialog, DialogContent, DialogTitle, IconButton, InputAdornment, Menu, MenuItem, Popover, Select, TextField, Tooltip, Typography } from '@mui/material'
+import { Avatar, AvatarGroup, Box, Button, Checkbox, colors, Dialog, DialogContent, DialogTitle, IconButton, InputAdornment, LinearProgress, Menu, MenuItem, Popover, Select, TextField, Tooltip, Typography } from '@mui/material'
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import PeopleIcon from '@mui/icons-material/People'
@@ -18,11 +18,14 @@ import 'react-datepicker/dist/react-datepicker.css'
 import { useTheme } from '@emotion/react'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import Member from './Member/Member'
+import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import MemberAssign from './Member/MemberAssign'
 
 function CardDetail({ board, card, open, handleClose }) {
   const dispath = useDispatch()
   const user = useSelector(state => state.user)
   const date = new Date(card.deadline)
+  const dateNow = new Date()
   const dayIndex = date.getDay()
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thurday', 'Friday', 'Saturday']
   const day = days[dayIndex]
@@ -37,8 +40,10 @@ function CardDetail({ board, card, open, handleClose }) {
   const [statusCard, setStatusCard] = useState('Still Good')
   const [description, setDescription] = useState(card.description)
   const [selectedDate, setSelectedDate] = useState(date)
+  const [usernameFilter, setUsernameFilter] = useState('')
   const [task, setTask] = useState('')
   const [menuCmtId, setMenuCmtId] = useState(null)
+  const [userTaskEl, setUserTaskEl] = useState(null)
   const confirmDeleteCard = useConfirm()
   const confirmDeleteTask = useConfirm()
   const dispatch = useDispatch()
@@ -54,6 +59,7 @@ function CardDetail({ board, card, open, handleClose }) {
   const cmtId = useRef(menuCmtId)
   const [contentEditingCmt, setContentEditingCmt] = useState('')
   const [buttonSubmit, setButtonSubmit] = useState(true)
+  const deadlineDate = new Date(selectedDate)
   // console.log('first',card)
   const handleEditCmt = (content) => {
     setCommentEditing(true)
@@ -67,6 +73,13 @@ function CardDetail({ board, card, open, handleClose }) {
     }
   }
 
+  const handlePopOverUserTask = (e) => {
+    setUserTaskEl(e.currentTarget)
+  }
+
+  const handleCloseUserTask = () => {
+    setUserTaskEl(null)
+  }
 
   const handleOpenMenuCmt = (e, id) => {
     if (menuCmtId) {
@@ -94,6 +107,12 @@ function CardDetail({ board, card, open, handleClose }) {
       _id: card._id,
       deadline : selectedDate
     }
+    if (dateNow.getTime() < deadlineDate.getTime()) {
+      data.status = 'Good'
+    }
+    if (dateNow.getTime() > deadlineDate.getTime()) {
+      data.status = 'Over Time'
+    }
     setButtonSubmit(false)
     updateCardAPI(data)
       .then(res => {
@@ -101,11 +120,14 @@ function CardDetail({ board, card, open, handleClose }) {
         toast.success('Update successfully')
         handleClosePopover()
         const action = updateDeadlineCardAction(res._id, res.deadline)
+        const action2 = updateStatusCardAction(res._id, res.status)
         dispath(action)
+        dispath(action2)
       })
       .catch(error => {
         toast.error('some thing wrong!')
       })
+
   }
 
   const handleDeleteCardSubmit = () => {
@@ -264,6 +286,7 @@ function CardDetail({ board, card, open, handleClose }) {
     }
   }
 
+
   const handleDeleteComment = (cmtId) => {
     handleCloseMenuCmt()
     deleteCmtConfirm({
@@ -319,15 +342,55 @@ function CardDetail({ board, card, open, handleClose }) {
       })
   }
 
+  const percentOfCompleteTask = () => {
+    let count = 0
+    card.tasks.forEach(task => {
+      if (task.taskStatus === true) {
+        count++
+      }
+    })
+    const percent = card.tasks.length > 0 ? (count / card.tasks.length) * 100 : 0
+    return Number(percent.toFixed(0))
+  }
+
+  const checkOverTimeCard = () => {
+    if (date.getTime() < dateNow.getTime()) {
+      const data = {
+        _id: card._id,
+        status : 'Over Time'
+      }
+      updateCardAPI(data)
+        .then(res => {
+          const action = updateStatusCardAction(res._id, res.status)
+          dispath(action)
+        })
+        .catch(error => {
+          toast.error('some thing wrong!')
+        })
+    }
+  }
+
+
+
+  const filterMemberAssign = card.members.filter(member => {
+
+    if (member.email.toLowerCase().includes(usernameFilter.toLowerCase())) {
+      return member
+    }
+  })
+
+  useEffect(() => {
+    checkOverTimeCard()
+  }, [])
 
   return (
     <Dialog sx={{ zIndex:1000, margin:'0 auto', '& .MuiPaper-root':{ minWidth:['100%', '700px'], minHeight: ['100vh', '0'] } }} open={open} onClose={handleClose}>
       <Box>
         <DialogTitle sx={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
           {card.title}
-          <IconButton onClick={(e) => {handleClose()}} ><CloseIcon  sx={{ display:['block', 'none'] }} /> </IconButton>
+          <IconButton onClick={(e) => {handleClose()}} ><CloseIcon sx={{ display:['block', 'none'] }} /> </IconButton>
         </DialogTitle>
-        <DialogContent  sx={{ display:'flex', overflow:'hidden', pb:'70px' }}>
+        <DialogContent sx={{ display:'flex', overflow:'hidden', pb:'70px' }}>
           <Box sx={{ flex:'8', paddingRight:'15px' }}>
 
             <Box sx={{ marginBottom:'30px' }}>
@@ -349,7 +412,7 @@ function CardDetail({ board, card, open, handleClose }) {
             </Box>
 
             <Box sx={{ display:'flex', marginBottom:'30px' }}>
-              <Box sx={{ marginRight:'20px' }}>
+              <Box sx={{ marginRight:'70px' }}>
                 <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
                   <HourglassBottomIcon sx={{ marginRight:'2px', color:(theme) => theme.palette.primary[500] }} />
                   <Typography>STATUS TASK</Typography>
@@ -380,20 +443,76 @@ function CardDetail({ board, card, open, handleClose }) {
                 <AssignmentIcon sx={{ marginRight:'4px', color:(theme) => theme.palette.primary[500] }} />
                 <Typography>TASK LIST</Typography>
               </Box>
+              <Box sx={{ display:'flex', alignItems:'center' }}>
+                <Typography>{percentOfCompleteTask()}%</Typography>
+                <Box sx={{ width:'100%', p:'0 10px' }}>
+                  <LinearProgress variant="determinate" value={percentOfCompleteTask()} sx={{ height:'10px', borderRadius:'10px' }} />
+                </Box>
+              </Box>
               {card.tasks.map((task, index) => {
                 return (
                   <Box key={index} sx={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                    <Box sx={{ display:'flex', alignItems:'center' }}>
+                    <Box >
                       <Checkbox onChange={(event) => handleTaskList(task.taskName, task.taskStatus, event)} checked={task.taskStatus} sx={{ color:'#ccc' }} />
-                      <Typography> {task.taskName} </Typography>
                     </Box>
-                    {isMembersInCard || ownerBoard && (
-                      <Box>
-                        <IconButton onClick={() => {handleRemoveTask(card._id, task.taskName)}}>
-                          <CloseIcon />
-                        </IconButton>
-                      </Box>
-                    )}
+                    <Box sx={{ display:'flex', alignItems:'center', justifyContent:'space-between', width:'100%' }}>
+                      <Typography> {task.taskName} </Typography>
+
+                      {(isMembersInCard || ownerBoard) && (
+                        <Box>
+                          <>
+                            <IconButton>
+                              <AccessTimeIcon />
+                            </IconButton>
+                          </>
+                          <>
+                            <IconButton aria-describedby='userTaskEl' onClick={(e) => {handlePopOverUserTask(e)}}>
+                              <PersonAddIcon />
+                            </IconButton>
+                            <Popover id='userTaskEl' open={Boolean(userTaskEl)} anchorEl={userTaskEl} onClose={handleCloseUserTask}
+                              anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left'
+                              }}
+                              sx={{
+                                zIndex:1300,
+                                '& .MuiPopover-paper' : {
+                                  boxShadow:'0px 4px 10px rgba(0, 0, 0, 0.2)'
+                                }
+                              }}
+                            >
+                              <Box sx={{
+                                width:'304px', height:'230px'
+                              }}>
+                                <Box sx={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                                  <Typography sx={{ width:'90%', textAlign:'center' }}>Assign</Typography>
+                                  <IconButton onClick={handleCloseUserTask}> <CloseIcon /> </IconButton>
+                                </Box>
+                                <Box sx={{ p:'10px 10px' }}>
+                                  <Box >
+                                    <TextField onChange={(e) => {setUsernameFilter(e.target.value)}} size='small' sx={{ width:'100%', pb:'10px' }}/>
+                                  </Box>
+                                  <Typography>Card members</Typography>
+                                  <Box>
+                                    {filterMemberAssign.map((member) => {
+                                      return (
+                                        <MemberAssign key={member._id} member={member} />
+                                      )
+                                    })}
+                                  </Box>
+                                </Box>
+                              </Box>
+                            </Popover>
+                          </>
+                          <>
+                            <IconButton onClick={() => {handleRemoveTask(card._id, task.taskName)}}>
+                              <CloseIcon />
+                            </IconButton>
+                          </>
+                        </Box>
+                      )}
+                    </Box>
+
 
                   </Box>
                 )
@@ -530,7 +649,7 @@ function CardDetail({ board, card, open, handleClose }) {
               )}
 
 
-              <Box id='status-task' onClick={(event) => handleClick(event, 'status-task')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
+              {/* <Box id='status-task' onClick={(event) => handleClick(event, 'status-task')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
                 <Box sx={{ cursor:'pointer', textAlign:'center' }}>Status Task</Box>
                 <Popover
                   sx={{
@@ -579,7 +698,7 @@ function CardDetail({ board, card, open, handleClose }) {
                     </Box>
                   </Box>
                 </Popover>
-              </Box>
+              </Box> */}
               <Box id='deadline-card' onClick={(event) => handleClick(event, 'deadline-card')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
                 <Box sx={{ cursor:'pointer', textAlign:'center' }}>Deadline</Box>
                 <Popover
@@ -680,9 +799,11 @@ function CardDetail({ board, card, open, handleClose }) {
                   </Box>
                 </Popover>
               </Box>
-              <Box onClick={handleDeleteCardSubmit} sx={{ backgroundColor:(theme) => theme.palette.primary[500], textAlign:'center', marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-              Delete Card
-              </Box>
+              {ownerBoard && (
+                <Box onClick={handleDeleteCardSubmit} sx={{ backgroundColor:(theme) => theme.palette.primary[500], textAlign:'center', marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
+                Delete Card
+                </Box>
+              )}
             </Box>
           )}
         </DialogContent>

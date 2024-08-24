@@ -25,7 +25,6 @@ function BoardCard({ data }) {
     }}>
       <CardActionArea sx={{
         position:'relative'
-
       }}>
         <CardMedia
           component="img"

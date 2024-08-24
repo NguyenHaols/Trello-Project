@@ -166,7 +166,7 @@ function AppBar({sideBarMobileActive}) {
       overflow:'hidden',
       position: 'sticky',
       top:0,
-      zIndex:10,
+      zIndex:0,
       borderBottom: '1px solid hsla(218, 54%, 19.6%, 0.16)'
     }}>
 

@@ -2,7 +2,6 @@ import Board from '~/pages/Boards/Boards'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import DefaultLayout from './components/Layout/DefaultLayout/DefaultLayout'
 import DashBoardContent from './pages/Home/DashBoardContent/DashBoardContent'
-import HomeContent from './pages/Home/HomeContent/HomeContent'
 import WorkspaceContent from './pages/Home/WorkspaceContent/WorkspaceContent'
 import Auth from './pages/Auth/Auth'
 import Login from './pages/Auth/Login/Login'
@@ -18,6 +17,7 @@ import ErrorPage from './pages/Error/ErrorPage'
 import Auth20 from './pages/Auth/auth20/Auth20'
 import MemberPage from './pages/Home/WorkspaceContent/Members/MemberPage'
 import Boards from './pages/Home/WorkspaceContent/Boards/Boards'
+import { Box } from '@mui/material'
 
 function App() {
 
@@ -35,13 +35,9 @@ function App() {
           element: <DashBoardContent/>
         },
         {
-          path:'home',
-          element: <HomeContent/>
-        },
-        {
           path:'workspace/:id',
           element:<WorkspaceContent />,
-          errorElement: <div></div>,
+          errorElement: <Box sx={{display:'flex', justifyContent:'center', alignItems:'center'}}> You are no longer a member of this workspace </Box>,
           children: [
             {
               path:'boards',

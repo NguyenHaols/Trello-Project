@@ -4,6 +4,7 @@ import { Box, Typography } from '@mui/material'
 import BoardCard from '../../DashBoardContent/BoardCard/BoardCard'
 import TitleAllBoard from '../Title/TitleAllBoard'
 import StarIcon from '@mui/icons-material/Star'
+import NewBoardBtn from './newBoardBtn/NewBoardBtn'
 
 function Boards() {
   const { workspace, starredBoards } = useOutletContext()
@@ -39,6 +40,7 @@ function Boards() {
               marginBottom: '20px'
             }}
           >
+            <NewBoardBtn workspace={workspace[0]} />
             {workspace[0].boards.map((b) => (
               <BoardCard key={b._id} data={b} />
             ))}
@@ -63,6 +65,8 @@ function Boards() {
               Create some board to use
             </Typography>
           </Box>
+          <NewBoardBtn workspace={workspace[0]} />
+
         </>
       )}
 
