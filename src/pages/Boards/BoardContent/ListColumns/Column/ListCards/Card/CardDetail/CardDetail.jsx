@@ -7,9 +7,9 @@ import CommentIcon from '@mui/icons-material/Comment'
 import SendIcon from '@mui/icons-material/Send'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import { useDispatch, useSelector } from 'react-redux'
-import { addCommentAPI, addMemberCardAPI, addTaskCardAPI, deleteCardAPI, deleteCommentAPI, removeTaskCardAPI, updateCardAPI, updateCommentAPI, updateTaskCardAPI } from '~/apis'
+import { addCommentAPI, addMemberCardAPI, addTaskCardAPI, deleteCardAPI, deleteCommentAPI, removeTaskCardAPI, updateCardAPI, updateCommentAPI, updateTaskAssignCardAPI, updateTaskCardAPI } from '~/apis'
 import { useEffect, useRef, useState } from 'react'
-import { addCommentAction, addMemberCardAction, addTaskCardAction, removeCardAction, removeCommentAction, removeTaskCardAction, updateCommentAction, updateDeadlineCardAction, updateDescriptionCardAction, updateStatusCardAction, updateTaskListCardAction } from '~/redux/actions/boardAction'
+import { addCommentAction, addMemberCardAction, addTaskCardAction, removeCardAction, removeCommentAction, removeTaskCardAction, updateCommentAction, updateDeadlineCardAction, updateDescriptionCardAction, updateStatusCardAction, updateTaskCardAssignAction, updateTaskListCardAction } from '~/redux/actions/boardAction'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
@@ -18,8 +18,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 import { useTheme } from '@emotion/react'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import Member from './Member/Member'
-import PersonAddIcon from '@mui/icons-material/PersonAdd'
-import MemberAssign from './Member/MemberAssign'
+import TaskList from './TaskList/TaskList'
 
 function CardDetail({ board, card, open, handleClose }) {
   const dispath = useDispatch()
@@ -40,12 +39,9 @@ function CardDetail({ board, card, open, handleClose }) {
   const [statusCard, setStatusCard] = useState('Still Good')
   const [description, setDescription] = useState(card.description)
   const [selectedDate, setSelectedDate] = useState(date)
-  const [usernameFilter, setUsernameFilter] = useState('')
   const [task, setTask] = useState('')
   const [menuCmtId, setMenuCmtId] = useState(null)
-  const [userTaskEl, setUserTaskEl] = useState(null)
   const confirmDeleteCard = useConfirm()
-  const confirmDeleteTask = useConfirm()
   const dispatch = useDispatch()
   const theme = useTheme()
   const textColor = theme.palette.text.primary
@@ -60,7 +56,6 @@ function CardDetail({ board, card, open, handleClose }) {
   const [contentEditingCmt, setContentEditingCmt] = useState('')
   const [buttonSubmit, setButtonSubmit] = useState(true)
   const deadlineDate = new Date(selectedDate)
-  // console.log('first',card)
   const handleEditCmt = (content) => {
     setCommentEditing(true)
     handleCloseMenuCmt()
@@ -73,13 +68,9 @@ function CardDetail({ board, card, open, handleClose }) {
     }
   }
 
-  const handlePopOverUserTask = (e) => {
-    setUserTaskEl(e.currentTarget)
-  }
 
-  const handleCloseUserTask = () => {
-    setUserTaskEl(null)
-  }
+
+  
 
   const handleOpenMenuCmt = (e, id) => {
     if (menuCmtId) {
@@ -202,27 +193,23 @@ function CardDetail({ board, card, open, handleClose }) {
     }
     setButtonSubmit(false)
     addTaskCardAPI(data)
-      .then( () => {
+      .then( (res) => {
+        const tasks = res.tasks
+        const dataAction = {
+          cardId: card._id,
+          newTask: {
+            ...tasks[tasks.length-1]
+          }
+        }
         setButtonSubmit(true)
-        const action = addTaskCardAction(data)
+        const action = addTaskCardAction(dataAction)
         dispatch(action)
         handleClosePopover()
         setTask('')
       })
   }
 
-  const handleTaskList = (taskName, taskStatus) => {
-    const data = {
-      cardId: card._id,
-      taskName : taskName,
-      taskStatus: !taskStatus
-    }
-    updateTaskCardAPI(data)
-      .then(res => {
-        const action = updateTaskListCardAction(card._id, taskName, taskStatus)
-        dispatch(action)
-      })
-  }
+  
 
   const handleUpdateCardDescriptionSubmit = () => {
     const data = {
@@ -321,26 +308,7 @@ function CardDetail({ board, card, open, handleClose }) {
       })
   }
 
-  const handleRemoveTask = (cardId, taskName) => {
-    const data = {
-      cardId,
-      taskName
-    }
-    confirmDeleteTask({
-      title:'Delete task',
-      content:'Are you sure you want to delete this task',
-      dialogProps: {
-        sx:{ zIndex:1500 }
-      }
-    })
-      .then(() => {
-        removeTaskCardAPI(data)
-          .then(res => {
-            const action = removeTaskCardAction(cardId, taskName)
-            dispath(action)
-          })
-      })
-  }
+ 
 
   const percentOfCompleteTask = () => {
     let count = 0
@@ -370,14 +338,11 @@ function CardDetail({ board, card, open, handleClose }) {
     }
   }
 
+ 
 
 
-  const filterMemberAssign = card.members.filter(member => {
 
-    if (member.email.toLowerCase().includes(usernameFilter.toLowerCase())) {
-      return member
-    }
-  })
+ 
 
   useEffect(() => {
     checkOverTimeCard()
@@ -449,72 +414,9 @@ function CardDetail({ board, card, open, handleClose }) {
                   <LinearProgress variant="determinate" value={percentOfCompleteTask()} sx={{ height:'10px', borderRadius:'10px' }} />
                 </Box>
               </Box>
-              {card.tasks.map((task, index) => {
+              {card.tasks.map((task) => {
                 return (
-                  <Box key={index} sx={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                    <Box >
-                      <Checkbox onChange={(event) => handleTaskList(task.taskName, task.taskStatus, event)} checked={task.taskStatus} sx={{ color:'#ccc' }} />
-                    </Box>
-                    <Box sx={{ display:'flex', alignItems:'center', justifyContent:'space-between', width:'100%' }}>
-                      <Typography> {task.taskName} </Typography>
-
-                      {(isMembersInCard || ownerBoard) && (
-                        <Box>
-                          <>
-                            <IconButton>
-                              <AccessTimeIcon />
-                            </IconButton>
-                          </>
-                          <>
-                            <IconButton aria-describedby='userTaskEl' onClick={(e) => {handlePopOverUserTask(e)}}>
-                              <PersonAddIcon />
-                            </IconButton>
-                            <Popover id='userTaskEl' open={Boolean(userTaskEl)} anchorEl={userTaskEl} onClose={handleCloseUserTask}
-                              anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left'
-                              }}
-                              sx={{
-                                zIndex:1300,
-                                '& .MuiPopover-paper' : {
-                                  boxShadow:'0px 4px 10px rgba(0, 0, 0, 0.2)'
-                                }
-                              }}
-                            >
-                              <Box sx={{
-                                width:'304px', height:'230px'
-                              }}>
-                                <Box sx={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                                  <Typography sx={{ width:'90%', textAlign:'center' }}>Assign</Typography>
-                                  <IconButton onClick={handleCloseUserTask}> <CloseIcon /> </IconButton>
-                                </Box>
-                                <Box sx={{ p:'10px 10px' }}>
-                                  <Box >
-                                    <TextField onChange={(e) => {setUsernameFilter(e.target.value)}} size='small' sx={{ width:'100%', pb:'10px' }}/>
-                                  </Box>
-                                  <Typography>Card members</Typography>
-                                  <Box>
-                                    {filterMemberAssign.map((member) => {
-                                      return (
-                                        <MemberAssign key={member._id} member={member} />
-                                      )
-                                    })}
-                                  </Box>
-                                </Box>
-                              </Box>
-                            </Popover>
-                          </>
-                          <>
-                            <IconButton onClick={() => {handleRemoveTask(card._id, task.taskName)}}>
-                              <CloseIcon />
-                            </IconButton>
-                          </>
-                        </Box>
-                      )}
-                    </Box>
-
-
-                  </Box>
+                  <TaskList key={task._id} task={task} card={card} isMembersInCard={isMembersInCard} ownerBoard={ownerBoard} />
                 )
               })}
 

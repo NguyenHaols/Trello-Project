@@ -137,7 +137,7 @@ const boardReducer = (state = initialState, action) => {
   }
 
   case 'REMOVE_TASK_CARD' : {
-    const { cardId, taskName } = action.payload
+    const { cardId, taskId } = action.payload
     const newState = {
       ...state,
       columns: state.columns.map(column => ({
@@ -146,7 +146,7 @@ const boardReducer = (state = initialState, action) => {
           if (card._id === cardId) {
             return {
               ...card,
-              tasks: card.tasks.filter(task => task.taskName !== taskName)
+              tasks: card.tasks.filter(task => task._id !== taskId)
             }
           }
           return card
@@ -221,7 +221,7 @@ const boardReducer = (state = initialState, action) => {
   }
 
   case 'UPDATE_CARD_TASK_LIST': {
-    const { cardId, taskName, taskStatus } = action.payload
+    const { cardId, taskId, taskStatus } = action.payload
     const newState = {
       ...state,
       columns: state.columns.map(column => ({
@@ -231,10 +231,40 @@ const boardReducer = (state = initialState, action) => {
             const updatedCard = {
               ...card,
               tasks: card.tasks.map(task => {
-                if (task.taskName === taskName) {
+                if (task._id === taskId) {
                   return {
                     ...task,
                     taskStatus: !taskStatus
+                  }
+                }
+                return task
+              })
+            }
+            return updatedCard
+          }
+          return card
+        })
+      }))
+    }
+    return newState
+  }
+
+  case 'UPDATE_CARD_TASK_ASSIGN_LIST': {
+    const { cardId, taskId, userId } = action.payload
+    console.log(taskId)
+    const newState = {
+      ...state,
+      columns: state.columns.map(column => ({
+        ...column,
+        cards: column.cards.map(card => {
+          if (card._id === cardId) {
+            const updatedCard = {
+              ...card,
+              tasks: card.tasks.map(task => {
+                if (task._id === taskId) {
+                  return {
+                    ...task,
+                    userId: userId
                   }
                 }
                 return task

@@ -93,6 +93,11 @@ export const updateTaskCardAPI = async (data) => {
   return response.data
 }
 
+export const updateTaskAssignCardAPI = async (data) => {
+  const response = await axios.post(`${API_ROOT}/v1/cards/updateTaskAssign`, data)
+  return response.data
+}
+
 export const addTaskCardAPI = async (data) => {
   const response = await axios.post(`${API_ROOT}/v1/cards/addTask`, data)
   return response.data
