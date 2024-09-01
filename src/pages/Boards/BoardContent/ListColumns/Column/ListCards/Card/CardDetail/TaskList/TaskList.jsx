@@ -1,22 +1,30 @@
-import { Avatar, Box, Button, Checkbox, IconButton, Popover, TextField, Typography } from '@mui/material'
+import { Avatar, Box, Button, Checkbox, IconButton, Popover, TextField, Tooltip, Typography } from '@mui/material'
 import MemberAssign from '../Member/MemberAssign'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
-import { removeTaskCardAPI, updateTaskAssignCardAPI, updateTaskCardAPI } from '~/apis'
-import { removeTaskCardAction, updateTaskCardAssignAction, updateTaskListCardAction } from '~/redux/actions/boardAction'
+import { removeTaskCardAPI, updateTaskAssignCardAPI, updateTaskCardAPI, updateTaskTimeCardAPI } from '~/apis'
+import { removeTaskCardAction, updateTaskCardAssignAction, updateTaskDeadlineCardAction, updateTaskListCardAction } from '~/redux/actions/boardAction'
 import { useDispatch } from 'react-redux'
 import { useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import { useConfirm } from 'material-ui-confirm'
+import Datepicker from 'react-datepicker'
+import { toast } from 'react-toastify'
 
-
-function TaskList({ task, isMembersInCard, ownerBoard,card }) {
+function TaskList({ task, isMembersInCard, ownerBoard, card }) {
   const dispatch = useDispatch()
   const [userTaskEl, setUserTaskEl] = useState(null)
+  const [timeTaskEl, setTimeTaskEl] = useState(null)
+  const [selectedDate, setSelectedDate] = useState(null)
   const [usernameFilter, setUsernameFilter] = useState('')
   const confirmDeleteTask = useConfirm()
 
   const handleTaskList = (taskId, taskStatus) => {
+
+    if ( !(isMembersInCard || ownerBoard)) {
+      return toast.info('You don\'t have permission to check task ')
+    }
+
     const data = {
       cardId: card._id,
       taskId : taskId,
@@ -35,6 +43,14 @@ function TaskList({ task, isMembersInCard, ownerBoard,card }) {
 
   const handleCloseUserTask = () => {
     setUserTaskEl(null)
+  }
+
+  const handlePopOverTimeTask = (e) => {
+    setTimeTaskEl(e.currentTarget)
+  }
+
+  const handleCloseTimeTask = () => {
+    setTimeTaskEl(null)
   }
 
   const getUserAssign = (userId) => {
@@ -83,6 +99,29 @@ function TaskList({ task, isMembersInCard, ownerBoard,card }) {
           })
       })
   }
+
+  const handleCaculateColorTimeTask = (deadline) => {
+    const date = new Date(deadline)
+    const dateNow = new Date()
+
+    return date.getTime() < dateNow.getTime() ? '#cc3300' : '#99cc33'
+  }
+
+  const handleUpdateTaskTime = (taskId) => {
+    const data = {
+      cardId: card._id,
+      taskId: taskId,
+      deadline: selectedDate
+    }
+    updateTaskTimeCardAPI(data)
+      .then((res) => {
+        const action = updateTaskDeadlineCardAction(card._id, taskId, selectedDate)
+        dispatch(action)
+        handleCloseTimeTask()
+        toast.success('Update deadline task success')
+      })
+  }
+
   return (
     <Box key={task._id} sx={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
       <Box >
@@ -91,11 +130,59 @@ function TaskList({ task, isMembersInCard, ownerBoard,card }) {
       <Box sx={{ display:'flex', alignItems:'center', justifyContent:'space-between', width:'100%' }}>
         <Typography> {task.taskName} </Typography>
         {(isMembersInCard || ownerBoard) && (
-          <Box>
+          <Box sx={{ display:'flex', alignItems:'center' }}>
             <>
-              <IconButton>
-                <AccessTimeIcon />
-              </IconButton>
+              {task?.deadline ? (
+                <Box sx={{ '&:hover': { opacity:.8 }, cursor:'pointer' }} aria-describedby='timeTaskEl' onClick={(e) => {handlePopOverTimeTask(e)}}>
+                  {task?.deadline
+                    ?
+                    (<Box sx={{ display:'flex', justifyContent:'center', alignItems:'center', color:'white', p:'5px 10px', minWidth:'68px', height:'24px', bgcolor:handleCaculateColorTimeTask(task.deadline), borderRadius:'14px' }}>
+                      <AccessTimeIcon sx={{ mr:'5px', fontSize:'16px' }}/>
+                      <Typography> {new Date(task.deadline).toLocaleDateString('vi', { day:'2-digit', month:'2-digit' })} </Typography>
+                    </Box>)
+                    :
+                    (<AccessTimeIcon />)}
+                </Box>
+              ) : (
+                <IconButton aria-describedby='timeTaskEl' onClick={(e) => {handlePopOverTimeTask(e)}}>
+                  {task?.deadline
+                    ?
+                    (<Box sx={{ display:'flex', justifyContent:'center', alignItems:'center', p:'5px 10px', minWidth:'68px', height:'24px', bgcolor:handleCaculateColorTimeTask(task.deadline), borderRadius:'14px' }}>
+                      <AccessTimeIcon sx={{ mr:'5px', fontSize:'16px' }}/>
+                      <Typography> {new Date(task.deadline).toLocaleDateString('vi', { day:'2-digit', month:'2-digit' })} </Typography>
+                    </Box>)
+                    :
+                    (<AccessTimeIcon />)}
+                </IconButton>
+
+              )}
+
+              <Popover id='timeTaskEl' open={Boolean(timeTaskEl)} anchorEl={timeTaskEl} onClose={handleCloseTimeTask}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right'
+                }}
+                sx={{
+                  zIndex:1300,
+                  '& .MuiPopover-paper' : {
+                    boxShadow:'0px 4px 10px rgba(0, 0, 0, 0.2)'
+                  }
+                }}
+              >
+                <Box sx={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                  <Typography sx={{ ml:'10%', width:'90%', textAlign:'center' }}>CHANGE DEADLINE</Typography>
+                  <IconButton onClick={handleCloseTimeTask}> <CloseIcon /> </IconButton>
+                </Box>
+                <Box sx={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'25px 30px' }}>
+                  <Datepicker selected={task?.deadline} inline onChange={data => setSelectedDate(data)} popperPlacement='bottom-start'/>
+                  <Button onClick={ () => handleUpdateTaskTime(task._id)} onChange={(data) => {setSelectedDate(data)}} sx={{ flex:'2', mt:'15px', marginLeft:'5px', color:'white', width:'100%', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
+                        Update
+                  </Button>
+                  <Button sx={{ flex:'2', mt:'15px', marginLeft:'5px', color:'white', width:'100%', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
+                        Remove
+                  </Button>
+                </Box>
+              </Popover>
             </>
             <>
               <IconButton aria-describedby='userTaskEl' onClick={(e) => {handlePopOverUserTask(e)}}>
@@ -104,7 +191,7 @@ function TaskList({ task, isMembersInCard, ownerBoard,card }) {
               <Popover id='userTaskEl' open={Boolean(userTaskEl)} anchorEl={userTaskEl} onClose={handleCloseUserTask}
                 anchorOrigin={{
                   vertical: 'bottom',
-                  horizontal: 'left'
+                  horizontal: 'right'
                 }}
                 sx={{
                   zIndex:1300,
@@ -117,12 +204,12 @@ function TaskList({ task, isMembersInCard, ownerBoard,card }) {
                   width:'304px', height:'270px'
                 }}>
                   <Box sx={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                    <Typography sx={{ width:'90%', textAlign:'center' }}>Assign</Typography>
+                    <Typography sx={{ ml:'10%', width:'90%', textAlign:'center' }}>ASSIGN</Typography>
                     <IconButton onClick={handleCloseUserTask}> <CloseIcon /> </IconButton>
                   </Box>
                   <Box sx={{ p:'10px 10px' }}>
                     <Box>
-                      <TextField onChange={(e) => {setUsernameFilter(e.target.value)}} size='small' sx={{ width:'100%', pb:'10px' }}/>
+                      <TextField placeholder='Enter email' onChange={(e) => {setUsernameFilter(e.target.value)}} size='small' sx={{ width:'100%', pb:'10px' }}/>
                     </Box>
                     <Typography>Card members</Typography>
                     <Box sx={{ minHeight:'90px', overflow:'auto' }}>

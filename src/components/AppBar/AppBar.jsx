@@ -26,14 +26,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import WorkspaceForm from './workspaceForm/WorkspaceForm'
 import { Avatar, Dialog, DialogContent, IconButton, Popover, Popper } from '@mui/material'
 import { useTheme } from '@emotion/react'
-import { getNotifiAPI, getUser } from '~/apis'
+import { getNotifiAPI, getUser, setIsReadAPI } from '~/apis'
 import { formatDistanceToNow } from 'date-fns'
 import { toast } from 'react-toastify'
 import socket from '~/socket/socket'
 import { setUser } from '~/redux/actions/userAction'
-import MenuIcon from '@mui/icons-material/Menu';
+import MenuIcon from '@mui/icons-material/Menu'
 
-function AppBar({sideBarMobileActive}) {
+function AppBar({ sideBarMobileActive }) {
   const user = useSelector(state => state.user)
   const workspaces = user?.workspaces
   const [searchValue, setSearchValue] = useState('')
@@ -42,6 +42,8 @@ function AppBar({sideBarMobileActive}) {
   const [notificationEl, setNotificationEl] = useState(null)
   const [notifications, setNotifications] = useState(null)
   const [activeNotification, setActiveNotification] = useState(false)
+  const [unReadNoti, setUnReadNoti] = useState(null)
+
   const openNotification = Boolean(notificationEl)
   const idNotification = openNotification ? 'Notification-popover' : undefined
   const navigate = useNavigate()
@@ -94,9 +96,22 @@ function AppBar({sideBarMobileActive}) {
     }
   }
 
-  const handleNavigateWorkspace = (id) => {
+  const handleNavigateWorkspace = (id, notiId) => {
     navigate(`workspace/${id}/boards`)
+    setIsReadAPI({ _id:notiId })
+      .then (() => {
+        const data = {
+          receiverId:user._id
+        }
+        getNotifiAPI(data)
+          .then(res => {
+            if (res.data.length > 0) {
+              setNotifications(res.data)
+            }
+          })
+      })
   }
+
 
   useEffect(() => {
     socket.on('connection', () => {
@@ -149,6 +164,13 @@ function AppBar({sideBarMobileActive}) {
       .then(res => {
         if (res.data.length > 0) {
           setNotifications(res.data)
+          let count = 0
+          res.data.forEach(noti => {
+            if (!noti.isRead) {
+              count = count + 1
+            }
+          })
+          count > 0 ? setUnReadNoti(count) : null
         }
       })
   }, [user])
@@ -215,13 +237,13 @@ function AppBar({sideBarMobileActive}) {
             InputProps={{
               startAdornment:(
                 <InputAdornment position="start">
-                  <SearchIcon sx={{color:(theme) => theme.palette.text.primary }} />
+                  <SearchIcon sx={{ color:(theme) => theme.palette.text.primary }} />
                 </InputAdornment>
               ),
               endAdornment:(
                 <InputAdornment position="end">
                   <CloseIcon
-                    sx={{fontSize:'small', color:searchValue? (theme) => theme.palette.text.primary: 'transparent', cursor:'pointer' }}
+                    sx={{ fontSize:'small', color:searchValue? (theme) => theme.palette.text.primary: 'transparent', cursor:'pointer' }}
                     onClick={handleCloseSearch}
                   />
                 </InputAdornment>
@@ -277,7 +299,7 @@ function AppBar({sideBarMobileActive}) {
         <ModeSelect />
         <Tooltip title="Notification">
           <IconButton aria-describedby={idNotification} onClick={handleClickNotificationEl}>
-            <Badge color="warning" invisible={!activeNotification} variant="dot" sx={{ cursor:'pointer' }}>
+            <Badge color="error" invisible={!unReadNoti} badgeContent={unReadNoti} sx={{ cursor:'pointer' }}>
               <NotificationsNoneIcon sx={{ color:(theme) => theme.palette.text.primary }} />
             </Badge>
           </IconButton>
@@ -302,7 +324,7 @@ function AppBar({sideBarMobileActive}) {
             </Box>
             {notifications && notifications.map(noti => {
               return (
-                <Button onClick={() => {handleNavigateWorkspace(noti.workspaceId)}} key={noti._id} sx={{
+                <Button onClick={() => {handleNavigateWorkspace(noti.workspaceId, noti._id)}} key={noti._id} sx={{
                   width:'100%',
                   display:'Block',
                   p:'10px 0',
@@ -310,13 +332,18 @@ function AppBar({sideBarMobileActive}) {
                   '&:hover':{
                     bgcolor: 'var(--mui-palette-action-hover)'
                   } }}>
-                  <Box sx={{ display:'block' }}>
-                    <Typography sx={{ textAlign: 'right', width: '100%', pr:'10px', color:mainColor }}>
-                      {formatDistanceToNow(new Date(noti.createdAt), { addSuffix: true }).replace('about', '')}
-                    </Typography></Box>
-                  <Box sx={{ display:'flex', alignItems:'center', textAlign:'left', pl:'5px', width:'100%' }}>
-                    <Avatar src={noti?.senderInfo?.avatar}/>
-                    <Typography sx={{ pl:'10px' }}>{noti.content} by <b>{noti.senderInfo.username}</b> </Typography>
+                  <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center' }}>
+                    <Box>
+                      <Box sx={{ display:'block' }}>
+                        <Typography sx={{ textAlign: 'right', width: '100%', pr:'10px', color:mainColor }}>
+                          {formatDistanceToNow(new Date(noti.createdAt), { addSuffix: true }).replace('about', '')}
+                        </Typography></Box>
+                      <Box sx={{ display:'flex', alignItems:'center', textAlign:'left', pl:'5px', width:'100%' }}>
+                        <Avatar src={noti?.senderInfo?.avatar}/>
+                        <Typography sx={{ pl:'10px' }}>{noti.content} by <b>{noti.senderInfo.username}</b> </Typography>
+                      </Box>
+                    </Box>
+                    <Box sx={{ bgcolor:noti.isRead ? 'unset' : mainColor, width:'12px', height:'12px', borderRadius:'50%' }}></Box>
                   </Box>
                 </Button>
               )

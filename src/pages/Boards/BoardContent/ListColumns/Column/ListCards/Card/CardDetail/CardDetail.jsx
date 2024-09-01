@@ -7,9 +7,9 @@ import CommentIcon from '@mui/icons-material/Comment'
 import SendIcon from '@mui/icons-material/Send'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import { useDispatch, useSelector } from 'react-redux'
-import { addCommentAPI, addMemberCardAPI, addTaskCardAPI, deleteCardAPI, deleteCommentAPI, removeTaskCardAPI, updateCardAPI, updateCommentAPI, updateTaskAssignCardAPI, updateTaskCardAPI } from '~/apis'
+import { addAttachCardAPI, addCommentAPI, addMemberCardAPI, addTaskCardAPI, deleteCardAPI, deleteCommentAPI, getMembersByWorkspaceIdAPI, removeTaskCardAPI, updateCardAPI, updateCommentAPI, updateTaskAssignCardAPI, updateTaskCardAPI, uploadFileAPI } from '~/apis'
 import { useEffect, useRef, useState } from 'react'
-import { addCommentAction, addMemberCardAction, addTaskCardAction, removeCardAction, removeCommentAction, removeTaskCardAction, updateCommentAction, updateDeadlineCardAction, updateDescriptionCardAction, updateStatusCardAction, updateTaskCardAssignAction, updateTaskListCardAction } from '~/redux/actions/boardAction'
+import { addAttachCardAction, addCommentAction, addMemberCardAction, addTaskCardAction, removeCardAction, removeCommentAction, removeTaskCardAction, updateCommentAction, updateDeadlineCardAction, updateDescriptionCardAction, updateStatusCardAction, updateTaskCardAssignAction, updateTaskListCardAction } from '~/redux/actions/boardAction'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
@@ -19,6 +19,12 @@ import { useTheme } from '@emotion/react'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import Member from './Member/Member'
 import TaskList from './TaskList/TaskList'
+import GroupIcon from '@mui/icons-material/Group'
+import CheckBoxIcon from '@mui/icons-material/CheckBox'
+import DeleteIcon from '@mui/icons-material/Delete'
+import AttachmentIcon from '@mui/icons-material/Attachment'
+import Attachment from './Attachment/Attachment'
+
 
 function CardDetail({ board, card, open, handleClose }) {
   const dispath = useDispatch()
@@ -28,17 +34,19 @@ function CardDetail({ board, card, open, handleClose }) {
   const dayIndex = date.getDay()
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thurday', 'Friday', 'Saturday']
   const day = days[dayIndex]
-  const formattedDate = `${date.getHours()}:${date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()} ${day} ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+  const formattedDate = `${day} ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
   const oldBoard = { ...board }
   const currentBoard = useRef(oldBoard)
   const ownerBoard = currentBoard.current.ownerId === user._id
   const isMembersInCard = Array.isArray(card?.members) && card?.members.some(member => member._id === user._id)
   const [cmtContent, setCmtContent] = useState('')
+  const [workspaceMember, setWorkspaceMember] = useState(null)
   const [memberEmail, setMemberEmail] = useState('')
   const [popoverInfo, setPopoverInfo] = useState(null)
   const [statusCard, setStatusCard] = useState('Still Good')
   const [description, setDescription] = useState(card.description)
   const [selectedDate, setSelectedDate] = useState(date)
+  const [fileAttach, setFileAttach] = useState(null)
   const [task, setTask] = useState('')
   const [menuCmtId, setMenuCmtId] = useState(null)
   const confirmDeleteCard = useConfirm()
@@ -68,9 +76,6 @@ function CardDetail({ board, card, open, handleClose }) {
     }
   }
 
-
-
-  
 
   const handleOpenMenuCmt = (e, id) => {
     if (menuCmtId) {
@@ -164,24 +169,6 @@ function CardDetail({ board, card, open, handleClose }) {
       })
   }
 
-  const handleMemberSubmit = () => {
-    const data = {
-      cardId : card._id,
-      email : memberEmail
-    }
-    addMemberCardAPI(data)
-      .then(res => {
-        const newUser = res.members[res.members.length-1]
-        const action = addMemberCardAction(card._id, newUser)
-        toast.success('Add member successfully')
-        dispath(action)
-        handleClosePopover()
-      })
-      .catch(error => {
-        const mesage = error.response.data.message
-        toast.error(mesage)
-      })
-  }
 
   const handleAddTaskSubmit = () => {
     const data = {
@@ -209,7 +196,6 @@ function CardDetail({ board, card, open, handleClose }) {
       })
   }
 
-  
 
   const handleUpdateCardDescriptionSubmit = () => {
     const data = {
@@ -258,6 +244,9 @@ function CardDetail({ board, card, open, handleClose }) {
     if (!('comments' in card)) {
       card.comments = []
     }
+    if (!('attachs' in card)) {
+      card.attachs = []
+    }
   }
   handleEmpty()
 
@@ -294,6 +283,11 @@ function CardDetail({ board, card, open, handleClose }) {
       })
   }
 
+  const isActivityMember = (member) => {
+    return !card.members.some(cmember => (cmember?._id === member._id))
+  }
+
+
   const handleUpdateComment = (cmtId, newContent) => {
     setCommentEditing(false)
     if ( !newContent ) return
@@ -308,7 +302,6 @@ function CardDetail({ board, card, open, handleClose }) {
       })
   }
 
- 
 
   const percentOfCompleteTask = () => {
     let count = 0
@@ -338,14 +331,57 @@ function CardDetail({ board, card, open, handleClose }) {
     }
   }
 
- 
+  const filterActivityMembers = () => {
+    if (!workspaceMember || workspaceMember.length === 0) {
+      return []
+    }
+    return workspaceMember.filter(member =>
+      !card.members.some(cardMember => cardMember._id === member._id)
+    )
+  }
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setFileAttach(file)
+    }
+  }
 
+  const handleAddAttachment = () => {
+    const formData = new FormData()
+    formData.append('file', fileAttach)
+    handleClosePopover()
+    uploadFileAPI(formData)
+      .then((res) => {
+        toast.success('Add new attach success')
+        return res
+      })
+      .then(data => {
+        const newAttach = {
+          cardId: card._id,
+          filename: fileAttach.name,
+          publicId: data.data.publicId,
+          url: data.data.url,
+          fileExtension: data.data.fileExtension
+        }
+        addAttachCardAPI(newAttach)
+          .then(res => {
+            const attachs = res.attachs
+            const lastAttach = attachs[attachs.length-1]
+            const action = addAttachCardAction(card._id, lastAttach)
+            dispatch(action)
+          })
+      })
+  }
 
- 
 
   useEffect(() => {
     checkOverTimeCard()
+
+    getMembersByWorkspaceIdAPI(board.workspaceId)
+      .then((data) => {
+        setWorkspaceMember(data)
+      })
   }, [])
 
   return (
@@ -419,8 +455,20 @@ function CardDetail({ board, card, open, handleClose }) {
                   <TaskList key={task._id} task={task} card={card} isMembersInCard={isMembersInCard} ownerBoard={ownerBoard} />
                 )
               })}
-
             </Box>
+
+            {card?.attachs.length > 0 && (
+              <Box sx={{ mb:'30px' }}>
+                <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
+                  <AttachmentIcon sx={{ marginRight:'4px', color:(theme) => theme.palette.primary[500] }} />
+                  <Typography>ATTACHMENT</Typography>
+                </Box>
+                {card.attachs.map(attach =>
+                  (<Attachment key={attach._id} ownerBoard={ownerBoard} attach={attach} card={card} />)
+                )}
+              </Box>
+            )}
+            
             <Box>
               <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'15px' }}>
                 <CommentIcon sx={{ marginRight:'10px', color:(theme) => theme.palette.primary[500] }} />
@@ -509,7 +557,7 @@ function CardDetail({ board, card, open, handleClose }) {
               <hr></hr>
               {ownerBoard && (
                 <Box id='add-members' onClick={(event) => handleClick(event, 'add-members')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800] } }}>
-                  <Box sx={{ cursor:'pointer', textAlign:'center' }}>Members</Box>
+                  <Box sx={{ display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', textAlign:'center' }}>Members <GroupIcon sx={{ ml:'5px' }} /> </Box>
                   <Popover
                     sx={{
                       '& .MuiPopover-paper': {
@@ -532,10 +580,19 @@ function CardDetail({ board, card, open, handleClose }) {
                         <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
                       </Box>
                       <Box sx={{ display:'flex', justifyContent:'center', padding: '10px 0' }}>
-                        <TextField onChange={(e) => setMemberEmail(e.target.value)} value={memberEmail} placeholder='Enter email' size='small'/>
-                        <Button onClick={handleMemberSubmit} sx={{ marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
-                        Add
-                        </Button>
+                        <TextField sx={{ width:'100%' }} onChange={(e) => setMemberEmail(e.target.value)} value={memberEmail} placeholder='Enter email' size='small'/>
+                      </Box>
+                      <Box>
+                        <Box sx={{ textAlign:'center' }}>
+                          {filterActivityMembers().length > 0 && (
+                            <Typography variant='caption'>ACTIVITY MEMBERS</Typography>
+                          )}
+                        </Box>
+                        <Box>
+                          {filterActivityMembers().map(member =>
+                            (<Member key={member._id} card={card} member={member} isActivityMember={isActivityMember(member)} />)
+                          )}
+                        </Box>
                       </Box>
                       <Box>
                         <Box sx={{ textAlign:'center', pt:'15px' }}>
@@ -601,8 +658,44 @@ function CardDetail({ board, card, open, handleClose }) {
                   </Box>
                 </Popover>
               </Box> */}
+              {ownerBoard && (
+                <Box id='attachment-file' onClick={(event) => handleClick(event, 'attachment-file')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
+                  <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center', cursor:'pointer', textAlign:'center' }}>Attachment <AttachmentIcon sx={{ ml:'5px' }} /></Box>
+                  <Popover
+                    sx={{
+                      '& .MuiPopover-paper': {
+                        minWidth:'300px',
+                        boxShadow: '0px 2px 4px rgba(0,0,0,0.3)'
+                      }
+                    }}
+                    open={Boolean(popoverInfo && popoverInfo.type === 'attachment-file')}
+                    anchorEl={popoverInfo?.anchorEl}
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right'
+                    }}
+                    onClose={handleClosePopover}
+                    container={() => document.getElementById('attachment-file')}
+                    disableAutoFocus
+                  >
+                    <Box onClick={(event) => event.stopPropagation()}>
+                      <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }} >
+                        <Typography sx={{ ml:'10%', flex:'8', textAlign:'center' }}>Add attachment</Typography>
+                        <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
+                      </Box>
+                      <Box sx={{ display:'flex', flexDirection:'column', justifyContent:'center', padding:'15px 20px' }}>
+                        <TextField type='file' onChange={handleFileChange} />
+                        <Button disabled={!buttonSubmit} onClick={handleAddAttachment} sx={{ flex:'2', mt:'10px', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
+                        Add
+                        </Button>
+                      </Box>
+                    </Box>
+                  </Popover>
+                </Box>
+              )}
+
               <Box id='deadline-card' onClick={(event) => handleClick(event, 'deadline-card')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                <Box sx={{ cursor:'pointer', textAlign:'center' }}>Deadline</Box>
+                <Box sx={{ display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', textAlign:'center' }}>Deadline <AccessTimeIcon sx={{ ml:'5px' }} /> </Box>
                 <Popover
                   sx={{
                     '& .MuiPopover-paper': {
@@ -625,9 +718,9 @@ function CardDetail({ board, card, open, handleClose }) {
                       <Typography sx={{ flex:'8', textAlign:'center' }}>Update deadline</Typography>
                       <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
                     </Box>
-                    <Box sx={{ display:'flex', alignItems:'center', justifyContent:'center', padding:'15px 20px', height:'280px' }}>
+                    <Box sx={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'15px 20px', height:'280px' }}>
                       <Datepicker selected={selectedDate} inline onChange={data => setSelectedDate(data)} popperPlacement='bottom-start'/>
-                      <Button disabled={!buttonSubmit} onClick={handleUpdateCardDeadlineSubmit} sx={{ flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
+                      <Button disabled={!buttonSubmit} onClick={handleUpdateCardDeadlineSubmit} sx={{ width:'100%', m:'8px 0', flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
                         Update
                       </Button>
                     </Box>
@@ -635,11 +728,11 @@ function CardDetail({ board, card, open, handleClose }) {
                 </Popover>
               </Box>
               <Box id='description-card' onClick={(event) => handleClick(event, 'description-card')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                <Box sx={{ cursor:'pointer', textAlign:'center' }}>Description</Box>
+                <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center', cursor:'pointer', textAlign:'center' }}>Description <NotesIcon sx={{ ml:'5px' }} /> </Box>
                 <Popover
                   sx={{
                     '& .MuiPopover-paper': {
-                      minWidth:'300px',
+                      minWidth:'430px',
                       boxShadow: '0px 2px 4px rgba(0,0,0,0.3)'
                     }
                   }}
@@ -655,13 +748,13 @@ function CardDetail({ board, card, open, handleClose }) {
                 >
                   <Box onClick={(event) => event.stopPropagation()}>
                     <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }} >
-                      <Typography sx={{ flex:'8', textAlign:'center' }}>Update description</Typography>
+                      <Typography sx={{ ml:'10%', flex:'8', textAlign:'center' }}>UPDATE DESCRIPTION</Typography>
                       <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
                     </Box>
-                    <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 20px' }}>
+                    <Box sx={{ display:'flex', flexDirection:'column', justifyContent:'center', padding:'15px 20px' }}>
                       {/* {console.log(description)} */}
-                      <TextField multiline rows={3} onChange={(e) => setDescription(e.target.value)} size='small' value={description}/>
-                      <Button disabled={!buttonSubmit} onClick={handleUpdateCardDescriptionSubmit} sx={{ flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
+                      <TextField multiline rows={8} onChange={(e) => setDescription(e.target.value)} size='small' value={description}/>
+                      <Button disabled={!buttonSubmit} onClick={handleUpdateCardDescriptionSubmit} sx={{ mt:'10px', flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
                         Update
                       </Button>
                     </Box>
@@ -669,7 +762,7 @@ function CardDetail({ board, card, open, handleClose }) {
                 </Popover>
               </Box>
               <Box id='taskList-card' onClick={(event) => handleClick(event, 'taskList-card')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                <Box sx={{ cursor:'pointer', textAlign:'center' }}>Add Task</Box>
+                <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center', cursor:'pointer', textAlign:'center' }}>Add Task <CheckBoxIcon sx={{ ml:'5px' }} /> </Box>
                 <Popover
                   sx={{
                     '& .MuiPopover-paper': {
@@ -702,8 +795,9 @@ function CardDetail({ board, card, open, handleClose }) {
                 </Popover>
               </Box>
               {ownerBoard && (
-                <Box onClick={handleDeleteCardSubmit} sx={{ backgroundColor:(theme) => theme.palette.primary[500], textAlign:'center', marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
+                <Box onClick={handleDeleteCardSubmit} sx={{ backgroundColor:(theme) => theme.palette.primary[500], display:'flex', justifyContent:'center', alignItems:'center', textAlign:'center', marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
                 Delete Card
+                  <DeleteIcon sx={{ ml:'5px' }} />
                 </Box>
               )}
             </Box>

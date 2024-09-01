@@ -136,6 +136,26 @@ const boardReducer = (state = initialState, action) => {
     return newState
   }
 
+  case 'ADD_ATTACH_CARD' : {
+    const { cardId, newAttach } = action.payload
+    const newState = {
+      ...state,
+      columns: state.columns.map(column => ({
+        ...column,
+        cards: column.cards.map(card => {
+          if (card._id === cardId) {
+            return {
+              ...card,
+              attachs: [...card.attachs, newAttach]
+            }
+          }
+          return card
+        })
+      }))
+    }
+    return newState
+  }
+
   case 'REMOVE_TASK_CARD' : {
     const { cardId, taskId } = action.payload
     const newState = {
@@ -147,6 +167,26 @@ const boardReducer = (state = initialState, action) => {
             return {
               ...card,
               tasks: card.tasks.filter(task => task._id !== taskId)
+            }
+          }
+          return card
+        })
+      }))
+    }
+    return newState
+  }
+
+  case 'REMOVE_ATTACH_CARD' : {
+    const { cardId, attachId } = action.payload
+    const newState = {
+      ...state,
+      columns: state.columns.map(column => ({
+        ...column,
+        cards: column.cards.map(card => {
+          if (card._id === cardId) {
+            return {
+              ...card,
+              attachs: card.attachs.filter(attach => attach._id !== attachId)
             }
           }
           return card
@@ -251,7 +291,6 @@ const boardReducer = (state = initialState, action) => {
 
   case 'UPDATE_CARD_TASK_ASSIGN_LIST': {
     const { cardId, taskId, userId } = action.payload
-    console.log(taskId)
     const newState = {
       ...state,
       columns: state.columns.map(column => ({
@@ -279,6 +318,35 @@ const boardReducer = (state = initialState, action) => {
     return newState
   }
 
+  case 'UPDATE_CARD_TASK_DEADLINE': {
+    const { cardId, taskId, deadline } = action.payload
+    const newState = {
+      ...state,
+      columns: state.columns.map(column => ({
+        ...column,
+        cards: column.cards.map(card => {
+          if (card._id === cardId) {
+            const updatedCard = {
+              ...card,
+              tasks: card.tasks.map(task => {
+                if (task._id === taskId) {
+                  return {
+                    ...task,
+                    deadline: deadline
+                  }
+                }
+                return task
+              })
+            }
+            return updatedCard
+          }
+          return card
+        })
+      }))
+    }
+    return newState
+  }
+
   case 'REMOVE_CARD' : {
     const cardId = action.payload
     const newState = {
@@ -290,7 +358,6 @@ const boardReducer = (state = initialState, action) => {
     }
     return newState
   }
-
 
   default:
     return state

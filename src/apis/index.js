@@ -98,6 +98,11 @@ export const updateTaskAssignCardAPI = async (data) => {
   return response.data
 }
 
+export const updateTaskTimeCardAPI = async (data) => {
+  const response = await axios.post(`${API_ROOT}/v1/cards/updateTaskTime`, data)
+  return response.data
+}
+
 export const addTaskCardAPI = async (data) => {
   const response = await axios.post(`${API_ROOT}/v1/cards/addTask`, data)
   return response.data
@@ -105,6 +110,16 @@ export const addTaskCardAPI = async (data) => {
 
 export const removeTaskCardAPI = async (data) => {
   const response = await axios.post(`${API_ROOT}/v1/cards/removeTask`, data)
+  return response.data
+}
+
+export const addAttachCardAPI = async (data) => {
+  const response = await axios.post(`${API_ROOT}/v1/cards/addAttach`, data)
+  return response.data
+}
+
+export const removeAttachCardAPI = async (data) => {
+  const response = await axios.post(`${API_ROOT}/v1/cards/removeAttach`, data)
   return response.data
 }
 
@@ -167,6 +182,15 @@ export const removeStarreddAPI = async (data) => {
 
 export const uploadImageAPI = async (image) => {
   const response = await axios.post(`${API_ROOT}/v1/image/upload`, image, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+  return response.data
+}
+
+export const uploadFileAPI = async (file) => {
+  const response = await axios.post(`${API_ROOT}/v1/image/uploadFile`, file, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -257,6 +281,11 @@ export const getMembersByWorkspaceIdAPI= async(workspaceId) => {
 
 export const getNotifiAPI = async(data) => {
   const response = await axios.post(`${API_ROOT}/v1/notifications/getNotificationsByReceiver`, data)
+  return response.data
+}
+
+export const setIsReadAPI = async(data) => {
+  const response = await axios.post(`${API_ROOT}/v1/notifications/setIsRead`, data)
   return response.data
 }
 

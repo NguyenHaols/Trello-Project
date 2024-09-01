@@ -60,6 +60,20 @@ export const addTaskCardAction = ({cardId,newTask}) => {
   }
 }
 
+export const addAttachCardAction = (cardId,newAttach) => {
+  return {
+    type : 'ADD_ATTACH_CARD',
+    payload: {cardId, newAttach}
+  }
+}
+
+export const removeAttachCardAction = (cardId,attachId) => {
+  return {
+    type : 'REMOVE_ATTACH_CARD',
+    payload: {cardId, attachId}
+  }
+}
+
 export const removeTaskCardAction = (cardId,taskId) => {
   return {
     type : 'REMOVE_TASK_CARD',
@@ -102,4 +116,12 @@ export const updateTaskCardAssignAction = (cardId,taskId,userId) => {
     payload: {cardId, taskId, userId}
   }
 }
+
+export const updateTaskDeadlineCardAction = (cardId,taskId,deadline) => {
+  return {
+    type : 'UPDATE_CARD_TASK_DEADLINE',
+    payload: {cardId, taskId, deadline}
+  }
+}
+
 
