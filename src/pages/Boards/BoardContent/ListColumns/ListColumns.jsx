@@ -8,6 +8,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import TextField from '@mui/material/TextField'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 import { useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 
 function ListColumns({ board, columns, createNewColumn, createNewCard, deleteColumn }) {
 
@@ -16,7 +17,7 @@ function ListColumns({ board, columns, createNewColumn, createNewCard, deleteCol
   const [newColumnTitle, setNewColumnTitle] = useState('')
   const user = useSelector(state=> state.user)
   const ownerBoard = board.ownerId === user._id
-
+  const {t} = useTranslation()
   // tim hieu react hook cho form co nhieu input
   const addNewColumn = () => {
     if (!newColumnTitle) {
@@ -70,7 +71,7 @@ function ListColumns({ board, columns, createNewColumn, createNewCard, deleteCol
                   py: 1
                 }}
                 startIcon={<AddIcon />}
-              >Add new column
+              > {t('add_new_column')}
               </Button>
             </Box>
 

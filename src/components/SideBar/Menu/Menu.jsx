@@ -7,10 +7,11 @@ import { ReactComponent as trelloIcon } from '~/assets/trello.svg'
 import { Link } from 'react-router-dom'
 import style from '~/CSS/CSSGlobal.module.scss'
 import { ActiveContextBtn } from '~/Contexts/Context'
+import { useTranslation } from 'react-i18next'
 
 function Menu() {
   const {activeBtn, setActiveBtn} = useContext(ActiveContextBtn)
-
+  const { t } = useTranslation()
   const handleButtonClick = (btnName) => {
     setActiveBtn(btnName)
   }
@@ -32,7 +33,7 @@ function Menu() {
 
         >
           <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:'#2196f3' }} />
-          <Typography sx={{ marginLeft:'10px' }}>  Boards </Typography>
+          <Typography sx={{ marginLeft:'10px' }}>  {t('boards')} </Typography>
 
         </Button>
       </Link>

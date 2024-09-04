@@ -34,7 +34,7 @@ function ListCards({ board, cards, handleClickOpenDialog, handleCloseDialog }) {
 
         {/* card */}
         {cards?.map(card =>
-          <CardItem  key={card._id} board={board} card={card} handleClickOpenDialog={handleClickOpenDialog} handleCloseDialog={handleCloseDialog}/>
+          <CardItem key={card._id} board={board} card={card} handleClickOpenDialog={handleClickOpenDialog} handleCloseDialog={handleCloseDialog}/>
         )}
 
 

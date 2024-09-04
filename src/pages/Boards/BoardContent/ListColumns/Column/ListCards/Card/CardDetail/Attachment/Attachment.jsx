@@ -6,6 +6,7 @@ import { removeAttachCardAPI } from '~/apis'
 import { toast } from 'react-toastify'
 import { removeAttachCardAction } from '~/redux/actions/boardAction'
 import { useDispatch } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 
 function Attachment({ ownerBoard, attach, card }) {
   const theme = useTheme()
@@ -14,6 +15,7 @@ function Attachment({ ownerBoard, attach, card }) {
   const mainColor = theme.palette.primary.main
   const addedDate = new Date(attach.addedAt)
   const removeAttachConfirm = useConfirm()
+  const {t} = useTranslation()
 
   const deleteAttach = (e) => {
     e.preventDefault()
@@ -56,12 +58,12 @@ function Attachment({ ownerBoard, attach, card }) {
               <Typography variant='h7' fontWeight='800' color={textColor} overflow='hidden' textOverflow='ellipsis'>{attach.filename}</Typography>
             </Box>
             <Box sx={{ display:'flex', alignItems:'center' }}>
-              <Typography fontStyle='italic' variant='h7' fontWeight='800' color={textColor} width='70px' pr='5px' textAlign='left'>Added at</Typography>
+              <Typography fontStyle='italic' variant='h7' fontWeight='800' color={textColor} width='75px' pr='5px' textAlign='left'> {t('added_at')} </Typography>
               <Typography fontStyle='italic' variant='h7' fontWeight='800' color={textColor}>: {`${addedDate.getDay()}-${addedDate.getMonth()}-${addedDate.getFullYear()}`}</Typography>
             </Box>
             {ownerBoard && (
               <Box sx={{ textAlign:'left' }}>
-                <Button onClick={deleteAttach} sx={{ fontWeight:'800', color:mainColor, p:'0' }}>Delete</Button>
+                <Button onClick={deleteAttach} sx={{ fontWeight:'800', color:mainColor, p:'0' }}> {t('delete')} </Button>
               </Box>
             )}
           </Box>

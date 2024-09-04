@@ -27,6 +27,7 @@ import TextField from '@mui/material/TextField'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
 import { useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 
 
 function Column({ board, column, createNewCard, deleteColumn }) {
@@ -37,6 +38,7 @@ function Column({ board, column, createNewCard, deleteColumn }) {
   const [newCardTitle, setNewCardTitle] = useState('')
   const user = useSelector(state => state.user)
   const ownerBoard = currentBoard.current.ownerId === user._id
+  const {t} = useTranslation()
 
   const [openDialog, setOpenDialog] = useState(false)
   const handleClickOpenDialog = () => {
@@ -174,7 +176,7 @@ function Column({ board, column, createNewCard, deleteColumn }) {
                     }
                   }}>
                   <ListItemIcon><AddCardIcon className='add-card-Icon' fontSize="small" /></ListItemIcon>
-                  <ListItemText>Add new card</ListItemText>
+                  <ListItemText> {t('add_new_card')} </ListItemText>
                 </MenuItem>
                 {/* <MenuItem>
                 <ListItemIcon><ContentCut fontSize="small" /></ListItemIcon>
@@ -202,7 +204,7 @@ function Column({ board, column, createNewCard, deleteColumn }) {
                   }
                 }}>
                   <ListItemIcon> <DeleteOutlineIcon className='delete-forever-Icon' fontSize="small" /> </ListItemIcon>
-                  <ListItemText>Remove this column</ListItemText>
+                  <ListItemText>{t('remove_this_column')}</ListItemText>
                 </MenuItem>
 
               </Menu>
@@ -230,7 +232,7 @@ function Column({ board, column, createNewCard, deleteColumn }) {
                 alignItems:'center',
                 justifyContent:'space-between'
               }}>
-                <Button startIcon={<AddIcon/>} onClick={toggleOpenNewCardForm}>Add new card</Button>
+                <Button startIcon={<AddIcon/>} onClick={toggleOpenNewCardForm}>{t('add_new_card')}</Button>
                 <Tooltip title="Drag to move">
                   <DragHandleIcon sx={{ cursor:'pointer', color:'primary.main' }}/>
                 </Tooltip>

@@ -9,33 +9,37 @@ import { styled } from '@mui/material/styles'
 import { toast } from 'react-toastify'
 import { useDispatch, useSelector } from 'react-redux'
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd'
-import { createNewWorkspaceAPI, uploadImageAPI } from '~/apis'
+import { createNewWorkspaceAPI, updateBoardDetailsAPI, uploadImageAPI } from '~/apis'
 import { addWorkspaceAction } from '~/redux/actions/userAction'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { setBoardAction } from '~/redux/actions/boardAction'
 import { useTranslation } from 'react-i18next'
 
-function WorkspaceForm() {
+function BoardForm(props) {
 
   const user = useSelector(state => state.user)
   const dispatch = useDispatch()
-  const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [workspaceTitle, setWorkspaceTitle] = useState('')
+  const [boardTitle, setWorkspaceTitle] = useState('')
   const [description, setDescription] = useState('')
   const [type, setType] = useState('Public')
   const [workspaceImage, setWorkspaceImage] = useState('')
   const [ImageFile, setImageFile] = useState('')
+  const { closeBoardForm, openBoardForm, boardForm, board } = props
   const { t } = useTranslation()
-  const workspaceFormik = useFormik({
+
+  const boardTitleValue = board.title
+  const boardDescription = board.description
+  const boardFormik = useFormik({
     initialValues: {
-      workspaceTitle:'',
-      description:''
+      boardTitle:boardTitleValue,
+      description:boardDescription
     },
     validationSchema: Yup.object({
-      workspaceTitle: Yup.string().min(4, 'Minimum 4 characters').max(30, 'Maximum 30 characters').required('Requiured!'),
+      boardTitle: Yup.string().min(4, 'Minimum 4 characters').max(30, 'Maximum 30 characters').required('Requiured!'),
       description: Yup.string().min(4, 'Minimum 4 characters').max(150, 'Maximum 150 characters').required('Requiured!')
     }),
     onSubmit:(values, { setSubmitting }) => {
@@ -43,9 +47,8 @@ function WorkspaceForm() {
       const image = {
         image:ImageFile
       }
-      const newWorkspace = {
-        ownerId: user._id,
-        title: values.workspaceTitle,
+      const newBoard = {
+        title: values.boardTitle,
         description: values.description,
         type:type
       }
@@ -53,16 +56,17 @@ function WorkspaceForm() {
         .then(data => {
           setWorkspaceImage(data.data.url)
           if (data.data.url) {
-            newWorkspace.avatar = data.data.url
+            newBoard.avatar = data.data.url
           }
         })
         .finally(() => {
-          createNewWorkspaceAPI(newWorkspace)
+          updateBoardDetailsAPI(board._id, newBoard)
             .then(res => {
-              toast.success('Workspace created successfully')
-              const action = addWorkspaceAction(res)
+              toast.success('Update board successfully')
+              const newBoard = {...board, ...res}
+              const action = setBoardAction(newBoard)
               dispatch(action)
-              handleClose()
+              closeBoardForm
               setLoading(false)
 
               // clear input
@@ -83,13 +87,6 @@ function WorkspaceForm() {
     }
   })
 
-  const handleOpen = () => {
-    setOpen(true)
-  }
-
-  const handleClose = () => {
-    setOpen(false)
-  }
 
   const handleImageChange = (e) => {
     const file = e.target.files[0] // Lấy ra file ảnh đầu tiên từ event
@@ -102,10 +99,6 @@ function WorkspaceForm() {
       setImageFile(file)
     }
   }
-
-  // const handleSubmitCreateBoard = () => {
-
-  // }
 
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -120,21 +113,7 @@ function WorkspaceForm() {
   })
   return (
     <Box>
-      <MenuItem onClick={handleOpen} sx={{
-        borderRadius:'4px',
-        color:'white',
-        bgcolor:(theme) => theme.palette.primary[500],
-        border:'none',
-        '&:hover':{ border:'none',
-          bgcolor:(theme) => theme.palette.primary[800]
-        }
-      }}>
-        <ListItemIcon >
-          <LibraryAddIcon sx={{ color:'white' }} />
-        </ListItemIcon>
-        <ListItemText sx={{ color:'white' }}> {t('create')} </ListItemText>
-      </MenuItem>
-      <Dialog sx={{ margin:'40px auto', '& .MuiPaper-root':{ width:'50%' } }} open={open} onClose={handleClose}>
+      <Dialog sx={{ margin:'40px auto', '& .MuiPaper-root':{ width:'50%' } }} open={Boolean(boardForm)} onClose={closeBoardForm}>
         {loading && (
           <Box sx={{
             position: 'fixed',
@@ -151,19 +130,19 @@ function WorkspaceForm() {
             <CircularProgress sx={{ color:'2196f3' }} />
           </Box>
         )}
-        <form onSubmit={workspaceFormik.handleSubmit}>
-          <DialogTitle sx={{ color:(theme) => theme.palette.text.primary }}> {t('create_workspace')} </DialogTitle>
+        <form onSubmit={boardFormik.handleSubmit}>
+          <DialogTitle sx={{ color:(theme) => theme.palette.text.primary }}>UPDATE BOARD </DialogTitle>
           <DialogContent sx={{ display:'flex', flexDirection:'column' }}>
-            <TextField name='workspaceTitle' onChange={workspaceFormik.handleChange} onBlur={workspaceFormik.handleBlur} sx={{ margin:'5px 0' }} size='small' label={t('workspace_title')} variant="outlined" />
-            {workspaceFormik.errors.workspaceTitle && workspaceFormik.touched.workspaceTitle && (
+            <TextField name='boardTitle' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} size='small' label="Board title" variant="outlined" value={boardFormik.values.boardTitle} />
+            {boardFormik.errors.boardTitle && boardFormik.touched.boardTitle && (
               <Typography variant='caption' color='error' marginTop='5px' >
-                {workspaceFormik.errors.workspaceTitle}
+                {boardFormik.errors.boardTitle}
               </Typography>
             )}
-            <TextField name='description' onChange={workspaceFormik.handleChange} onBlur={workspaceFormik.handleBlur} sx={{ margin:'5px 0' }} multiline maxRows={4} size='large' label={t('description')} variant="outlined" />
-            {workspaceFormik.errors.description && workspaceFormik.touched.description && (
+            <TextField name='description' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} multiline maxRows={4} size='large' label="Description" variant="outlined" value={boardFormik.values.description}/>
+            {boardFormik.errors.description && boardFormik.touched.description && (
               <Typography variant='caption' color='error' marginTop='5px' >
-                {workspaceFormik.errors.description}
+                {boardFormik.errors.description}
               </Typography>
             )}
             <Select
@@ -175,10 +154,10 @@ function WorkspaceForm() {
               sx={{ margin:'10px 0' }}
             >
               <MenuItem value={'Public'}>
-                {t('public')}
+                          Public
               </MenuItem>
               <MenuItem value={'Private'}>
-                {t('private')}
+                          Private
               </MenuItem>
             </Select>
             {errorMessage && (
@@ -192,7 +171,7 @@ function WorkspaceForm() {
               startIcon={<CloudUploadIcon />}
               sx={{ bgcolor:(theme) => theme.palette.primary }}
             >
-              {t('upload_avatar_workspace')}
+                          Board background
               <VisuallyHiddenInput type="file" accept='image/*' onChange={handleImageChange} />
             </Button>
             {selectedImage && (
@@ -203,8 +182,8 @@ function WorkspaceForm() {
 
           </DialogContent>
           <DialogActions >
-            <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} onClick={handleClose}> {t('cancel')} </Button>
-            <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} type='submit'>{t('create')}</Button>
+            <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} onClick={closeBoardForm}>Cancel</Button>
+            <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} type='submit'>Update</Button>
           </DialogActions>
         </form>
       </Dialog>
@@ -212,4 +191,4 @@ function WorkspaceForm() {
   )
 }
 
-export default WorkspaceForm
+export default BoardForm

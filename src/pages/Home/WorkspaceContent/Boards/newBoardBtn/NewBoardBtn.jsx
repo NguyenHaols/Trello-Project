@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { styled } from '@mui/material/styles'
 import { useTheme } from '@emotion/react'
+import { useTranslation } from 'react-i18next'
 
 function NewBoardBtn({ workspace }) {
   const [loading, setLoading] = useState(false)
@@ -25,7 +26,7 @@ function NewBoardBtn({ workspace }) {
   const textColor = theme.palette.text.primary
   const mainColor = theme.palette.primary.main
   const secondaryColor = theme.palette.secondary.main
-
+  const { t } = useTranslation()
 
   const handleOpen = () => {
     setOpen(true)
@@ -139,7 +140,7 @@ function NewBoardBtn({ workspace }) {
               justifyContent:'center'
             }}>
               <AddBoxIcon sx={{ color:'#2196f3', m:'0 5px' }} />
-              <Typography sx={{ color:'black' }}>CREATE NEW BOARD</Typography>
+              <Typography sx={{ color:'black' }} textTransform='uppercase'> {t('new_board')} </Typography>
             </Box>
           </Box>
           <Dialog sx={{ margin:'0 auto', '& .MuiPaper-root':{ width:'50%' } }} open={open} onClose={handleClose}>
@@ -160,15 +161,15 @@ function NewBoardBtn({ workspace }) {
               </Box>
             )}
             <form onSubmit={boardFormik.handleSubmit}>
-              <DialogTitle sx={{ color:(theme) => theme.palette.text.primary }}>CREATE BOARD</DialogTitle>
+              <DialogTitle sx={{ color:(theme) => theme.palette.text.primary }}> {t('new_board')} </DialogTitle>
               <DialogContent sx={{ display:'flex', flexDirection:'column' }}>
-                <TextField name='boardTitle' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} size='small' id="outlined-basic" label="Board title" variant="outlined" />
+                <TextField name='boardTitle' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} size='small' id="outlined-basic" label={t('board_title')} variant="outlined" />
                 {boardFormik.errors.boardTitle && boardFormik.touched.boardTitle && (
                   <Typography variant='caption' color='error' marginTop='5px' >
                     {boardFormik.errors.boardTitle}
                   </Typography>
                 )}
-                <TextField name='description' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} multiline maxRows={4} size='large' id="outlined-basic" label="Description" variant="outlined" />
+                <TextField name='description' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} multiline maxRows={4} size='large' id="outlined-basic" label={t('description')} variant="outlined" />
                 {boardFormik.errors.description && boardFormik.touched.description && (
                   <Typography variant='caption' color='error' marginTop='5px' >
                     {boardFormik.errors.description}
@@ -183,10 +184,10 @@ function NewBoardBtn({ workspace }) {
                   sx={{ margin:'10px 0' }}
                 >
                   <MenuItem value={'Public'}>
-                          Public
+                          {t('public')}
                   </MenuItem>
                   <MenuItem value={'Private'}>
-                          Private
+                          {t('private')}
                   </MenuItem>
                 </Select>
                 {errorMessage && (
@@ -200,7 +201,7 @@ function NewBoardBtn({ workspace }) {
                   startIcon={<CloudUploadIcon />}
                   sx={{ bgcolor:(theme) => theme.palette.primary }}
                 >
-                          Upload background image
+                          {t('Upload_background_image')}
                   <VisuallyHiddenInput type="file" accept='image/*' onChange={handleImageChange} />
                 </Button>
                 {selectedImage && (
@@ -211,8 +212,8 @@ function NewBoardBtn({ workspace }) {
 
               </DialogContent>
               <DialogActions >
-                <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} onClick={handleClose}>Cancel</Button>
-                <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} type='submit' >Create</Button>
+                <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} onClick={handleClose}> {t('cancel')} </Button>
+                <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} type='submit' >{t('create')}</Button>
               </DialogActions>
             </form>
           </Dialog>

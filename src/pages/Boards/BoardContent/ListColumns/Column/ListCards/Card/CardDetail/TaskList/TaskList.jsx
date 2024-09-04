@@ -10,6 +10,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useConfirm } from 'material-ui-confirm'
 import Datepicker from 'react-datepicker'
 import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 
 function TaskList({ task, isMembersInCard, ownerBoard, card }) {
   const dispatch = useDispatch()
@@ -18,6 +19,7 @@ function TaskList({ task, isMembersInCard, ownerBoard, card }) {
   const [selectedDate, setSelectedDate] = useState(null)
   const [usernameFilter, setUsernameFilter] = useState('')
   const confirmDeleteTask = useConfirm()
+  const { t } = useTranslation()
 
   const handleTaskList = (taskId, taskStatus) => {
 
@@ -85,8 +87,10 @@ function TaskList({ task, isMembersInCard, ownerBoard, card }) {
       taskId
     }
     confirmDeleteTask({
-      title:'Delete task',
-      content:'Are you sure you want to delete this task',
+      title: t('delete_task'),
+      content:t('are_you_sure_you_want_to_delete_this_task'),
+      confirmationText:t('confirm'),
+      cancellationText:t('cancel'),
       dialogProps: {
         sx:{ zIndex:1500 }
       }
@@ -119,6 +123,21 @@ function TaskList({ task, isMembersInCard, ownerBoard, card }) {
         dispatch(action)
         handleCloseTimeTask()
         toast.success('Update deadline task success')
+      })
+  }
+
+  const handleRemoveTaskTime = (taskId) => {
+    const data = {
+      cardId: card._id,
+      taskId: taskId,
+      deadline: null
+    }
+    updateTaskTimeCardAPI(data)
+      .then((res) => {
+        const action = updateTaskDeadlineCardAction(card._id, taskId, null)
+        dispatch(action)
+        handleCloseTimeTask()
+        toast.success('Remove deadline task success')
       })
   }
 
@@ -170,16 +189,16 @@ function TaskList({ task, isMembersInCard, ownerBoard, card }) {
                 }}
               >
                 <Box sx={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                  <Typography sx={{ ml:'10%', width:'90%', textAlign:'center' }}>CHANGE DEADLINE</Typography>
+                  <Typography sx={{ ml:'10%', width:'90%', textAlign:'center' }}> {t('change_deadline')} </Typography>
                   <IconButton onClick={handleCloseTimeTask}> <CloseIcon /> </IconButton>
                 </Box>
                 <Box sx={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'25px 30px' }}>
                   <Datepicker selected={task?.deadline} inline onChange={data => setSelectedDate(data)} popperPlacement='bottom-start'/>
                   <Button onClick={ () => handleUpdateTaskTime(task._id)} onChange={(data) => {setSelectedDate(data)}} sx={{ flex:'2', mt:'15px', marginLeft:'5px', color:'white', width:'100%', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
-                        Update
+                    {t('update')}
                   </Button>
-                  <Button sx={{ flex:'2', mt:'15px', marginLeft:'5px', color:'white', width:'100%', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
-                        Remove
+                  <Button onClick={() => {handleRemoveTaskTime(task._id)}} sx={{ flex:'2', mt:'15px', marginLeft:'5px', color:'white', width:'100%', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
+                    {t('remove')}
                   </Button>
                 </Box>
               </Popover>
@@ -204,14 +223,14 @@ function TaskList({ task, isMembersInCard, ownerBoard, card }) {
                   width:'304px', height:'270px'
                 }}>
                   <Box sx={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                    <Typography sx={{ ml:'10%', width:'90%', textAlign:'center' }}>ASSIGN</Typography>
+                    <Typography sx={{ ml:'10%', width:'90%', textAlign:'center' }}> {t('assign')} </Typography>
                     <IconButton onClick={handleCloseUserTask}> <CloseIcon /> </IconButton>
                   </Box>
                   <Box sx={{ p:'10px 10px' }}>
                     <Box>
-                      <TextField placeholder='Enter email' onChange={(e) => {setUsernameFilter(e.target.value)}} size='small' sx={{ width:'100%', pb:'10px' }}/>
+                      <TextField placeholder={t('enter_email')} onChange={(e) => {setUsernameFilter(e.target.value)}} size='small' sx={{ width:'100%', pb:'10px' }}/>
                     </Box>
-                    <Typography>Card members</Typography>
+                    <Box sx={{ textAlign:'center' }}><Typography variant='caption'> {t('card_members')} </Typography></Box>
                     <Box sx={{ minHeight:'90px', overflow:'auto' }}>
                       {filterMemberAssign.map((member, index) => {
                         return (
@@ -220,7 +239,7 @@ function TaskList({ task, isMembersInCard, ownerBoard, card }) {
                       })}
                     </Box>
                     <Box>
-                      <Button onClick={() => {updateRemoveAssignTask(task._id, task.taskStatus)}} sx={{ width:'100%', bgcolor:(theme) => theme.palette.primary.main, color:'white', mt:'10px', '&:hover':{ bgcolor:(theme) => theme.palette.primary[700] } }}>Remove member</Button>
+                      <Button onClick={() => {updateRemoveAssignTask(task._id, task.taskStatus)}} sx={{ width:'100%', bgcolor:(theme) => theme.palette.primary.main, color:'white', mt:'10px', '&:hover':{ bgcolor:(theme) => theme.palette.primary[700] } }}> {t('remove_member')} </Button>
                     </Box>
                   </Box>
                 </Box>

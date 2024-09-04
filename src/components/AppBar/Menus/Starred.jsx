@@ -11,6 +11,7 @@ import Check from '@mui/icons-material/Check'
 import { Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 
 function Starred() {
@@ -18,6 +19,8 @@ function Starred() {
   const user = useSelector(state => state.user)
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
+  const { t } = useTranslation()
+
   const handleClick = (event) => {
     setAnchorEl((prev) => (prev ? null : event.currentTarget))
   }
@@ -56,7 +59,7 @@ function Starred() {
         onClick={handleClick}
         endIcon={<ExpandMoreIcon/>}
       >
-        Starred
+        {t('starred')}
       </Button>
       <Menu
         sx={{
@@ -73,7 +76,7 @@ function Starred() {
         }}
       >
         <MenuItem>
-          <Typography variant="body2" color="">Your Starred Board</Typography>
+          <Typography variant="body2" color="" textTransform='lowercase'> {t('your_starred_board2')} </Typography>
         </MenuItem>
         {starredBoards.map(board =>
           (

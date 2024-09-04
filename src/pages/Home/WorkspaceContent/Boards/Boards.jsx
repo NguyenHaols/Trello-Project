@@ -5,9 +5,11 @@ import BoardCard from '../../DashBoardContent/BoardCard/BoardCard'
 import TitleAllBoard from '../Title/TitleAllBoard'
 import StarIcon from '@mui/icons-material/Star'
 import NewBoardBtn from './newBoardBtn/NewBoardBtn'
+import { useTranslation } from 'react-i18next'
 
 function Boards() {
   const { workspace, starredBoards } = useOutletContext()
+  const { t } = useTranslation
   return (
     <>
 
@@ -62,7 +64,7 @@ function Boards() {
               variant='h6'
               fontWeight={500}
             >
-              Create some board to use
+              {t('create_some_board_to_use')}
             </Typography>
           </Box>
           <NewBoardBtn workspace={workspace[0]} />

@@ -8,12 +8,15 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import Typography from '@mui/material/Typography'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 
 function Workspaces({ workspaces }) {
   const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
+  const { t } = useTranslation()
+
   const handleClick = (event) => {
     setAnchorEl((prev) => (prev ? null : event.currentTarget))
   }
@@ -40,7 +43,7 @@ function Workspaces({ workspaces }) {
         onClick={handleClick}
         endIcon={<ExpandMoreIcon/>}
       >
-        Workspaces
+        {t('workspaces')}
       </Button>
       <Menu
         sx={{
@@ -57,7 +60,7 @@ function Workspaces({ workspaces }) {
         }}
       >
         <MenuItem>
-          <Typography variant="body2" color="">Your workspaces</Typography>
+          <Typography variant="body2" color=""> {t('your_workspaces')} </Typography>
         </MenuItem>
         {workspaces.map(workspace => (
           <Box onClick={() => {handleNavigateToWorkspace(workspace._id)}} key={workspace._id}>

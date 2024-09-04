@@ -1,5 +1,6 @@
 import { Box, Button, Typography } from '@mui/material'
 import { useConfirm } from 'material-ui-confirm'
+import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -14,6 +15,8 @@ function Members({ workspace, currentUserId, member }) {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const leaveConfirm = useConfirm()
+  const { t } = useTranslation()
+
   const handleRemoveSubmit = () => {
     if ( currentUserId === member._id || currentUserId === currentWorkspace.ownerId ) {
       const data = {
@@ -82,7 +85,7 @@ function Members({ workspace, currentUserId, member }) {
       <Box sx={{
         flex:'1'
       }}>
-        <Typography variant='strong' fontWeight='bold' color={(theme) => theme.palette.text.primary} > {member.username} {currentWorkspace.ownerId === member._id ? '(ADMIN)' : ''} </Typography>
+        <Typography variant='strong' fontWeight='bold' color={(theme) => theme.palette.text.primary} > {member.username} {currentWorkspace.ownerId === member._id ? `(${t('admin')})` : ''} </Typography>
         <Typography color={(theme) => theme.palette.text.primary}>{member.email}</Typography>
       </Box>
       <Box sx={{
@@ -97,7 +100,7 @@ function Members({ workspace, currentUserId, member }) {
             float:'right',
             '&:hover':{ backgroundColor:(theme) => theme.palette.primary[800] }
           }}> 
-            {member._id === currentUserId ? 'Leave' : 'Remove'} 
+            {member._id === currentUserId ? t('leave') : t('remove')}
           </Button>
         )}
       </Box>

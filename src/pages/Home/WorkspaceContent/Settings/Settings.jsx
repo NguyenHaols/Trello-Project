@@ -9,16 +9,17 @@ import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
 import { useNavigate, useOutletContext } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 
 function Settings() {
   const { workspace, ownerWorkspace } = useOutletContext()
-  console.log('🚀 ~ Settings ~ workspace:', workspace)
   const dispatch = useDispatch()
   const confirmDeleteWorkspace = useConfirm()
   const navigate = useNavigate()
-  const handleDeleteWorkspace = () => {
+  const {t} = useTranslation()
 
+  const handleDeleteWorkspace = () => {
 
     confirmDeleteWorkspace({
       title:'Delete workspace',
@@ -79,13 +80,13 @@ function Settings() {
             </Box>
           </Box> */}
             <Box sx={{ marginTop:'15px' }}>
-              <Typography variant='h7' color={(theme) => theme.palette.text.primary} >Workspace destroy </Typography>
+              <Typography variant='h7' color={(theme) => theme.palette.text.primary} > {t('workspace_destroy')} </Typography>
               <Typography onClick={handleDeleteWorkspace} sx={{
                 cursor:'pointer',
                 '&:hover':{ color:'#bb2124' }
               }} variant='subtitle2' color={(theme) => theme.palette.text.primary} display='flex' marginTop='5px'>
                 <DeleteOutlineIcon sx={{ width:'18px', height:'22px', marginRight:'5px' }}/>
-              Delete this workspace ?
+              {t('delete_this_workspace')} ?
               </Typography>
             </Box> </>
       }

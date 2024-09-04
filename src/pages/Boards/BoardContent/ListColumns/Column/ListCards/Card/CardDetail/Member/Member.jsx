@@ -7,18 +7,20 @@ import { useDispatch } from 'react-redux'
 import { addMemberCardAPI, removeMemberCardAPI } from '~/apis'
 import { toast } from 'react-toastify'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
+import { useTranslation } from 'react-i18next'
 
 function Member({ member, card, isActivityMember}) {
-  console.log('🚀 ~ Member ~ isActivityMember:', isActivityMember)
-  console.log('🚀 ~ Member ~ member:', member)
   const theme = useTheme()
   const mainColor = theme.palette.primary.main
   const removeMemberConfirm = useConfirm()
   const dispatch = useDispatch()
+  const {t} = useTranslation()
   const handleRemoveMember = (memberId) => {
     removeMemberConfirm({
-      title:'Remove member',
-      content:'Are you sure you want to remove this member',
+      title:t('delete_member'),
+      content:t('are_you_sure_you_want_to_remove_this_member'),
+      confirmationText:t('confirm'),
+      cancellationText:t('cancel'),
       dialogProps: {
         sx:{ zIndex:1500 }
       }

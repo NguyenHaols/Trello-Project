@@ -14,6 +14,7 @@ import Cookies from 'js-cookie'
 
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 
 function Profiles() {
   const user = useSelector(state => state.user)
@@ -21,6 +22,8 @@ function Profiles() {
   const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
+  const { t } = useTranslation()
+
   const handleClick = (event) => {
     setAnchorEl((prev) => (prev ? null : event.currentTarget))
   }
@@ -68,26 +71,26 @@ function Profiles() {
       >
 
         <MenuItem onClick={() => {navigate('/profile')}}>
-          <Avatar src={data.avatar} sx={{width:28, height:28, mr:2 }} /> Profile
+          <Avatar src={data.avatar} sx={{width:28, height:28, mr:2 }} /> {t('profile')}
         </MenuItem>
         <Divider />
         <MenuItem >
           <ListItemIcon>
             <HelpIcon fontSize="small" />
           </ListItemIcon>
-          Help
+          {t('help')}
         </MenuItem>
         <MenuItem >
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
-          Settings
+          {t('settings')}
         </MenuItem>
         <MenuItem onClick={handleNavigationLogOut}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          Logout
+          {t('log_out')}
         </MenuItem>
 
       </Menu>

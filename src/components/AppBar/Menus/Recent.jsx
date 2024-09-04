@@ -11,12 +11,14 @@ import Check from '@mui/icons-material/Check'
 import { Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 
 function Recent() {
   const navigate = useNavigate()
   const user = useSelector(state => state.user)
   const [anchorEl, setAnchorEl] = React.useState(null)
+  const { t } = useTranslation()
   const open = Boolean(anchorEl)
   const allBoards = user.workspaces.flatMap(workspace => workspace.boards)
   const handleClick = (event) => {
@@ -45,7 +47,7 @@ function Recent() {
         onClick={handleClick}
         endIcon={<ExpandMoreIcon/>}
       >
-        Recent
+        {t('recent')}
       </Button>
       <Menu
         sx={{
@@ -62,7 +64,7 @@ function Recent() {
         }}
       >
         <MenuItem>
-          <Typography variant="body2" color="">Your Recent Board</Typography>
+          <Typography variant="body2" color=""> {t('your_recent_board')} </Typography>
         </MenuItem>
         {allBoards.map(board =>
           (

@@ -32,6 +32,8 @@ import { toast } from 'react-toastify'
 import socket from '~/socket/socket'
 import { setUser } from '~/redux/actions/userAction'
 import MenuIcon from '@mui/icons-material/Menu'
+import LanguageSelect from '../LanguageSelect/LanguageSelect'
+import { useTranslation } from 'react-i18next'
 
 function AppBar({ sideBarMobileActive }) {
   const user = useSelector(state => state.user)
@@ -44,6 +46,7 @@ function AppBar({ sideBarMobileActive }) {
   const [activeNotification, setActiveNotification] = useState(false)
   const [unReadNoti, setUnReadNoti] = useState(null)
 
+  const {t} = useTranslation()
   const openNotification = Boolean(notificationEl)
   const idNotification = openNotification ? 'Notification-popover' : undefined
   const navigate = useNavigate()
@@ -97,7 +100,7 @@ function AppBar({ sideBarMobileActive }) {
   }
 
   const handleNavigateWorkspace = (id, notiId) => {
-    navigate(`workspace/${id}/boards`)
+    navigate(`/workspace/${id}/boards`)
     setIsReadAPI({ _id:notiId })
       .then (() => {
         const data = {
@@ -188,7 +191,7 @@ function AppBar({ sideBarMobileActive }) {
       overflow:'hidden',
       position: 'sticky',
       top:0,
-      zIndex:0,
+      zIndex:1,
       borderBottom: '1px solid hsla(218, 54%, 19.6%, 0.16)'
     }}>
 
@@ -224,11 +227,11 @@ function AppBar({ sideBarMobileActive }) {
         </Box>
       </Box>
 
-      <Box sx={{ display:'flex', alignItems:'center', gap:2 }}>
+      <Box sx={{ display:'flex', alignItems:'center', gap:1 }}>
         <Box onClick={handleOpenSearch}>
           <TextField
             id="outlined-search"
-            label="Search"
+            label={t('search')}
             type="text"
             size="small"
             autoComplete='off'
@@ -297,6 +300,7 @@ function AppBar({ sideBarMobileActive }) {
         </Box>
 
         <ModeSelect />
+        <LanguageSelect />
         <Tooltip title="Notification">
           <IconButton aria-describedby={idNotification} onClick={handleClickNotificationEl}>
             <Badge color="error" invisible={!unReadNoti} badgeContent={unReadNoti} sx={{ cursor:'pointer' }}>
@@ -320,7 +324,7 @@ function AppBar({ sideBarMobileActive }) {
         >
           <Box sx={{ width:'400px', minHeight:'330px', maxHeight:'78vh', borderRadius:'8px', overflow:'auto', p:'20px 10px 10px 10px' }}>
             <Box>
-              <Typography variant='h5' sx={{ borderBottom:'1px solid #ccc', pb:'10px' }}>Notifications</Typography>
+              <Typography variant='h5' sx={{ borderBottom:'1px solid #ccc', pb:'10px' }} textTransform='uppercase'> {t('notifications')} </Typography>
             </Box>
             {notifications && notifications.map(noti => {
               return (

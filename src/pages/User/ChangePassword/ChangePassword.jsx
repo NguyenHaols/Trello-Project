@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
 import { updatePasswordAPI } from '~/apis'
+import { useTranslation } from 'react-i18next'
 function ChangePassword() {
   const navigate = useNavigate()
   const user = useSelector(state => state.user)
@@ -11,6 +12,7 @@ function ChangePassword() {
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  const { t } = useTranslation()
 
   const handleUpdatePassword = () => {
     if (newPassword !== confirmPassword) {
@@ -48,21 +50,21 @@ function ChangePassword() {
         maxWidth:'700px'
       }}>
         <Box sx={{ borderBottom:'1px solid #ccc', paddingBottom:'20px' }}>
-          <Typography variant='h6'>CHANGE PASSWORD</Typography>
-          <Typography>Manage profile information </Typography>
+          <Typography variant='h6' textTransform='uppercase'> {t('change_password')} </Typography>
+          <Typography> {t('manage_profile_infomation')} </Typography>
         </Box>
         <Box sx={{ display:'flex', padding:'20px 0 ' }}>
           <Box sx={{ flex:'2' }}>
             <Box sx={{ display:'flex', alignItems:'center', padding:'20px 0' }}>
-              <Typography sx={{ flex:'2', textAlign:'left', paddingRight:'15px' }}>Current password</Typography>
+              <Typography sx={{ flex:'2', textAlign:'left', paddingRight:'15px' }}> {t('current_password')} </Typography>
               <TextField onChange={(e) => {setPassword(e.target.value)}} sx={{ flex:'6' }} size='small' variant="outlined" type='password' value={password}/>
             </Box>
             <Box sx={{ display:'flex', alignItems:'center', padding:'20px 0' }}>
-              <Typography sx={{ flex:'2', textAlign:'left', paddingRight:'15px' }}>New password</Typography>
+              <Typography sx={{ flex:'2', textAlign:'left', paddingRight:'15px' }}>{t('new_password')}</Typography>
               <TextField onChange={(e) => {setNewPassword(e.target.value)}} sx={{ flex:'6' }} size='small' variant="outlined" type='password' value={newPassword}/>
             </Box>
             <Box sx={{ display:'flex', alignItems:'center', padding:'20px 0' }}>
-              <Typography sx={{ flex:'2', textAlign:'left', paddingRight:'15px' }}>Confirm password</Typography>
+              <Typography sx={{ flex:'2', textAlign:'left', paddingRight:'15px' }}>{t('confirm_password')}</Typography>
               <TextField onChange={(e) => {setConfirmPassword(e.target.value)}} sx={{ flex:'6' }} size='small' variant="outlined" type='password' value={confirmPassword}/>
             </Box>
 
@@ -73,10 +75,10 @@ function ChangePassword() {
           <Typography marginBottom='15px' color='error'> {errorMessage}</Typography>
         )}
         <Button onClick={handleUpdatePassword} sx={{ bgcolor:(theme) => theme.palette.primary[500], color:'white', width:'100px', '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
-            Update
+          {t('update')}
         </Button>
         <Button onClick={handleBackToProfile} sx={{ bgcolor:(theme) => theme.palette.primary[500], color:'white', marginLeft:'30px', '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
-            Back to profile
+          {t('back_to_profile')}
         </Button>
       </Box>
     </Container>

@@ -35,6 +35,8 @@ import * as Yup from 'yup'
 import socket from '~/socket/socket'
 import MemberPage from './Members/MemberPage'
 import { useConfirm } from 'material-ui-confirm'
+import { useTranslation } from 'react-i18next'
+
 
 
 function WorkspaceContent() {
@@ -57,7 +59,7 @@ function WorkspaceContent() {
   const theme = useTheme()
   const textColor = theme.palette.text.primary
   const mainColor = theme.palette.primary.main
-
+  const { t } = useTranslation()
 
   const getStarredBoard = () => {
     const starredBoards = []
@@ -275,7 +277,7 @@ function WorkspaceContent() {
                         color: '	#22bb33'
                       }}
                     />
-                    <Typography color='	#22bb33'>Public</Typography>
+                    <Typography color='	#22bb33'> {t('public')} </Typography>
                   </>
                 ) : (
                   <>
@@ -287,7 +289,7 @@ function WorkspaceContent() {
                         color: '	#ba3f42'
                       }}
                     />
-                    <Typography color='	#ba3f42'>Private</Typography>
+                    <Typography color='	#ba3f42'> {t('private')} </Typography>
                   </>
                 )}
               </Box>
@@ -321,7 +323,7 @@ function WorkspaceContent() {
                   sx={{ margin: '5px 0' }}
                   size='small'
                   id='outlined-basic'
-                  label='Workspace title'
+                  label={t('workspace_title')}
                   variant='outlined'
                 />
                 {workspaceFormik.errors.workspaceTitle && workspaceFormik.touched.workspaceTitle && (
@@ -339,7 +341,7 @@ function WorkspaceContent() {
                   maxRows={4}
                   size='large'
                   id='outlined-basic'
-                  label='Description'
+                  label={t('description')}
                   variant='outlined'
                 />
                 {workspaceFormik.errors.description && workspaceFormik.touched.description && (
@@ -357,8 +359,8 @@ function WorkspaceContent() {
                   }}
                   sx={{ margin: '10px 0' }}
                 >
-                  <MenuItem value={'Public'}>Public</MenuItem>
-                  <MenuItem value={'Private'}>Private</MenuItem>
+                  <MenuItem value={'Public'}>{t('public')}</MenuItem>
+                  <MenuItem value={'Private'}>{t('private')}</MenuItem>
                 </Select>
                 {errorMessage && (
                   <Typography color='error'>{errorMessage}</Typography>
@@ -371,7 +373,7 @@ function WorkspaceContent() {
                   startIcon={<CloudUploadIcon />}
                   sx={{ bgcolor: (theme) => theme.palette.primary, color:textColor }}
                 >
-                  Upload background image
+                  {t('Upload_background_image')}
                   <VisuallyHiddenInput
                     type='file'
                     accept='image/*'
@@ -396,7 +398,7 @@ function WorkspaceContent() {
                   }}
                   onClick={() => {handleSubmitUpdate()}}
                 >
-                  Update
+                  {t('update')}
                 </Button>
               </Box>
             </form>

@@ -6,12 +6,14 @@ import LaptopMacIcon from '@mui/icons-material/LaptopMac'
 import { Link, useOutletContext } from 'react-router-dom'
 import { Fragment, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 
 
 function DashBoardContent() {
   const [data] = useOutletContext()
   const cloneData = { ...data }
   const workspaces = cloneData?.workspaces
+  const { t } = useTranslation()
 
 
   const getStarredBoard = () => {
@@ -46,7 +48,7 @@ function DashBoardContent() {
             color:(theme) => theme.palette.primary
           }}>
             <StarIcon sx={{ marginRight:'10px', color:'#e2b203' }}></StarIcon>
-            <Typography variant='h6' fontWeight={500}>YOUR STARRED BOARD</Typography>
+            <Typography variant='h6' fontWeight={500}> {t('your_starred_board')}</Typography>
           </Box>
           <Box sx={{
             display:'flex',
@@ -73,7 +75,7 @@ function DashBoardContent() {
             margin:'40px 0 10px 0'
           }}>
             <LaptopMacIcon sx={{ marginRight:'10px', color:'#e2b203' }}></LaptopMacIcon>
-            <Typography variant='h6' fontWeight={500}>YOUR WORKSPACES</Typography>
+            <Typography variant='h6' fontWeight={500}> {t('your_workspace')} </Typography>
           </Box>
           {workspaces && workspaces.map(workspace => (
             <Fragment key={workspace._id}>
@@ -91,7 +93,7 @@ function DashBoardContent() {
                     <BoardCard key={board._id} data={board} />
                   ))
                 ) : (
-                  <Typography variant="body2">No boards available</Typography>
+                  <Typography variant="body2"> {t('no_boards_available')} </Typography>
                 )}
               </Box>
             </Fragment>
@@ -105,7 +107,7 @@ function DashBoardContent() {
             color:(theme) => theme.palette.primary
           }}>
             <StarIcon sx={{ marginRight:'10px', color:'#e2b203' }}></StarIcon>
-            <Typography variant='h6' fontWeight={500}>Create some workspace or join some to work</Typography>
+            <Typography variant='h6' fontWeight={500}> {t('create_some_workspace_or_join_some_to_work')} </Typography>
           </Box>
         </>
       }

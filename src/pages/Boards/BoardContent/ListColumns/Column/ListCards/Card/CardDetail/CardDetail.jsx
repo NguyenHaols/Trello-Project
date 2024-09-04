@@ -24,6 +24,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AttachmentIcon from '@mui/icons-material/Attachment'
 import Attachment from './Attachment/Attachment'
+import { useTranslation } from 'react-i18next'
 
 
 function CardDetail({ board, card, open, handleClose }) {
@@ -38,6 +39,7 @@ function CardDetail({ board, card, open, handleClose }) {
   const oldBoard = { ...board }
   const currentBoard = useRef(oldBoard)
   const ownerBoard = currentBoard.current.ownerId === user._id
+  const { t } = useTranslation()
   const isMembersInCard = Array.isArray(card?.members) && card?.members.some(member => member._id === user._id)
   const [cmtContent, setCmtContent] = useState('')
   const [workspaceMember, setWorkspaceMember] = useState(null)
@@ -128,10 +130,10 @@ function CardDetail({ board, card, open, handleClose }) {
 
   const handleDeleteCardSubmit = () => {
     confirmDeleteCard({
-      content:'Are you sure you want to delete this card ?',
-      title: 'Delete Column ?',
-      // confirmationText:'Confirm',  đã là mặc định ở main.jsx
-      // cancellationText:'Cancel'  đã là mặc định ở main.jsx
+      content:t('are_you_sure_you_want_to_delete_this_card_?'),
+      title: t('delete_card'),
+      confirmationText:t('confirm'),
+      cancellationText:t('cancel'),
       dialogProps:{ maxWidth:'xs', sx:{ zIndex:5000 } }
     })
       .then( () => {
@@ -140,7 +142,7 @@ function CardDetail({ board, card, open, handleClose }) {
         }
         deleteCardAPI(data)
           .then(res => {
-            toast.success('Delete successfully')
+            toast.success(`${t('delete_successfully')}`)
             const action = removeCardAction(card._id)
             dispatch(action)
           })
@@ -374,11 +376,10 @@ function CardDetail({ board, card, open, handleClose }) {
       })
   }
 
-
   useEffect(() => {
     checkOverTimeCard()
 
-    getMembersByWorkspaceIdAPI(board.workspaceId)
+    getMembersByWorkspaceIdAPI(currentBoard.current.workspaceId)
       .then((data) => {
         setWorkspaceMember(data)
       })
@@ -397,7 +398,7 @@ function CardDetail({ board, card, open, handleClose }) {
             <Box sx={{ marginBottom:'30px' }}>
               <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
                 <PeopleIcon sx={{ marginRight:'4px', color:(theme) => theme.palette.primary[500] }} />
-                <Typography>JOINED MEMBERS</Typography>
+                <Typography textTransform='uppercase'> {t('joined_members')} </Typography>
               </Box>
               <Box sx={{ display:'flex' }}>
                 {card.members.map( member => {
@@ -416,14 +417,14 @@ function CardDetail({ board, card, open, handleClose }) {
               <Box sx={{ marginRight:'70px' }}>
                 <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
                   <HourglassBottomIcon sx={{ marginRight:'2px', color:(theme) => theme.palette.primary[500] }} />
-                  <Typography>STATUS TASK</Typography>
+                  <Typography textTransform='uppercase' > {t('status_task')} </Typography>
                 </Box>
                 <Box sx={{ bgcolor:setStatusColor(), maxWidth:'100px', textAlign:'center', color:'white', borderRadius:'4px' }}>{card.status}</Box>
               </Box>
               <Box>
                 <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
                   <AccessTimeIcon sx={{ marginRight:'2px', color:'red' }} />
-                  <Typography >DEADLINE</Typography>
+                  <Typography textTransform='uppercase'> {t('deadline')} </Typography>
                 </Box>
                 <Box sx={{ border:'1px solid #ccc', borderRadius:'4px', minWidth:'100px', textAlign:'center', padding:'0 5px' }}> {formattedDate} </Box>
               </Box>
@@ -432,7 +433,7 @@ function CardDetail({ board, card, open, handleClose }) {
             <Box sx={{ marginBottom:'30px' }}>
               <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
                 <NotesIcon sx={{ marginRight:'4px', color:(theme) => theme.palette.primary[500] }} />
-                <Typography>DESCRIPTION</Typography>
+                <Typography textTransform='uppercase'> {t('description')} </Typography>
               </Box>
               <Box sx={{ whiteSpace:'pre-line', paddingLeft:'25px' }}>
                 {card.description}
@@ -442,7 +443,7 @@ function CardDetail({ board, card, open, handleClose }) {
             <Box sx={{ marginBottom:'30px' }}>
               <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
                 <AssignmentIcon sx={{ marginRight:'4px', color:(theme) => theme.palette.primary[500] }} />
-                <Typography>TASK LIST</Typography>
+                <Typography textTransform='uppercase'> {t('task_list')} </Typography>
               </Box>
               <Box sx={{ display:'flex', alignItems:'center' }}>
                 <Typography>{percentOfCompleteTask()}%</Typography>
@@ -461,25 +462,25 @@ function CardDetail({ board, card, open, handleClose }) {
               <Box sx={{ mb:'30px' }}>
                 <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
                   <AttachmentIcon sx={{ marginRight:'4px', color:(theme) => theme.palette.primary[500] }} />
-                  <Typography>ATTACHMENT</Typography>
+                  <Typography textTransform='uppercase'> {t('attachment')} </Typography>
                 </Box>
                 {card.attachs.map(attach =>
                   (<Attachment key={attach._id} ownerBoard={ownerBoard} attach={attach} card={card} />)
                 )}
               </Box>
             )}
-            
+
             <Box>
               <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'15px' }}>
                 <CommentIcon sx={{ marginRight:'10px', color:(theme) => theme.palette.primary[500] }} />
-                <Typography>COMMENTS</Typography>
+                <Typography textTransform='uppercase'> {t('comments')} </Typography>
               </Box>
               {(ownerBoard || isMembersInCard) && (
                 <Box sx={{ display:'flex', marginBottom:'20px' }}>
                   <Avatar src={user.avatar} sx={{ marginRight:'8px' }} />
                   <TextField
                     value={cmtContent}
-                    placeholder='Type your comment'
+                    placeholder= {t('type_your_comment')}
                     onChange={(e) => setCmtContent(e.target.value)}
                     sx={{ width:'100%' }}
                     InputProps={{
@@ -526,8 +527,8 @@ function CardDetail({ board, card, open, handleClose }) {
                                 />
                               </Box>
                               <Box>
-                                <Button onClick={() => {handleUpdateComment(cmtId.current, contentEditingCmt)}}>Save</Button>
-                                <Button onClick={() => {setCommentEditing(false)}}>Cancel</Button>
+                                <Button onClick={() => {handleUpdateComment(cmtId.current, contentEditingCmt)}}>{t('save')} </Button>
+                                <Button onClick={() => {setCommentEditing(false)}}>{t('cancel')}</Button>
                               </Box>
                             </Box>
                           ) : (<Typography> {comment.content} </Typography>)
@@ -540,8 +541,8 @@ function CardDetail({ board, card, open, handleClose }) {
                         {menuCmtId === comment._id && (
                           <Box ref={optionsCommentRef} sx={{ position:'absolute', right:'0', bottom:'-50px', minWidth:'200px', boxShadow:'0 4px 10px rgb(0,0,0,0.4)', bgcolor:mainColor, zIndex:'2', p:'10px 10px', borderRadius:'10px', color:'white' }}
                           >
-                            <Box onClick={() => {handleEditCmt(comment.content)}} sx={{ p:'5px 10px', borderRadius:'5px', '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] }, cursor:'pointer' }}> Edit </Box>
-                            <Box onClick={() => {handleDeleteComment(comment._id)}} sx={{ p:'5px 10px', borderRadius:'5px', '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] }, cursor:'pointer' }}> Delete </Box>
+                            <Box onClick={() => {handleEditCmt(comment.content)}} sx={{ p:'5px 10px', borderRadius:'5px', '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] }, cursor:'pointer' }}> {t('edit')} </Box>
+                            <Box onClick={() => {handleDeleteComment(comment._id)}} sx={{ p:'5px 10px', borderRadius:'5px', '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] }, cursor:'pointer' }}> {t('delete')} </Box>
                           </Box>
                         )}
                       </Box>
@@ -553,11 +554,11 @@ function CardDetail({ board, card, open, handleClose }) {
           </Box>
           {(isMembersInCard || ownerBoard) && (
             <Box sx={{ flex:'2' }}>
-              <Box sx={{ color:(theme) => theme.palette.mode =='light' ? theme.palette.primary[800] : textColor, fontWeight:'600', fontSize:'18px' }} >Management</Box>
+              <Box sx={{ color:(theme) => theme.palette.mode =='light' ? theme.palette.primary[800] : textColor, fontWeight:'600', fontSize:'18px' }} > {t('management_card')} </Box>
               <hr></hr>
               {ownerBoard && (
                 <Box id='add-members' onClick={(event) => handleClick(event, 'add-members')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800] } }}>
-                  <Box sx={{ display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', textAlign:'center' }}>Members <GroupIcon sx={{ ml:'5px' }} /> </Box>
+                  <Box sx={{ display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', textAlign:'center' }}> {t('members')} <GroupIcon sx={{ ml:'5px' }} /> </Box>
                   <Popover
                     sx={{
                       '& .MuiPopover-paper': {
@@ -576,16 +577,16 @@ function CardDetail({ board, card, open, handleClose }) {
                   >
                     <Box onClick={(event) => event.stopPropagation()} sx={{ padding:'15px 15px' }}>
                       <Box sx={{ display:'flex', justifyContent:'center', padding: '10px 0' }} >
-                        <Typography sx={{ flex:'8', textAlign:'center', pl:'40px' }}>Members</Typography>
+                        <Typography sx={{ flex:'8', textAlign:'center', pl:'40px' }}> {t('members')} </Typography>
                         <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
                       </Box>
                       <Box sx={{ display:'flex', justifyContent:'center', padding: '10px 0' }}>
-                        <TextField sx={{ width:'100%' }} onChange={(e) => setMemberEmail(e.target.value)} value={memberEmail} placeholder='Enter email' size='small'/>
+                        <TextField sx={{ width:'100%' }} onChange={(e) => setMemberEmail(e.target.value)} value={memberEmail} placeholder={t('enter_email')} size='small'/>
                       </Box>
                       <Box>
                         <Box sx={{ textAlign:'center' }}>
                           {filterActivityMembers().length > 0 && (
-                            <Typography variant='caption'>ACTIVITY MEMBERS</Typography>
+                            <Typography variant='caption'> {t('activity_members')} </Typography>
                           )}
                         </Box>
                         <Box>
@@ -596,7 +597,7 @@ function CardDetail({ board, card, open, handleClose }) {
                       </Box>
                       <Box>
                         <Box sx={{ textAlign:'center', pt:'15px' }}>
-                          <Typography variant='caption'>JOINED MEMBERS</Typography>
+                          <Typography variant='caption'> {t('joined_members')} </Typography>
                         </Box>
                         {card.members.map(member =>
                           (<Member key={member._id} member={member} card={card}/>)
@@ -660,7 +661,7 @@ function CardDetail({ board, card, open, handleClose }) {
               </Box> */}
               {ownerBoard && (
                 <Box id='attachment-file' onClick={(event) => handleClick(event, 'attachment-file')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                  <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center', cursor:'pointer', textAlign:'center' }}>Attachment <AttachmentIcon sx={{ ml:'5px' }} /></Box>
+                  <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center', cursor:'pointer', textAlign:'center' }}> {t('attachment')} <AttachmentIcon sx={{ ml:'5px' }} /></Box>
                   <Popover
                     sx={{
                       '& .MuiPopover-paper': {
@@ -680,13 +681,13 @@ function CardDetail({ board, card, open, handleClose }) {
                   >
                     <Box onClick={(event) => event.stopPropagation()}>
                       <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }} >
-                        <Typography sx={{ ml:'10%', flex:'8', textAlign:'center' }}>Add attachment</Typography>
+                        <Typography sx={{ ml:'10%', flex:'8', textAlign:'center' }}> {t('add_attachment')} </Typography>
                         <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
                       </Box>
                       <Box sx={{ display:'flex', flexDirection:'column', justifyContent:'center', padding:'15px 20px' }}>
                         <TextField type='file' onChange={handleFileChange} />
                         <Button disabled={!buttonSubmit} onClick={handleAddAttachment} sx={{ flex:'2', mt:'10px', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
-                        Add
+                          {t('add')}
                         </Button>
                       </Box>
                     </Box>
@@ -695,7 +696,7 @@ function CardDetail({ board, card, open, handleClose }) {
               )}
 
               <Box id='deadline-card' onClick={(event) => handleClick(event, 'deadline-card')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                <Box sx={{ display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', textAlign:'center' }}>Deadline <AccessTimeIcon sx={{ ml:'5px' }} /> </Box>
+                <Box sx={{ display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', textAlign:'center' }}>{t('deadline')} <AccessTimeIcon sx={{ ml:'5px' }} /> </Box>
                 <Popover
                   sx={{
                     '& .MuiPopover-paper': {
@@ -715,20 +716,20 @@ function CardDetail({ board, card, open, handleClose }) {
                 >
                   <Box onClick={(event) => event.stopPropagation()}>
                     <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }} >
-                      <Typography sx={{ flex:'8', textAlign:'center' }}>Update deadline</Typography>
+                      <Typography sx={{ ml:'10%', flex:'8', textAlign:'center' }}> {t('update_deadline')} </Typography>
                       <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
                     </Box>
                     <Box sx={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'15px 20px', height:'280px' }}>
                       <Datepicker selected={selectedDate} inline onChange={data => setSelectedDate(data)} popperPlacement='bottom-start'/>
                       <Button disabled={!buttonSubmit} onClick={handleUpdateCardDeadlineSubmit} sx={{ width:'100%', m:'8px 0', flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
-                        Update
+                        {t('update')}
                       </Button>
                     </Box>
                   </Box>
                 </Popover>
               </Box>
               <Box id='description-card' onClick={(event) => handleClick(event, 'description-card')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center', cursor:'pointer', textAlign:'center' }}>Description <NotesIcon sx={{ ml:'5px' }} /> </Box>
+                <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center', cursor:'pointer', textAlign:'center' }}>{t('description')} <NotesIcon sx={{ ml:'5px' }} /> </Box>
                 <Popover
                   sx={{
                     '& .MuiPopover-paper': {
@@ -748,21 +749,21 @@ function CardDetail({ board, card, open, handleClose }) {
                 >
                   <Box onClick={(event) => event.stopPropagation()}>
                     <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }} >
-                      <Typography sx={{ ml:'10%', flex:'8', textAlign:'center' }}>UPDATE DESCRIPTION</Typography>
+                      <Typography sx={{ ml:'10%', flex:'8', textAlign:'center' }}> {t('update_description')} </Typography>
                       <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
                     </Box>
                     <Box sx={{ display:'flex', flexDirection:'column', justifyContent:'center', padding:'15px 20px' }}>
                       {/* {console.log(description)} */}
                       <TextField multiline rows={8} onChange={(e) => setDescription(e.target.value)} size='small' value={description}/>
                       <Button disabled={!buttonSubmit} onClick={handleUpdateCardDescriptionSubmit} sx={{ mt:'10px', flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
-                        Update
+                        {t('update')}
                       </Button>
                     </Box>
                   </Box>
                 </Popover>
               </Box>
               <Box id='taskList-card' onClick={(event) => handleClick(event, 'taskList-card')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center', cursor:'pointer', textAlign:'center' }}>Add Task <CheckBoxIcon sx={{ ml:'5px' }} /> </Box>
+                <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center', cursor:'pointer', textAlign:'center' }}>{t('add_task')} <CheckBoxIcon sx={{ ml:'5px' }} /> </Box>
                 <Popover
                   sx={{
                     '& .MuiPopover-paper': {
@@ -782,13 +783,13 @@ function CardDetail({ board, card, open, handleClose }) {
                 >
                   <Box onClick={(event) => event.stopPropagation()}>
                     <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }} >
-                      <Typography sx={{ flex:'8', textAlign:'center' }}>Add task</Typography>
+                      <Typography sx={{  ml:'10%', flex:'8', textAlign:'center' }}> {t('add_task')} </Typography>
                       <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
                     </Box>
                     <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 20px' }}>
                       <TextField onChange={(e) => setTask(e.target.value)} size='small' value={task}/>
                       <Button onClick={handleAddTaskSubmit} sx={{ flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
-                        Add
+                        {t('add')}
                       </Button>
                     </Box>
                   </Box>
@@ -796,7 +797,7 @@ function CardDetail({ board, card, open, handleClose }) {
               </Box>
               {ownerBoard && (
                 <Box onClick={handleDeleteCardSubmit} sx={{ backgroundColor:(theme) => theme.palette.primary[500], display:'flex', justifyContent:'center', alignItems:'center', textAlign:'center', marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                Delete Card
+                  {t('delete_card')}
                   <DeleteIcon sx={{ ml:'5px' }} />
                 </Box>
               )}

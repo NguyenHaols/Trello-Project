@@ -11,6 +11,11 @@ import { toast } from 'react-toastify'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useNavigate } from 'react-router-dom'
 import { useConfirm } from 'material-ui-confirm'
+import { Button, IconButton, Menu, MenuItem, Typography } from '@mui/material'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import EditIcon from '@mui/icons-material/Edit'
+import BoardForm from '~/components/BoardForm/BoardForm'
+import { useTranslation } from 'react-i18next'
 
 function BoardBar({ board }) {
   const navigate = useNavigate()
@@ -18,10 +23,31 @@ function BoardBar({ board }) {
   const user = useSelector(state => state.user)
   const currentBoard = { ...board }
   const ownerBoard = user._id === currentBoard.ownerId
+  const [boardForm, setBoardForm] = useState(null)
+  const {t} = useTranslation()
   const checkStaredBoard = () => {
     return user.starredBoard.includes(board._id)
   }
   const [starredBoolean, setStarredBoolean] = useState(checkStaredBoard)
+  const [more, setMore] = useState(null)
+
+  const handleOpenMore = (e) => {
+    setMore(e.currentTarget)
+  }
+
+  const handleOpenBoardForm = (e) => {
+    setBoardForm(e.currentTarget)
+    // setMore(null)
+  }
+
+  const handleCloseBoardForm = () => {
+    setBoardForm(null)
+  }
+
+  const handleCloseMore = () => {
+    setMore(null)
+  }
+
   const handleStarredBoard = () => {
     const data = {
       userId: user._id,
@@ -43,6 +69,7 @@ function BoardBar({ board }) {
         })
     }
   }
+
   const handleSubmitDeleteBoard = () => {
     deleteBoardConfirm({
       title:'Delete board',
@@ -86,7 +113,7 @@ function BoardBar({ board }) {
               bgcolor:(theme) => theme.palette.primary[300]
             }
           }}
-          icon={<DashboardIcon />} label={board?.title} clickable
+          icon={<DashboardIcon />} label={board?.title} clickable={true}
         />
         <Chip
           sx={{
@@ -102,7 +129,7 @@ function BoardBar({ board }) {
               bgcolor:(theme) => theme.palette.primary[300]
             }
           }}
-          icon={<VpnLockIcon />} label={capitalizeFirstLetter(board?.type)} clickable
+          icon={<VpnLockIcon />} label={capitalizeFirstLetter(board?.type)} clickable={true}
         />
         <Chip
           onClick={handleStarredBoard}
@@ -119,28 +146,8 @@ function BoardBar({ board }) {
               bgcolor:(theme) => theme.palette.primary[300]
             }
           }}
-          icon={<PushPinIcon />} label={starredBoolean ? 'Unstarred Board' : 'Star Board'} clickable
+          icon={<PushPinIcon />} label={starredBoolean ? t('un_starred_board') : t('starred_board')} clickable={true}
         />
-
-        {ownerBoard && (
-          <Chip
-            onClick={handleSubmitDeleteBoard}
-            sx={{
-              color:(theme) => theme.palette.text.primary,
-              backgroundColor:'transparent',
-              border:'none',
-              paddingX:'5px',
-              borderRadius:'4px',
-              '.MuiSvgIcon-root': {
-                color:(theme) => theme.palette.text.primary
-              },
-              '&:hover':{
-                bgcolor:(theme) => theme.palette.primary[300]
-              }
-            }}
-            icon={<DeleteIcon />} label="Delete board" clickable
-          />
-        )}
 
         {/* <Chip
           sx={{
@@ -156,25 +163,56 @@ function BoardBar({ board }) {
               bgcolor:(theme) => theme.palette.primary[300]
             }
           }}
-          icon={<FilterListIcon />} label="Filters" clickable
+          icon={<FilterListIcon />} label="Filters" clickable={true}
         /> */}
       </Box>
 
-      {/* <Box sx={{ display:{ xs:'none', md:'flex' }, alignItems:'center', gap:2 }}>
-        <Button
-          variant="outlined"
-          startIcon={<PersonAddIcon/>}
-          sx={{
-            color:(theme) => 'white',
-            bgcolor:(theme) => theme.palette.primary[500],
-            '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] }
-          }}
-        >
-            Invite
-        </Button>
+      {ownerBoard && (
+        <Box sx={{ display:{ xs:'none', md:'flex' }, alignItems:'center', gap:2 }}>
+          <IconButton
+            variant="outlined"
+            sx={{
+              color:(theme) => theme.palette.text.primary
+            }}
+            onClick={handleOpenMore}
+          >
+            <MoreHorizIcon />
+          </IconButton>
+          <Menu
+            onClose={handleCloseMore}
+            anchorEl={more}
+            open={Boolean(more)}
+          >
+            <MenuItem onClick={handleOpenBoardForm}>
+              <Box
+                sx={{
+                  color:(theme) => theme.palette.text.primary,
+                  display:'flex'
+                }}
+              >
+                <EditIcon sx={{ mr:'5px' }} />
+                <Typography> {t('update')} </Typography>
+              </Box>
+            </MenuItem>
+            <BoardForm closeBoardForm={handleCloseBoardForm} openBoardForm={handleOpenBoardForm} boardForm={boardForm} board={board} />
+            <MenuItem onClick={handleCloseMore}>
+              <Box
+                onClick={handleSubmitDeleteBoard}
+                sx={{
+                  color:(theme) => theme.palette.text.primary,
+                  display:'flex'
+                }}
+                icon={<DeleteIcon />} label="Delete board" clickable={true}
+              >
+                <DeleteIcon sx={{ mr:'5px' }} />
+                <Typography> {t('delete_board')} </Typography>
+              </Box>
+            </MenuItem>
+          </Menu>
 
+        </Box>
+      )}
 
-      </Box> */}
     </Box>
 
   )

@@ -21,6 +21,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addBoardToWorkspace } from '~/redux/actions/userAction'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { t } from 'i18next'
 
 function Workspace( { data, currentUserId } ) {
 
@@ -191,7 +192,7 @@ function Workspace( { data, currentUserId } ) {
             color:(theme) => theme.palette.text.primary,
             justifyContent:'left',
             bgcolor: (theme) => activeBtn === data._id ? '#ccc' : 'transparent',
-            width:{ md:'100%',xs:'100%' },
+            width:{ md:'100%', xs:'100%' },
             '&:hover':{
               bgcolor:(theme) => '#ccc'
             }
@@ -220,7 +221,7 @@ function Workspace( { data, currentUserId } ) {
                   <ListItemIcon >
                     <AddBoxIcon sx={{ color:'#2196f3' }} />
                   </ListItemIcon>
-                  <ListItemText sx={{ color:(theme) => theme.palette.text.primary }}>New board</ListItemText>
+                  <ListItemText sx={{ color:(theme) => theme.palette.text.primary }}>{t('new_board')}</ListItemText>
                 </MenuItem>
                 <Dialog sx={{ margin:'0 auto', '& .MuiPaper-root':{ width:'50%' } }} open={open} onClose={handleClose}>
                   {loading && (
@@ -240,15 +241,15 @@ function Workspace( { data, currentUserId } ) {
                     </Box>
                   )}
                   <form onSubmit={boardFormik.handleSubmit}>
-                    <DialogTitle sx={{ color:(theme) => theme.palette.text.primary }}>CREATE BOARD</DialogTitle>
+                    <DialogTitle sx={{ color:(theme) => theme.palette.text.primary }}> {t('new_board')} </DialogTitle>
                     <DialogContent sx={{ display:'flex', flexDirection:'column' }}>
-                      <TextField name='boardTitle' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} size='small' id="outlined-basic" label="Board title" variant="outlined" />
+                      <TextField name='boardTitle' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} size='small' id="outlined-basic" label={t('board_title')} variant="outlined" />
                       {boardFormik.errors.boardTitle && boardFormik.touched.boardTitle && (
                         <Typography variant='caption' color='error' marginTop='5px' >
                           {boardFormik.errors.boardTitle}
                         </Typography>
                       )}
-                      <TextField name='description' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} multiline maxRows={4} size='large' id="outlined-basic" label="Description" variant="outlined" />
+                      <TextField name='description' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} multiline maxRows={4} size='large' id="outlined-basic" label={t('description')} variant="outlined" />
                       {boardFormik.errors.description && boardFormik.touched.description && (
                         <Typography variant='caption' color='error' marginTop='5px' >
                           {boardFormik.errors.description}
@@ -263,10 +264,10 @@ function Workspace( { data, currentUserId } ) {
                         sx={{ margin:'10px 0' }}
                       >
                         <MenuItem value={'Public'}>
-                          Public
+                          {t('public')}
                         </MenuItem>
                         <MenuItem value={'Private'}>
-                          Private
+                          {t('private')}
                         </MenuItem>
                       </Select>
                       {errorMessage && (
@@ -280,7 +281,7 @@ function Workspace( { data, currentUserId } ) {
                         startIcon={<CloudUploadIcon />}
                         sx={{ bgcolor:(theme) => theme.palette.primary }}
                       >
-                          Upload background image
+                        {t('Upload_background_image')}
                         <VisuallyHiddenInput type="file" accept='image/*' onChange={handleImageChange} />
                       </Button>
                       {selectedImage && (
@@ -291,8 +292,8 @@ function Workspace( { data, currentUserId } ) {
 
                     </DialogContent>
                     <DialogActions >
-                      <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} onClick={handleClose}>Cancel</Button>
-                      <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} type='submit' >Create</Button>
+                      <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} onClick={handleClose}>{t('cancel')}</Button>
+                      <Button sx={{ color:(theme) => theme.palette.text.primary, '&:hover':{ bgcolor:(theme) => theme.palette.primary[300] } }} type='submit' >{t('create')}</Button>
                     </DialogActions>
                   </form>
                 </Dialog>
@@ -304,7 +305,7 @@ function Workspace( { data, currentUserId } ) {
                 <ListItemIcon >
                   <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:'#2196f3' }} />
                 </ListItemIcon>
-                <ListItemText sx={{ color:(theme) => theme.palette.text.primary }}>Boards</ListItemText>
+                <ListItemText sx={{ color:(theme) => theme.palette.text.primary }}> {t('boards')} </ListItemText>
               </MenuItem>
             </Link>
 
@@ -313,7 +314,7 @@ function Workspace( { data, currentUserId } ) {
                 <ListItemIcon >
                   <PeopleIcon sx={{ color:'#2196f3' }}/>
                 </ListItemIcon>
-                <ListItemText sx={{ color:(theme) => theme.palette.text.primary }}>Members</ListItemText>
+                <ListItemText sx={{ color:(theme) => theme.palette.text.primary }}> {t('members')} </ListItemText>
               </MenuItem>
             </Link>
 
@@ -323,7 +324,7 @@ function Workspace( { data, currentUserId } ) {
                   <ListItemIcon >
                     <SettingsIcon sx={{ color:'#2196f3' }}/>
                   </ListItemIcon>
-                  <ListItemText sx={{ color:(theme) => theme.palette.text.primary }}>Settings</ListItemText>
+                  <ListItemText sx={{ color:(theme) => theme.palette.text.primary }}> {t('settings')} </ListItemText>
                 </MenuItem>
               </Link>
             )}

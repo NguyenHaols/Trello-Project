@@ -8,12 +8,13 @@ import { toast } from 'react-toastify'
 import socket from '~/socket/socket'
 import { addMemberAction } from '~/redux/actions/memberAction'
 import { useOutletContext } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 function MemberPage() {
   const {members, workspace, ownerWorkspace, currentUserId, user} = useOutletContext()
   const [emailInvite, setEmailInvite] = useState('')
   const dispatch = useDispatch()
-
+  const { t } = useTranslation()
   const handleInviteSubmit = () => {
     if (ownerWorkspace) {
       const data = {
@@ -62,7 +63,7 @@ function MemberPage() {
               value={emailInvite}
               sx={{ marginRight: '10px', width: '300px', pl:['15px', '0'] }}
               size='small'
-              placeholder='Enter email to invite'
+              placeholder={t('enter_email_to_invite')}
             />
           </Box>
           <Button
@@ -75,7 +76,7 @@ function MemberPage() {
               '&:hover': { bgcolor: (theme) => theme.palette.primary[800] }
             }}
           >
-            Invite
+            {t('invite')}
           </Button>
         </Box>
       )}
