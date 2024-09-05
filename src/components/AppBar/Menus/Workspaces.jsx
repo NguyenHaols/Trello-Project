@@ -25,7 +25,7 @@ function Workspaces({ workspaces }) {
   }
 
   const handleNavigateToWorkspace = (id) => {
-    navigate(`/workspace/${id}`)
+    navigate(`/workspace/${id}/boards`)
   }
 
   return (

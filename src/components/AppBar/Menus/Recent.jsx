@@ -29,7 +29,7 @@ function Recent() {
   }
 
   const handleNavigateToBoard = (id) => {
-    navigate(`board/${id}`)
+    navigate(`/board/${id}`)
   }
 
   return (
