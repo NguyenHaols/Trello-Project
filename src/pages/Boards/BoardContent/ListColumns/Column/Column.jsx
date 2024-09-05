@@ -51,7 +51,7 @@ function Column({ board, column, createNewCard, deleteColumn }) {
 
   const addNewCard = () => {
     if (!newCardTitle) {
-      toast.error('Please enter card title')
+      toast.error(`${t('please_enter_card_title')}`)
       return
     }
 

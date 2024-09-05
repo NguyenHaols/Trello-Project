@@ -37,7 +37,7 @@ function UserProfile() {
 
   const handleSubmitUpdateUser = () => {
     if (!/^\d+$/.test(phoneNumber)|| phoneNumber.length > 11) {
-      return toast.error('Phone number is not valid')
+      return toast.error(`${t('phone_number_is_not_valid')}`)
     }
     setLoading(true)
     const image = {
@@ -60,7 +60,7 @@ function UserProfile() {
       .finally(() => {
         updateUser(newInfor)
           .then(res => {
-            toast.success('Update user successfully')
+            toast.success(`${t('update_successfully')}`)
             const action = updateUserAction(res)
             dispatch(action)
             setLoading(false)

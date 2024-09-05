@@ -16,12 +16,14 @@ import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeBoardAction, setBoardAction } from '~/redux/actions/boardAction'
 import { store } from '~/redux/store'
+import { useTranslation } from 'react-i18next'
 
 function Board() {
   let { id } = useParams()
   const dispath = useDispatch()
   const board = useSelector(state => state.board)
   const [loading, setLoading] = useState(false)
+  const {t} = useTranslation()
   // const [board, setBoard] = useState()
 
   useEffect(() => {
@@ -165,10 +167,10 @@ function Board() {
     // Call API delete column
     deleteColumnDetailsAPI(columnId)
       .then(res => {
-        toast.success('Delete successfully')
+        toast.success(`${t('delete_successfully')}`)
       })
       .catch( () => {
-        toast.error('Some thing wrong!')
+        toast.error(`${t('some_thing_wrong')}`)
       } )
   }
 

@@ -26,8 +26,7 @@ function ChangePassword() {
       }
       updatePasswordAPI(data)
         .then(data => {
-          console.log('🚀 ~ handleUpdatePassword ~ data:', data)
-          toast.success('Updated successfully')
+          toast.success(`${t('update_successfully')}`)
         })
         .catch(err => {
           const message = err.response.data.message

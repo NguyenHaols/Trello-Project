@@ -68,7 +68,7 @@ function NewBoardBtn({ workspace }) {
         .finally(() => {
           createNewBoardAPI(newboard)
             .then(res => {
-              toast.success('Board created successfully')
+              toast.success(`${t('board_created_successfully')}`)
               const action = addBoardToWorkspace(workspace._id, res)
               dispatch(action)
               handleClose()
@@ -82,7 +82,7 @@ function NewBoardBtn({ workspace }) {
               setLoading(false)
               const message = error.response.data.message.split(':')
               setErrorMessage(message[1])
-              toast.error('Board create failure')
+              toast.error(`${t('board_created_failure')}`)
             })
           setSubmitting(false)
           setErrorMessage('')

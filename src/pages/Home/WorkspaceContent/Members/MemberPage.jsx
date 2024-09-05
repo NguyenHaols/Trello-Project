@@ -26,7 +26,7 @@ function MemberPage() {
           const newMember = data.user
           const action = addMemberAction(newMember)
           dispatch(action)
-          toast.success('Add member successfully')
+          toast.success(`${t('add_member_successfully')}`)
           setEmailInvite('')
           socket.emit('invite', {
             inviterId : user._id,
@@ -35,7 +35,7 @@ function MemberPage() {
           })
         })
         .catch((err) => {
-          toast.error(`Fail to invite ${emailInvite}`)
+          toast.error(`${t('fail_to_invite')} ${emailInvite}`)
         })
     }
   }

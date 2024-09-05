@@ -115,7 +115,7 @@ function CardDetail({ board, card, open, handleClose }) {
     updateCardAPI(data)
       .then(res => {
         setButtonSubmit(true)
-        toast.success('Update successfully')
+        toast.success(`${t('update_successfully')}`)
         handleClosePopover()
         const action = updateDeadlineCardAction(res._id, res.deadline)
         const action2 = updateStatusCardAction(res._id, res.status)
@@ -123,7 +123,7 @@ function CardDetail({ board, card, open, handleClose }) {
         dispath(action2)
       })
       .catch(error => {
-        toast.error('some thing wrong!')
+        toast.error(`${t('some_thing_wrong')}`)
       })
 
   }
@@ -208,13 +208,13 @@ function CardDetail({ board, card, open, handleClose }) {
     updateCardAPI(data)
       .then(res => {
         setButtonSubmit(true)
-        toast.success('Update successfully')
+        toast.success(`${t('update_successfully')}`)
         const action = updateDescriptionCardAction(res._id, res.description)
         dispath(action)
         handleClosePopover()
       })
       .catch(error => {
-        toast.error('some thing wrong!')
+        toast.error(`${t('some_thing_wrong')}`)
       })
   }
 
@@ -227,12 +227,12 @@ function CardDetail({ board, card, open, handleClose }) {
     updateCardAPI(data)
       .then(res => {
         setButtonSubmit(true)
-        toast.success('Update successfully')
+        toast.success(`${t('update_successfully')}`)
         const action = updateStatusCardAction(res._id, res.status)
         dispath(action)
       })
       .catch(error => {
-        toast.error('some thing wrong!')
+        toast.error(`${t('some_thing_wrong')}`)
       })
   }
 
@@ -328,7 +328,7 @@ function CardDetail({ board, card, open, handleClose }) {
           dispath(action)
         })
         .catch(error => {
-          toast.error('some thing wrong!')
+          toast.error(`${t('some_thing_wrong')}`)
         })
     }
   }
@@ -355,7 +355,7 @@ function CardDetail({ board, card, open, handleClose }) {
     handleClosePopover()
     uploadFileAPI(formData)
       .then((res) => {
-        toast.success('Add new attach success')
+        toast.success(`${t('add_new_attach_success')}`)
         return res
       })
       .then(data => {

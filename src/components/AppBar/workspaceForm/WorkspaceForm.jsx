@@ -59,7 +59,7 @@ function WorkspaceForm() {
         .finally(() => {
           createNewWorkspaceAPI(newWorkspace)
             .then(res => {
-              toast.success('Workspace created successfully')
+              toast.success(`${t('workspace_created_successfully')}`)
               const action = addWorkspaceAction(res)
               dispatch(action)
               handleClose()
@@ -74,7 +74,7 @@ function WorkspaceForm() {
               setLoading(false)
               const message = error.response.data.message.split(':')
               setErrorMessage(message[1])
-              toast.error('Workspace create failure')
+              toast.error(`${t('workspace_create_failure')}`)
             })
 
           setErrorMessage('')

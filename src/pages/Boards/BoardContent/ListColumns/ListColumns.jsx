@@ -21,7 +21,7 @@ function ListColumns({ board, columns, createNewColumn, createNewCard, deleteCol
   // tim hieu react hook cho form co nhieu input
   const addNewColumn = () => {
     if (!newColumnTitle) {
-      toast.error('Please enter column title')
+      toast.error(`${t('please_enter_column_title')}`)
       return
     }
 

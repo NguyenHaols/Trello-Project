@@ -11,6 +11,7 @@ import { registerApi } from '~/apis'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
+import { useTranslation } from 'react-i18next'
 
 
 function Register() {
@@ -19,6 +20,7 @@ function Register() {
   const [fullName, setFullName] = useState('')
   const [password, setPassword] = useState('')
   const [confirmpassword, setConfirmPassword] = useState('')
+  const {t} = useTranslation()
   const theme = useTheme()
   const textColor = theme.palette.text.primary
   const mainColor = theme.palette.primary.main
@@ -48,7 +50,7 @@ function Register() {
           .then(data => {
             if (data._id) {
               navigate('/auth/login')
-              toast.success('Register success')
+              toast.success(`${t('register_success')}`)
             }
           })
       } catch (error) {

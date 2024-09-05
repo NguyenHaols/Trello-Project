@@ -10,6 +10,7 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { recoverPasswordAPI } from '~/apis'
 import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 
 
 function RecoverPassword() {
@@ -18,7 +19,7 @@ function RecoverPassword() {
   const navigate = useNavigate()
   const textColor = theme.palette.text.primary
   const mainColor = theme.palette.primary.main
-
+  const {t} = useTranslation()
   const recoverFormik = useFormik({
     initialValues: {
       password: '',
@@ -42,7 +43,7 @@ function RecoverPassword() {
           .then(data => {
             if (data.success) {
               navigate('/auth/login')
-              toast.success('Update password success')
+              toast.success(`${t('update_password_success')}`)
             }
           })
       } catch (error) {

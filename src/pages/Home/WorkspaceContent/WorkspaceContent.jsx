@@ -166,7 +166,7 @@ function WorkspaceContent() {
         .finally(() => {
           updateWorkspaceAPI(updatedWorkspace)
             .then((res) => {
-              toast.success('Update workspace successfully')
+              toast.success(`${t('update_workspace_successfully')}`)
               const newUpdate = {
                 ...updatedWorkspace
               }
@@ -182,7 +182,7 @@ function WorkspaceContent() {
             .catch((error) => {
               const message = error.response.data.message.split(':')
               setErrorMessage(message[1])
-              toast.error('Update workspace failure')
+              toast.error(`${t('update_workspace_failure')}`)
             })
 
           setErrorMessage('')

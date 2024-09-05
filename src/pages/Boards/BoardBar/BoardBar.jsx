@@ -58,28 +58,28 @@ function BoardBar({ board }) {
       removeStarreddAPI(data)
         .then(() => {
           setStarredBoolean(false)
-          toast.success('Remove starred successfully')
+          toast.success(`${t('remove_starred_successfully')}`)
         })
     } else {
       // chua ghim
       addStarreddAPI(data)
         .then(() => {
           setStarredBoolean(true)
-          toast.success('Add starred successfully')
+          toast.success(`${t('add_starred_successfully')}`)
         })
     }
   }
 
   const handleSubmitDeleteBoard = () => {
     deleteBoardConfirm({
-      title:'Delete board',
-      content:'Are you sure you want to delete this board ?'
+      title: t('delete_board'),
+      content:t('are_you_sure_you_want_to_delete_this_board_?')
     })
       .then(() => {
         deleteBoardAPI({ boardId:currentBoard._id })
           .then(() => {
             navigate('/boards')
-            toast.success('Delete board successfully')
+            toast.success(`${t('delete_board_successfully')}`)
           })
       })
       .catch(() => {})

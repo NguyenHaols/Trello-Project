@@ -20,8 +20,8 @@ function Attachment({ ownerBoard, attach, card }) {
   const deleteAttach = (e) => {
     e.preventDefault()
     removeAttachConfirm({
-      title:'Remove attach',
-      content:'Are you sure you want to remove this attach',
+      title:t('remove_attach'),
+      content:t('are_you_sure_you_want_to_remove_this_attach'),
       dialogProps:{ maxWidth:'xs', sx:{ zIndex:5000 } }
     })
       .then(() => {
@@ -31,7 +31,7 @@ function Attachment({ ownerBoard, attach, card }) {
         }
         removeAttachCardAPI(data)
           .then(res => {
-            toast.success('Remove attach success')
+            toast.success(`${t('remove_attach_success')}`)
             const action = removeAttachCardAction(card._id, attach._id)
             dispath(action)
           })

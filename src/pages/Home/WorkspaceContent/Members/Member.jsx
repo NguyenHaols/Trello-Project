@@ -24,13 +24,13 @@ function Members({ workspace, currentUserId, member }) {
         email : member.email
       }
       leaveConfirm({
-        title:'Remove from workspace',
-        content: 'Are you sure ?'
+        title:t('remove_from_workspace'),
+        content: t('are_you_sure')
       })
         .then(() => {
           removeMemberAPI(data)
             .then( data => {
-              toast.success('Remove member successfully')
+              toast.success(`${t('remove_member_successfully')}`)
               const action = removeMemberAction(member._id)
               socket.emit('removeMember', {
                 senderId: currentUserId,
@@ -51,7 +51,7 @@ function Members({ workspace, currentUserId, member }) {
         .catch(() => {})
     }
     else {
-      toast.error('you don\'t have permission to delete')
+      toast.error(`${t('you_dont_have_permission_to_delete')}`)
     }
 
   }

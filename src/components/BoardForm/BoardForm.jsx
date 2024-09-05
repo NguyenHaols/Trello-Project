@@ -62,7 +62,7 @@ function BoardForm(props) {
         .finally(() => {
           updateBoardDetailsAPI(board._id, newBoard)
             .then(res => {
-              toast.success('Update board successfully')
+              toast.success(`${t('update_board_successfully')}`)
               const newBoard = {...board, ...res}
               const action = setBoardAction(newBoard)
               dispatch(action)
@@ -78,7 +78,7 @@ function BoardForm(props) {
               setLoading(false)
               const message = error.response.data.message.split(':')
               setErrorMessage(message[1])
-              toast.error('Workspace create failure')
+              toast.error(`${t('update_board_failure')}`)
             })
 
           setErrorMessage('')

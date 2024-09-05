@@ -24,7 +24,7 @@ function TaskList({ task, isMembersInCard, ownerBoard, card }) {
   const handleTaskList = (taskId, taskStatus) => {
 
     if ( !(isMembersInCard || ownerBoard)) {
-      return toast.info('You don\'t have permission to check task ')
+      return toast.info(`${t('you_dont_have_permission_to_check_task')}`)
     }
 
     const data = {
@@ -122,7 +122,7 @@ function TaskList({ task, isMembersInCard, ownerBoard, card }) {
         const action = updateTaskDeadlineCardAction(card._id, taskId, selectedDate)
         dispatch(action)
         handleCloseTimeTask()
-        toast.success('Update deadline task success')
+        toast.success(`${t('update_deadline_task_success')}`)
       })
   }
 
@@ -137,7 +137,7 @@ function TaskList({ task, isMembersInCard, ownerBoard, card }) {
         const action = updateTaskDeadlineCardAction(card._id, taskId, null)
         dispatch(action)
         handleCloseTimeTask()
-        toast.success('Remove deadline task success')
+        toast.success(`${t('remove_deadline_task_success')}`)
       })
   }
 

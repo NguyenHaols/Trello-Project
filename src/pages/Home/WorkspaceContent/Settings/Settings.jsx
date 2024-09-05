@@ -22,8 +22,8 @@ function Settings() {
   const handleDeleteWorkspace = () => {
 
     confirmDeleteWorkspace({
-      title:'Delete workspace',
-      content:'Are you sure you want to delete this workspace ?'
+      title:t('delete_workspace'),
+      content:t('are_you_sure_you_want_to_delete_this_workspace')
     })
       .then( () => {
         navigate('/')
@@ -31,7 +31,7 @@ function Settings() {
           .then( () => {
             const action = removeWorkspaceAction(workspace[0]._id)
             dispatch(action)
-            toast.success('Delete successfully')
+            toast.success(`${t('delete_successfully')}`)
           } )
       })
       .catch( () => {})

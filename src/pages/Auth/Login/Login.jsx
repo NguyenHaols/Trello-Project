@@ -16,11 +16,13 @@ import { API_ROOT } from '~/utils/constants'
 import Cookies from 'js-cookie'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
+import { useTranslation } from 'react-i18next'
 
 function Login() {
   const navigate = useNavigate()
   const [errorMessage, setErrorMessage] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const {t} = useTranslation()
   const theme = useTheme()
   const textColor = theme.palette.text.primary
   const mainColor = theme.palette.primary.main
@@ -40,9 +42,9 @@ function Login() {
           localStorage.setItem('accessToken', data.accessToken)
           Cookies.set('accessToken', data.accessToken)
           navigate('/boards')
-          toast.success('Login successful')
+          toast.success(`${t('login_successful')}`)
         } else {
-          setErrorMessage('Sorry, your email or password was incorrect')
+          setErrorMessage(`${t('sorry,_your_email_or_password_was_incorrect')}`)
         }
       })
       .catch((error) => {

@@ -34,7 +34,7 @@ function Member({ member, card, isActivityMember}) {
           .then(() => {
             const action = removeMemberCardAction(card._id, memberId)
             dispatch(action)
-            toast.success('Remove member success')
+            toast.success(`${t('remove_member_successfully')}`)
           })
       })
       .catch(() => {})
@@ -50,7 +50,7 @@ function Member({ member, card, isActivityMember}) {
       .then(res => {
         const newUser = res.members[res.members.length-1]
         const action = addMemberCardAction(card._id, newUser)
-        toast.success('Add member successfully')
+        toast.success(`${t('add_member_successfully')}`)
         dispatch(action)
       })
       .catch(error => {
