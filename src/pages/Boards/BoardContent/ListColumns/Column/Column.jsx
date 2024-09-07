@@ -70,10 +70,10 @@ function Column({ board, column, createNewCard, deleteColumn }) {
   const confirmDeleteColumn = useConfirm()
   const handleDeleteColumn = () => {
     confirmDeleteColumn({
-      content:'Are you sure you want to delete this column ?',
-      title: 'Delete Column ?',
-      // confirmationText:'Confirm',  đã là mặc định ở main.jsx
-      // cancellationText:'Cancel'  đã là mặc định ở main.jsx
+      content:t('are_you_sure_you_want_to_delete_this_column'),
+      title: t('delete_column'),
+      confirmationText:t('confirm'),
+      cancellationText:t('cancel'),
       dialogProps:{ maxWidth:'xs' }
     })
       .then( () => {

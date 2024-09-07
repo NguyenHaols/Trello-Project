@@ -16,7 +16,8 @@ function TaskList({ task, isMembersInCard, ownerBoard, card }) {
   const dispatch = useDispatch()
   const [userTaskEl, setUserTaskEl] = useState(null)
   const [timeTaskEl, setTimeTaskEl] = useState(null)
-  const [selectedDate, setSelectedDate] = useState(null)
+  const deadLine = new Date(task.deadline)
+  const [selectedDate, setSelectedDate] = useState(deadLine)
   const [usernameFilter, setUsernameFilter] = useState('')
   const confirmDeleteTask = useConfirm()
   const { t } = useTranslation()
@@ -193,7 +194,7 @@ function TaskList({ task, isMembersInCard, ownerBoard, card }) {
                   <IconButton onClick={handleCloseTimeTask}> <CloseIcon /> </IconButton>
                 </Box>
                 <Box sx={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'25px 30px' }}>
-                  <Datepicker selected={task?.deadline} inline onChange={data => setSelectedDate(data)} popperPlacement='bottom-start'/>
+                  <Datepicker selected={selectedDate} showTimeSelect inline onChange={data => setSelectedDate(data)} popperPlacement='bottom-start'/>
                   <Button onClick={ () => handleUpdateTaskTime(task._id)} onChange={(data) => {setSelectedDate(data)}} sx={{ flex:'2', mt:'15px', marginLeft:'5px', color:'white', width:'100%', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
                     {t('update')}
                   </Button>

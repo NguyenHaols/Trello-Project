@@ -141,8 +141,8 @@ function WorkspaceContent() {
       description:workpaceDescription
     },
     validationSchema: Yup.object({
-      workspaceTitle: Yup.string().min(4, 'Minimum 4 characters').max(30, 'Maximum 30 characters').required('Requiured!'),
-      description: Yup.string().min(4, 'Minimum 4 characters').max(300, 'Maximum 300 characters').required('Requiured!')
+      workspaceTitle: Yup.string().min(4, t('minimum_4_characters')).max(30, t('maximum_30_characters')).required(t('requiured')),
+      description: Yup.string().min(4, t('minimum_4_characters')).max(300, t('maximum_300_characters')).required(t('requiured'))
     }),
     onSubmit:(values, { setSubmitting }) => {
       const data = workspace[0]
@@ -194,8 +194,10 @@ function WorkspaceContent() {
   const updateConfirm = useConfirm()
   const handleSubmitUpdate = () => {
     updateConfirm({
-      title: 'Update workspace',
-      content: 'Are you sure you want to update ?'
+      title: t('update_workspace'),
+      content: t('are_you_sure'),
+      confirmationText:t('confirm'),
+      cancellationText:t('cancel'),
     })
       .then(() => {
         workspaceFormik.handleSubmit()

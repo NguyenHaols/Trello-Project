@@ -12,18 +12,23 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import CardDetail from './CardDetail/CardDetail'
 import AssignmentIcon from '@mui/icons-material/Assignment'
+import { useTranslation } from 'react-i18next'
 
 function CardItem({ board, card, handleClickOpenDialog, handleCloseDialog }) {
   const [openDialog, setOpenDialog] = useState(false)
+  const { t } = useTranslation()
  
   const setStatusColor = () => {
-    if (card.status === 'Still Good') {
+    if (card.status === 'Doing') {
       return '#99cc33'
-    } else if (card.status === 'Coming Up') {
+    } else if (card.status === 'Reject') {
       return '#ffcc00'
     } else if (card.status === 'Over Time') {
       return '#cc3300'
-    } else {
+    } else if (card.status === 'Done') {
+      return '#ccc'
+    }
+    else {
       return '#99cc33'
     }
   }
@@ -84,8 +89,8 @@ function CardItem({ board, card, handleClickOpenDialog, handleCloseDialog }) {
 
         <CardContent sx={{ display:'flex',justifyContent:'space-between' ,p:1.5, '&:last-child':{ p:1.5 } }}>
           <Typography > {card?.title} </Typography>
-          <Box sx={{bgcolor:setStatusColor(),color:'white',padding:'5px',width:'100px',textAlign:'center',borderRadius:'6px'}}>
-            {card.status}
+          <Box sx={{bgcolor:setStatusColor(),color:'white',padding:'5px',width:'110px',textAlign:'center',borderRadius:'6px'}}>
+            {t(`${card.status}`)}
           </Box>
         </CardContent>
         {shouldShowCardActions() &&

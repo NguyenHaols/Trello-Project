@@ -25,7 +25,9 @@ function Members({ workspace, currentUserId, member }) {
       }
       leaveConfirm({
         title:t('remove_from_workspace'),
-        content: t('are_you_sure')
+        content: t('are_you_sure'),
+        confirmationText:t('confirm'),
+        cancellationText:t('cancel')
       })
         .then(() => {
           removeMemberAPI(data)

@@ -46,7 +46,7 @@ function AppBar({ sideBarMobileActive }) {
   const [activeNotification, setActiveNotification] = useState(false)
   const [unReadNoti, setUnReadNoti] = useState(null)
 
-  const {t} = useTranslation()
+  const { t } = useTranslation()
   const openNotification = Boolean(notificationEl)
   const idNotification = openNotification ? 'Notification-popover' : undefined
   const navigate = useNavigate()

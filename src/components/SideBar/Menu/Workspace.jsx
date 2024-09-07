@@ -70,8 +70,8 @@ function Workspace( { data, currentUserId } ) {
       description:''
     },
     validationSchema: Yup.object({
-      boardTitle: Yup.string().min(4, 'Minimum 4 characters').max(30, 'Maximum 30 characters').required('Requiured!'),
-      description: Yup.string().min(4, 'Minimum 4 characters').max(150, 'Maximum 150 characters').required('Requiured!')
+      boardTitle: Yup.string().min(4, t('minimum_4_characters')).max(30, t('maximum_30_characters')).required(t('requiured')),
+      description: Yup.string().min(4, t('minimum_4_characters')).max(150, t('maximum_30_characters')).required(t('requiured'))
     }),
     onSubmit:(values, { setSubmitting }) => {
       setLoading(true)

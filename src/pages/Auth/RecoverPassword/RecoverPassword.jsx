@@ -26,10 +26,10 @@ function RecoverPassword() {
       confirmPassword: ''
     },
     validationSchema: Yup.object({
-      password: Yup.string().min(6, 'Minimum 6 characters').max(30, 'Maximum 30 characters').required('Required!'),
+      password: Yup.string().min(6, t('minimum_6_characters')).max(30, t('maximum_30_characters')).required(t('requiured')),
       confirmPassword: Yup.string()
-        .oneOf([Yup.ref('password'), null], 'Passwords must match')
-        .required('Required!')
+        .oneOf([Yup.ref('password'), null], t('passwords_must_match'))
+        .required(t('requiured'))
     }),
     onSubmit: (values, { setSubmitting }) => {
       const token = window.location.pathname.split('/').pop()

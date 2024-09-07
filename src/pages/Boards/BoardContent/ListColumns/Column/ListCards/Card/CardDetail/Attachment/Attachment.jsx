@@ -22,6 +22,8 @@ function Attachment({ ownerBoard, attach, card }) {
     removeAttachConfirm({
       title:t('remove_attach'),
       content:t('are_you_sure_you_want_to_remove_this_attach'),
+      confirmationText:t('confirm'),
+      cancellationText:t('cancel'),
       dialogProps:{ maxWidth:'xs', sx:{ zIndex:5000 } }
     })
       .then(() => {

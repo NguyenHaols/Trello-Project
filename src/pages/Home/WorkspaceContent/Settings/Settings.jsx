@@ -23,7 +23,9 @@ function Settings() {
 
     confirmDeleteWorkspace({
       title:t('delete_workspace'),
-      content:t('are_you_sure_you_want_to_delete_this_workspace')
+      content:t('are_you_sure_you_want_to_delete_this_workspace'),
+      confirmationText:t('confirm'),
+      cancellationText:t('cancel')
     })
       .then( () => {
         navigate('/')

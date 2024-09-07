@@ -63,8 +63,8 @@ function Login() {
       password:''
     },
     validationSchema: Yup.object({
-      email: Yup.string().min(2, 'Minimum 2 characters').max(30, 'Maximum 30 characters').required('Required!'),
-      password: Yup.string().min(6, 'Minimum 6 characters').max(15, 'Maximum 15 characters').required('Required!')
+      email: Yup.string().min(2, t('minimum_2_characters')).max(30, t('maximum_30_characters')).required(t('requiured')),
+      password: Yup.string().min(6, t('minimum_6_characters')).max(15, t('maximum_15_characters')).required(t('requiured'))
     }),
     onSubmit: handleLogin
   })

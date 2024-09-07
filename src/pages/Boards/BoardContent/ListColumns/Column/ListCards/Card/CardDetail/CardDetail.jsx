@@ -35,7 +35,7 @@ function CardDetail({ board, card, open, handleClose }) {
   const dayIndex = date.getDay()
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thurday', 'Friday', 'Saturday']
   const day = days[dayIndex]
-  const formattedDate = `${day} ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+  const formattedDate = `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}  ${day} ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
   const oldBoard = { ...board }
   const currentBoard = useRef(oldBoard)
   const ownerBoard = currentBoard.current.ownerId === user._id
@@ -106,7 +106,7 @@ function CardDetail({ board, card, open, handleClose }) {
       deadline : selectedDate
     }
     if (dateNow.getTime() < deadlineDate.getTime()) {
-      data.status = 'Good'
+      data.status = 'Doing'
     }
     if (dateNow.getTime() > deadlineDate.getTime()) {
       data.status = 'Over Time'
@@ -253,13 +253,16 @@ function CardDetail({ board, card, open, handleClose }) {
   handleEmpty()
 
   const setStatusColor = () => {
-    if (card.status === 'Still Good') {
+    if (card.status === 'Doing') {
       return '#99cc33'
-    } else if (card.status === 'Coming Up') {
+    } else if (card.status === 'Reject') {
       return '#ffcc00'
     } else if (card.status === 'Over Time') {
       return '#cc3300'
-    } else {
+    } else if (card.status === 'Done') {
+      return '#ccc'
+    }
+    else {
       return '#99cc33'
     }
   }
@@ -268,8 +271,10 @@ function CardDetail({ board, card, open, handleClose }) {
   const handleDeleteComment = (cmtId) => {
     handleCloseMenuCmt()
     deleteCmtConfirm({
-      title:'Delete comment',
-      content:'Are you sure you want to delete this comment?',
+      title:t('delete_comment'),
+      content:t('are_you_sure_you_want_to_delete_this_comment'),
+      confirmationText:t('confirm'),
+      cancellationText:t('cancel'),
       dialogProps: {
         sx:{ zIndex:1500 }
       }
@@ -419,7 +424,7 @@ function CardDetail({ board, card, open, handleClose }) {
                   <HourglassBottomIcon sx={{ marginRight:'2px', color:(theme) => theme.palette.primary[500] }} />
                   <Typography textTransform='uppercase' > {t('status_task')} </Typography>
                 </Box>
-                <Box sx={{ bgcolor:setStatusColor(), maxWidth:'100px', textAlign:'center', color:'white', borderRadius:'4px' }}>{card.status}</Box>
+                <Box sx={{ bgcolor:setStatusColor(), maxWidth:'100px', textAlign:'center', color:'white', borderRadius:'4px' }}>{t(`${card.status}`)}</Box>
               </Box>
               <Box>
                 <Box sx={{ display:'flex', alignItems:'center', paddingBottom:'5px' }}>
@@ -609,56 +614,60 @@ function CardDetail({ board, card, open, handleClose }) {
               )}
 
 
-              {/* <Box id='status-task' onClick={(event) => handleClick(event, 'status-task')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                <Box sx={{ cursor:'pointer', textAlign:'center' }}>Status Task</Box>
-                <Popover
-                  sx={{
-                    '& .MuiPopover-paper': {
-                      minWidth:'300px',
-                      boxShadow: '0px 2px 4px rgba(0,0,0,0.3)'
-                    }
-                  }}
-                  open={Boolean(popoverInfo && popoverInfo.type === 'status-task')}
-                  anchorEl={popoverInfo?.anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right'
-                  }}
-                  onClose={handleClosePopover}
-                  container={() => document.getElementById('status-task')}
-                  disableAutoFocus
-                >
-                  <Box onClick={(event) => event.stopPropagation()}>
-                    <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }} >
-                      <Typography sx={{ flex:'8', textAlign:'center' }}>Update Status</Typography>
-                      <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
-                    </Box>
-                    <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 20px' }}>
-                      <select
+              {ownerBoard && (
+                <Box id='status-task' onClick={(event) => handleClick(event, 'status-task')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
+                  <Box sx={{ cursor:'pointer', textAlign:'center', display:'flex' }}>Status Task <HourglassBottomIcon sx={{ ml:'5px' }}/> </Box>
+                  <Popover
+                    sx={{
+                      '& .MuiPopover-paper': {
+                        minWidth:'300px',
+                        boxShadow: '0px 2px 4px rgba(0,0,0,0.3)'
+                      }
+                    }}
+                    open={Boolean(popoverInfo && popoverInfo.type === 'status-task')}
+                    anchorEl={popoverInfo?.anchorEl}
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right'
+                    }}
+                    onClose={handleClosePopover}
+                    container={() => document.getElementById('status-task')}
+                    disableAutoFocus
+                  >
+                    <Box onClick={(event) => event.stopPropagation()}>
+                      <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }} >
+                        <Typography sx={{ flex:'8', textAlign:'center' }}>Update Status</Typography>
+                        <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
+                      </Box>
+                      <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 20px' }}>
+                        <select
 
-                        onChange={(e) => setStatusCard(e.target.value)}
-                        size='small'
-                        id="status-select"
-                        value={statusCard}
-                        style={{ flex:'8' }}
-                      >
-                        <option style={{ fontSize:'18px' }} value={'Still Good'}>
-                          Still Good
-                        </option>
-                        <option style={{ fontSize:'18px' }} value={'Coming Up'}>
-                          Coming Up
-                        </option>
-                        <option style={{ fontSize:'18px' }} value={'Over Time'}>
-                          Over Time
-                        </option>
-                      </select>
-                      <Button disabled={!buttonSubmit} onClick={handleUpdateCardStatusSubmit} sx={{ flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
+                          onChange={(e) => setStatusCard(e.target.value)}
+                          size='small'
+                          id="status-select"
+                          value={statusCard}
+                          style={{ flex:'8' }}
+                        >
+                          <option style={{ fontSize:'18px' }} value={'Doing'}>
+                            {t('Doing')}
+                          </option>
+                          <option style={{ fontSize:'18px' }} value={'Reject'}>
+                            {t('Reject')}
+                          </option>
+                          <option style={{ fontSize:'18px' }} value={'Done'}>
+                            {t('Done')}
+                          </option>
+                        </select>
+                        <Button disabled={!buttonSubmit} onClick={handleUpdateCardStatusSubmit} sx={{ flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
                         Update
-                      </Button>
+                        </Button>
+                      </Box>
                     </Box>
-                  </Box>
-                </Popover>
-              </Box> */}
+                  </Popover>
+                </Box>
+              )}
+
+
               {ownerBoard && (
                 <Box id='attachment-file' onClick={(event) => handleClick(event, 'attachment-file')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
                   <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center', cursor:'pointer', textAlign:'center' }}> {t('attachment')} <AttachmentIcon sx={{ ml:'5px' }} /></Box>
@@ -720,7 +729,7 @@ function CardDetail({ board, card, open, handleClose }) {
                       <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
                     </Box>
                     <Box sx={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'15px 20px', height:'280px' }}>
-                      <Datepicker selected={selectedDate} inline onChange={data => setSelectedDate(data)} popperPlacement='bottom-start'/>
+                      <Datepicker selected={selectedDate} showTimeSelect inline onChange={data => setSelectedDate(data)} popperPlacement='bottom-start'/>
                       <Button disabled={!buttonSubmit} onClick={handleUpdateCardDeadlineSubmit} sx={{ width:'100%', m:'8px 0', flex:'2', marginLeft:'5px', color:'white', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
                         {t('update')}
                       </Button>
@@ -783,7 +792,7 @@ function CardDetail({ board, card, open, handleClose }) {
                 >
                   <Box onClick={(event) => event.stopPropagation()}>
                     <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 0' }} >
-                      <Typography sx={{  ml:'10%', flex:'8', textAlign:'center' }}> {t('add_task')} </Typography>
+                      <Typography sx={{ ml:'10%', flex:'8', textAlign:'center' }}> {t('add_task')} </Typography>
                       <CloseIcon onClick={handleClosePopover} sx={{ flex:'2', cursor:'pointer', borderRadius:'50%', '&:hover':{ color:'#ccc' } }}/>
                     </Box>
                     <Box sx={{ display:'flex', justifyContent:'center', padding:'15px 20px' }}>

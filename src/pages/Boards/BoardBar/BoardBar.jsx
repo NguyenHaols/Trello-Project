@@ -73,7 +73,9 @@ function BoardBar({ board }) {
   const handleSubmitDeleteBoard = () => {
     deleteBoardConfirm({
       title: t('delete_board'),
-      content:t('are_you_sure_you_want_to_delete_this_board_?')
+      content:t('are_you_sure_you_want_to_delete_this_board_?'),
+      confirmationText:t('confirm'),
+      cancellationText:t('cancel')
     })
       .then(() => {
         deleteBoardAPI({ boardId:currentBoard._id })

@@ -9,6 +9,9 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setLanguageAction } from '~/redux/actions/languageAction'
 import { useTranslation } from 'react-i18next'
+import vnFlag from  '~/assets/vnflag.png'
+import usFlag from  '~/assets/usflag.png'
+
 
 function LanguageSelect() {
   const dispatch = useDispatch()
@@ -62,13 +65,13 @@ function LanguageSelect() {
 
         <MenuItem value={'en'}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        EngLish <GTranslateIcon />
+                        EngLish <img src={usFlag} width='24px'/>
           </Box>
         </MenuItem>
 
         <MenuItem value={'vi'}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        Việt Nam <GTranslateIcon />
+                        Việt Nam <img src={vnFlag} width='24px' />
           </Box>
         </MenuItem>
 

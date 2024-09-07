@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, ListItemIcon, ListItemText, MenuItem, Select, TextField, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select, TextField, Typography } from '@mui/material'
 import AddBoxIcon from '@mui/icons-material/AddBox'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
@@ -42,8 +42,8 @@ function NewBoardBtn({ workspace }) {
       description:''
     },
     validationSchema: Yup.object({
-      boardTitle: Yup.string().min(4, 'Minimum 4 characters').max(30, 'Maximum 30 characters').required('Requiured!'),
-      description: Yup.string().min(4, 'Minimum 4 characters').max(150, 'Maximum 150 characters').required('Requiured!')
+      boardTitle: Yup.string().min(4, t('minimum_4_characters')).max(30, t('maximum_30_characters')).required(t('requiured')),
+      description: Yup.string().min(4, t('minimum_4_characters')).max(150, t('maximum_150_characters')).required(t('requiured'))
     }),
     onSubmit:(values, { setSubmitting }) => {
       setLoading(true)
