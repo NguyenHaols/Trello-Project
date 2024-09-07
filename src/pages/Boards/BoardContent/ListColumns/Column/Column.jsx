@@ -38,7 +38,7 @@ function Column({ board, column, createNewCard, deleteColumn }) {
   const [newCardTitle, setNewCardTitle] = useState('')
   const user = useSelector(state => state.user)
   const ownerBoard = currentBoard.current.ownerId === user._id
-  const {t} = useTranslation()
+  const { t } = useTranslation()
 
   const [openDialog, setOpenDialog] = useState(false)
   const handleClickOpenDialog = () => {
@@ -50,6 +50,9 @@ function Column({ board, column, createNewCard, deleteColumn }) {
   }
 
   const addNewCard = () => {
+    if (newCardTitle.length < 3) {
+      toast.error('Card need more than 3 character')
+    }
     if (!newCardTitle) {
       toast.error(`${t('please_enter_card_title')}`)
       return
@@ -284,7 +287,7 @@ function Column({ board, column, createNewCard, deleteColumn }) {
                       '&:hover': { bgcolor: (theme) => theme.palette.primary.main }
                     }}
                   >
-                  Add
+                    {t('add')}
                   </Button>
                   <CloseIcon
                     sx={{

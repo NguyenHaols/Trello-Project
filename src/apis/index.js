@@ -291,3 +291,16 @@ export const setIsReadAPI = async(data) => {
 
 // End notification
 
+
+// Admin 
+
+// - User
+export const loginAdminApi = async (userData) => {
+  const response = await axios.post(`${API_ROOT}/v1/users/loginAdmin`, userData, {
+    withCredentials: true
+  })
+  return response.data
+}
+
+
+// End admin

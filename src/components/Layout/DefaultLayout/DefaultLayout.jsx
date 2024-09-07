@@ -42,8 +42,6 @@ function DefaultLayout() {
       .catch(() => {
         navigate('/auth/login')
       })
-
-  
   }, [])
 
 

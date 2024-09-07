@@ -9,7 +9,6 @@ import Register from './pages/Auth/Register/Register'
 import RecoverPassword from './pages/Auth/RecoverPassword/RecoverPassword'
 import Forgot from './pages/Auth/Forgot/Forgot'
 import AppBarOnlyLayout from './components/Layout/AppBarOnlyLayout/AppBarOnlyLayout'
-import Members from './pages/Home/WorkspaceContent/Members/Member'
 import Settings from './pages/Home/WorkspaceContent/Settings/Settings'
 import UserProfile from './pages/User/UserProfile/UserProfile'
 import ChangePassword from './pages/User/ChangePassword/ChangePassword'
@@ -18,6 +17,10 @@ import Auth20 from './pages/Auth/auth20/Auth20'
 import MemberPage from './pages/Home/WorkspaceContent/Members/MemberPage'
 import Boards from './pages/Home/WorkspaceContent/Boards/Boards'
 import { Box } from '@mui/material'
+import AuthAdmin from './pages/admin/Auth/AuthAdmin'
+import LoginAdmin from './pages/admin/Auth/Login/LoginAdmin'
+import { Navigate } from 'react-router-dom'
+import AdminLayOut from './pages/admin/Layout/AdminLayout'
 
 function App() {
 
@@ -37,7 +40,7 @@ function App() {
         {
           path:'workspace/:id',
           element:<WorkspaceContent />,
-          errorElement: <Box sx={{display:'flex', justifyContent:'center', alignItems:'center'}}> You are no longer a member of this workspace </Box>,
+          errorElement: <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center' }}> You are no longer a member of this workspace </Box>,
           children: [
             {
               path:'boards',
@@ -109,6 +112,46 @@ function App() {
         {
           path:'login-success/:token',
           element: <Auth20 />
+        }
+      ]
+    },
+    {
+      path:'admin',
+      element: <AdminLayOut />,
+      children:[
+        {
+          path:'',
+          element: <Navigate to='dashboard' replace />
+        },
+        {
+          path:'dashboard',
+          element: <div> dash board </div>
+        },
+        {
+          path:'user',
+          element: <div> user </div>
+        },
+        {
+          path:'workspace',
+          element: <div> user </div>
+        },
+        {
+          path:'report',
+          element: <div> user </div>
+        }
+      ]
+    },
+    {
+      path:'admin/auth',
+      element:<AuthAdmin/>,
+      children: [
+        {
+          path: '',
+          element: <Navigate to='login' replace />
+        },
+        {
+          path: 'login',
+          element: <LoginAdmin />
         }
       ]
     }
