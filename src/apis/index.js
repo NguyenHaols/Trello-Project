@@ -10,7 +10,7 @@ axios.interceptors.request.use(config => {
   }
   return config
 }, error => {
-  return Promise.reject(error);
+  return Promise.reject(error)
 })
 
 // Board
@@ -212,7 +212,7 @@ export const addMemberAPI = async(data) => {
 }
 
 export const removeMemberAPI = async(data) => {
-  const response = await axios.post(`${API_ROOT}/v1/workspace/member/removeMember`, data,{
+  const response = await axios.post(`${API_ROOT}/v1/workspace/member/removeMember`, data, {
     withCredentials: true
   })
   return response.data
@@ -292,7 +292,7 @@ export const setIsReadAPI = async(data) => {
 // End notification
 
 
-// Admin 
+// -------------------Admin
 
 // - User
 export const loginAdminApi = async (userData) => {
@@ -302,5 +302,26 @@ export const loginAdminApi = async (userData) => {
   return response.data
 }
 
+export const getUserPercentOnMonthApi = async () => {
+  const response = await axios.get(`${API_ROOT}/v1/users/getPercentOnMonth`)
+  return response.data
+}
 
-// End admin
+// - workspace
+export const getWorkspacePercentOnMonthApi = async () => {
+  const response = await axios.get(`${API_ROOT}/v1/workspaces/getPercentOnMonth`)
+  return response.data
+}
+
+export const getCountOnMonthApi = async () => {
+  const response = await axios.get(`${API_ROOT}/v1/workspaces/getCountOnMonth`)
+  return response.data
+}
+
+// - cmt
+export const getActivityPercentOnMonthApi = async () => {
+  const response = await axios.get(`${API_ROOT}/v1/comments/getPercentOnMonth`)
+  return response.data
+}
+
+// ----------------End admin

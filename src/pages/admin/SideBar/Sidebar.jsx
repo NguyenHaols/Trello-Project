@@ -6,15 +6,17 @@ import GroupIcon from '@mui/icons-material/Group'
 import { useTheme } from '@emotion/react'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import FlagIcon from '@mui/icons-material/Flag'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 function SideBar() {
-  const [activeBtn, setActiveBtn] = useState('Dashboard')
+  const location = useLocation()
+  const path = location.pathname.split('/').pop()
+  const [activeBtn, setActiveBtn] = useState(path)
   const theme = useTheme()
   const navigate = useNavigate()
   const mainColor = theme.palette.primary.main
   const bgColor = theme.palette.primary
-
+  
   const handleUpdateActiveBtn = (name) => {
     setActiveBtn(name)
     navigate(`${name.toLowerCase()}`)
@@ -27,64 +29,64 @@ function SideBar() {
       </Box>
       <List>
         <ListItemButton
-          onClick={ () => handleUpdateActiveBtn('Dashboard')}
+          onClick={ () => handleUpdateActiveBtn('dashboard')}
           sx={{
-            color: activeBtn === 'Dashboard' ? mainColor : 'unset',
-            bgcolor: activeBtn === 'Dashboard' ? bgColor[50] : 'unset',
+            color: activeBtn === 'dashboard' ? mainColor : 'unset',
+            bgcolor: activeBtn === 'dashboard' ? bgColor[50] : 'unset',
             borderRadius:'5px'
           }}
         >
           <ListItemIcon>
             <LeaderboardIcon sx={{
-              color: activeBtn === 'Dashboard' ? mainColor : 'unset'
+              color: activeBtn === 'dashboard' ? mainColor : 'unset'
             }} />
           </ListItemIcon>
           <ListItemText > <Typography fontWeight='700'>Dashboard </Typography></ListItemText>
         </ListItemButton>
 
         <ListItemButton
-          onClick={ () => handleUpdateActiveBtn('User')}
+          onClick={ () => handleUpdateActiveBtn('user')}
           sx={{
-            color: activeBtn === 'User' ? mainColor : 'unset',
-            bgcolor: activeBtn === 'User' ? bgColor[50] : 'unset',
+            color: activeBtn === 'user' ? mainColor : 'unset',
+            bgcolor: activeBtn === 'user' ? bgColor[50] : 'unset',
             borderRadius:'5px'
           }}
         >
           <ListItemIcon>
             <GroupIcon sx={{
-              color: activeBtn === 'User' ? mainColor : 'unset'
+              color: activeBtn === 'user' ? mainColor : 'unset'
             }} />
           </ListItemIcon>
           <ListItemText > <Typography fontWeight='700'>User </Typography></ListItemText>
         </ListItemButton>
 
         <ListItemButton
-          onClick={ () => handleUpdateActiveBtn('Workspace')}
+          onClick={ () => handleUpdateActiveBtn('workspace')}
           sx={{
-            color: activeBtn === 'Workspace' ? mainColor : 'unset',
-            bgcolor: activeBtn === 'Workspace' ? bgColor[50] : 'unset',
+            color: activeBtn === 'workspace' ? mainColor : 'unset',
+            bgcolor: activeBtn === 'workspace' ? bgColor[50] : 'unset',
             borderRadius:'5px'
           }}
         >
           <ListItemIcon>
             <DashboardIcon sx={{
-              color: activeBtn === 'Workspace' ? mainColor : 'unset'
+              color: activeBtn === 'workspace' ? mainColor : 'unset'
             }} />
           </ListItemIcon>
           <ListItemText > <Typography fontWeight='700'>Workspace </Typography></ListItemText>
         </ListItemButton>
 
         <ListItemButton
-          onClick={ () => handleUpdateActiveBtn('Report')}
+          onClick={ () => handleUpdateActiveBtn('report')}
           sx={{
-            color: activeBtn === 'Report' ? mainColor : 'unset',
-            bgcolor: activeBtn === 'Report' ? bgColor[50] : 'unset',
+            color: activeBtn === 'report' ? mainColor : 'unset',
+            bgcolor: activeBtn === 'report' ? bgColor[50] : 'unset',
             borderRadius:'5px'
           }}
         >
           <ListItemIcon>
             <FlagIcon sx={{
-              color: activeBtn === 'Report' ? mainColor : 'unset'
+              color: activeBtn === 'report' ? mainColor : 'unset'
             }} />
           </ListItemIcon>
           <ListItemText > <Typography fontWeight='700'>Report </Typography></ListItemText>

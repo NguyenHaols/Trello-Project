@@ -23,6 +23,8 @@ import { Navigate } from 'react-router-dom'
 import AdminLayOut from './pages/admin/Layout/AdminLayout'
 import DashBoard from './pages/admin/Dashboard/DashBoard'
 import UserManagerMent from './pages/admin/UserManagerment/UserManagerment'
+import WorkspaceAdmin from './pages/admin/WorkspaceAdmin/WorkspaceAdmin'
+import WorkspaceDetail from './pages/admin/WorkspaceDetail/WorkspaceDetail'
 
 function App() {
 
@@ -135,7 +137,11 @@ function App() {
         },
         {
           path:'workspace',
-          element: <div> user </div>
+          element: <WorkspaceAdmin />
+        },
+        {
+          path:'workspace/:id',
+          element: <WorkspaceDetail />
         },
         {
           path:'report',

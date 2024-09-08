@@ -9,7 +9,7 @@ function AdminLayOut() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const admin = localStorage.getItem('accessTokenAdmin')
+    const admin = localStorage.getItem('accessToken')
     if (!admin) {
       navigate('/admin/auth/login')
     } else {

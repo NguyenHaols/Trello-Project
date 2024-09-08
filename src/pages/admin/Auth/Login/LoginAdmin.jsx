@@ -39,7 +39,7 @@ function LoginAdmin() {
     loginAdminApi(user)
       .then((data) => {
         if (data.user._id) {
-          localStorage.setItem('accessTokenAdmin', data.accessToken)
+          localStorage.setItem('accessToken', data.accessToken)
           navigate('/admin/')
           toast.success(`${t('login_successful')}`)
         } else {
