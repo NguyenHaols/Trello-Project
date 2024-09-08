@@ -26,8 +26,8 @@ function AdminLayOut() {
   }
   return (
     <Box sx={{display:'flex'}}>
-      <SideBar />
-      <Box sx={{width:'100%', p:'8px 40px'}}>
+      <Box sx={{width:'20vw'}}><SideBar  /></Box>
+      <Box sx={{width:'80vw', p:'8px 40px', bgcolor:'#f9fafb'}}>
         {/* header */}
         <Header />
         {/* mainContent */}

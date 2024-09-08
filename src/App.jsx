@@ -21,6 +21,8 @@ import AuthAdmin from './pages/admin/Auth/AuthAdmin'
 import LoginAdmin from './pages/admin/Auth/Login/LoginAdmin'
 import { Navigate } from 'react-router-dom'
 import AdminLayOut from './pages/admin/Layout/AdminLayout'
+import DashBoard from './pages/admin/Dashboard/DashBoard'
+import UserManagerMent from './pages/admin/UserManagerment/UserManagerment'
 
 function App() {
 
@@ -125,11 +127,11 @@ function App() {
         },
         {
           path:'dashboard',
-          element: <div> dash board </div>
+          element: <DashBoard />
         },
         {
           path:'user',
-          element: <div> user </div>
+          element: <UserManagerMent />
         },
         {
           path:'workspace',

@@ -20,7 +20,7 @@ function SideBar() {
     navigate(`${name.toLowerCase()}`)
   }
   return (
-    <Box sx={{ width: '300px', height:'100vh', p:'0 20px 20px 20px' }}>
+    <Box sx={{height:'100vh', p:'0 20px 20px 20px' }}>
       <Box sx={{ display:'flex', alignItems:'center', height:'72px' }}>
         <SvgIcon component={trelloIcon} inheritViewBox sx={{ color:'#2196f3', mr:'15px' }} />
         <Typography variant="span" sx={{ fontSize:'1.2rem', fontWeight:'bold', color:'#2196f3' }}> ItWorks</Typography>
