@@ -1,10 +1,17 @@
-import { Avatar, Box, Button, Card, Typography } from '@mui/material'
+import { Avatar, Box, Button, Card, CircularProgress, Typography } from '@mui/material'
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { getAllUserApi, updateUser } from '~/apis'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import CancelIcon from '@mui/icons-material/Cancel'
+import { toast } from 'react-toastify'
 
 function UserManagerMent() {
   const [userSelected, setUserSelected] = useState(null)
- 
+  const [loading, setIsloading] = useState(true)
+  const [allUsers, setAllUsers] = useState(null)
+  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 6 })
+
   const handleRowClick = (params) => {
     setUserSelected(params)
   }
@@ -13,52 +20,88 @@ function UserManagerMent() {
     // console.log('Remove row with id:', id);
   }
 
-  const rows = [
-    { id: 13213123123211, col1: 'Nguyễn Hào', col2: 'nguyenhaocu0@gmail.com', col3: '0852455166', col4: '20/12/2024', col5: true },
-    { id: 132131231232112, col1: 'Nguyễn Hào', col2: 'nguyenhaocu0@gmail.com', col3: '0852455166', col4: '20/12/2024', col5: true },
-    { id: 132131231232113, col1: 'Nguyễn Hào', col2: 'nguyenhaocu0@gmail.com', col3: '0852455166', col4: '20/12/2024', col5: true },
-    { id: 132131231232114, col1: 'Nguyễn Hào', col2: 'nguyenhaocu0@gmail.com', col3: '0852455166', col4: '20/12/2024', col5: true },
-    { id: 132131231232115, col1: 'Nguyễn Hào', col2: 'nguyenhaocu0@gmail.com', col3: '0852455166', col4: '20/12/2024', col5: true },
-    { id: 132131231232116, col1: 'Nguyễn Hào', col2: 'nguyenhaocu0@gmail.com', col3: '0852455166', col4: '20/12/2024', col5: true }
+  useEffect(() => {
+    getAllUserApi()
+      .then(res => {
+        setAllUsers(res)
+        setIsloading(false)
+      })
+  }, [])
 
-  ]
+  const handleUpdateUser = (user) => {
+    const { id, createdAt, ...resData } = user
+    resData._destroy = !resData._destroy
+    updateUser(resData)
+      .then(res => {
+        const newAllUserData = allUsers.map(user => (
+          user._id === res._id ? { ...user, ...res } : user
+        ))
+        setAllUsers(newAllUserData)
+        toast.success('Update success')
+      })
+      .catch(err => {
+        toast.error('Update failed')
+      })
+  }
+
+  const rows = allUsers ? allUsers.map(user => {
+    const joinedDate = new Date(user.createdAt)
+    return {
+      id: user._id,
+      avatar: user.avatar,
+      username: user.username,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      createdAt: `${joinedDate.getDay()}/${joinedDate.getMonth()}/${joinedDate.getFullYear()}`,
+      _destroy: !user._destroy
+    }
+  }) : []
+
 
   const columns = [
     { field: 'id', hide: true, align:'center', headerAlign:'center' },
-    { field: 'col1', headerName: 'Username',align:'center', flex:2, headerAlign:'center', editable:true, renderCell: (params) => (
+    { field: 'username', headerName: 'Username', align:'center', flex:1.5, headerAlign:'center', editable:true, renderCell: (params) => (
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar sx={{ mr: 1 }}>{params.row.col1.charAt(0)}</Avatar> {/* Avatar từ chữ cái đầu tiên */}
-        {params.row.col1}
+        <Avatar sx={{ mr: 1 }} src={params.row.avatar} alt={params.row.username}>
+          {!params.row.avatar && params.row.username.charAt(0)}
+        </Avatar>
+        {params.row.username}
       </Box>
     ) },
-    { field: 'col2', headerName: 'Email', flex:2, editable:true, headerAlign:'center' },
-    { field: 'col3', headerName: 'Phone number', flex:1,align:'center', editable:true, headerAlign:'center' },
-    { field: 'col4', headerName: 'Joined date',align:'center', flex:1, headerAlign:'center' },
-    { field: 'col5', headerName: 'Active', flex:1,align:'center', editable:true, headerAlign:'center' },
-    { field: 'col6', headerName: 'Options', flex:2, type:'actions', headerAlign:'center', getActions: (params, index) => [
+    { field: 'email', headerName: 'Email', flex:2, headerAlign:'center' },
+    { field: 'phoneNumber', headerName: 'Phone number', flex:1, align:'center', editable:true, headerAlign:'center' },
+    { field: 'createdAt', headerName: 'Joined date', align:'center', flex:1, headerAlign:'center' },
+    { field: '_destroy', headerName: 'Active', flex:1, align:'center', editable:true, headerAlign:'center' },
+    { field: 'col6', headerName: 'Options', flex:1, type:'actions', headerAlign:'center', getActions: (params, index) => [
       <GridActionsCellItem
         key={index}
         icon={<Button color="primary">Update</Button>}
         label="Update"
-        onClick={() => handleRowClick(params.row)}
+        onClick={() => handleUpdateUser(params.row)}
       />,
-      <GridActionsCellItem
-        key={index}
-        icon={<Button color="error">Remove</Button>}
-        label="Remove"
-        onClick={() => handleRemove(params.row.id)}
-      />
+      // <GridActionsCellItem
+      //   key={index}
+      //   icon={<Button color="error">Remove</Button>}
+      //   label="Remove"
+      //   onClick={() => handleRemove(params.row.id)}
+      // />
     ] }
   ]
 
-
+  if (loading) {
+    return (
+      <Box sx={{ height:'100vh', display: 'flex', justifyContent:'center', alignItems:'center' }}>
+        <CircularProgress />
+      </Box>
+    )
+  }
   return (
     <Box>
       <Box sx={{ mb:'20px' }}>
         <Typography fontWeight='700' variant='h5'>Users</Typography>
       </Box>
       <Card sx={{ borderRadius:'16px' }}>
-        <DataGrid sx={{ borderRadius:'16px', overflow:'hidden' }} rows={rows} columns={columns} pageSizeOptions={7} pageSize={7} rowHeight={70} onRowClick={handleRowClick}/>
+        <DataGrid sx={{ borderRadius:'16px', overflow:'hidden' }} rows={rows} pagination paginationModel={paginationModel} onPaginationModelChange={(newModel) => setPaginationModel(newModel)} columns={columns} pageSize={7} rowHeight={70} onRowClick={handleRowClick}/>
       </Card>
     </Box>
   )

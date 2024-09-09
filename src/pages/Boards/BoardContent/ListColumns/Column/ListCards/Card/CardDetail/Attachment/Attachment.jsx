@@ -53,14 +53,17 @@ function Attachment({ ownerBoard, attach, card }) {
             display:'flex',
             flexDirection:'column',
             justifyContent:'space-evenly',
-            flex:3
+            flex:3,
+            overflow:'hidden',
+            textOverflow:'ellipsis',
+            whiteSpace:'nowrap'
           }}>
             <Box sx={{ display:'flex', alignItems:'center' }}>
               {/* <Typography variant='h7' fontWeight='800' color={textColor} width='70px' pr='5px' textAlign='left'>File Name</Typography> */}
-              <Typography variant='h7' fontWeight='800' color={textColor} overflow='hidden' textOverflow='ellipsis'>{attach.filename}</Typography>
+              <Typography variant='h7' fontWeight='800' color={textColor} overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>{attach.filename}</Typography>
             </Box>
             <Box sx={{ display:'flex', alignItems:'center' }}>
-              <Typography fontStyle='italic' variant='h7' fontWeight='800' color={textColor} width='75px' pr='5px' textAlign='left'> {t('added_at')} </Typography>
+              <Typography maxWidth='428px' fontStyle='italic' variant='h7' fontWeight='800' color={textColor} width='75px' pr='5px' textAlign='left'> {t('added_at')} </Typography>
               <Typography fontStyle='italic' variant='h7' fontWeight='800' color={textColor}>: {`${addedDate.getDay()}-${addedDate.getMonth()}-${addedDate.getFullYear()}`}</Typography>
             </Box>
             {ownerBoard && (

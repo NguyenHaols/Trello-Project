@@ -302,6 +302,11 @@ export const loginAdminApi = async (userData) => {
   return response.data
 }
 
+export const getAllUserApi = async () => {
+  const response = await axios.get(`${API_ROOT}/v1/users`)
+  return response.data
+}
+
 export const getUserPercentOnMonthApi = async () => {
   const response = await axios.get(`${API_ROOT}/v1/users/getPercentOnMonth`)
   return response.data
