@@ -17,6 +17,8 @@ import Cookies from 'js-cookie'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import { useTranslation } from 'react-i18next'
+import { setUser } from '~/redux/actions/userAction'
+import { useDispatch } from 'react-redux'
 
 function LoginAdmin() {
   const navigate = useNavigate()
@@ -26,6 +28,7 @@ function LoginAdmin() {
   const theme = useTheme()
   const textColor = theme.palette.text.primary
   const mainColor = theme.palette.primary.main
+  const dispatch = useDispatch()
   const formikHandleChange = (e) => {
     loginFormik.handleChange(e)
     setErrorMessage('')
@@ -40,7 +43,9 @@ function LoginAdmin() {
       .then((data) => {
         if (data.user._id) {
           localStorage.setItem('accessToken', data.accessToken)
-          navigate('/admin/')
+          navigate('/admin')
+          const action = setUser(data.user)
+          dispatch(action)
           toast.success(`${t('login_successful')}`)
         } else {
           setErrorMessage(`${t('sorry,_your_email_or_password_was_incorrect')}`)

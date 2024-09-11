@@ -233,6 +233,12 @@ export const deleteWorkspaceAPI = async(id) => {
   return response.data
 }
 
+export const getWorkspaceByIdAPI = async(id) => {
+  const response = await axios.post(`${API_ROOT}/v1/workspaces/findById`, id)
+  return response.data
+}
+
+
 // end workspace
 
 // start comments
@@ -291,6 +297,23 @@ export const setIsReadAPI = async(data) => {
 
 // End notification
 
+// Report
+export const getAllReportAPI = async() => {
+  const response = await axios.get(`${API_ROOT}/v1/report/getAll`)
+  return response.data
+}
+
+export const createNewReportAPI = async(data) => {
+  const response = await axios.post(`${API_ROOT}/v1/report/createNew`, data)
+  return response.data
+}
+
+export const deleteReportAPI = async(data) => {
+  const response = await axios.post(`${API_ROOT}/v1/report/deleteOne`, data)
+  return response.data
+}
+// End report
+
 
 // -------------------Admin
 
@@ -320,6 +343,11 @@ export const getWorkspacePercentOnMonthApi = async () => {
 
 export const getCountOnMonthApi = async () => {
   const response = await axios.get(`${API_ROOT}/v1/workspaces/getCountOnMonth`)
+  return response.data
+}
+
+export const getAllWorkspaceApi = async () => {
+  const response = await axios.get(`${API_ROOT}/v1/workspaces/getAll`)
   return response.data
 }
 

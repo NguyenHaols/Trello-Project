@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Card, CircularProgress, Typography } from '@mui/material'
+import { Avatar, Box, Button, Card, CircularProgress, TextField, Typography } from '@mui/material'
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid'
 import { useEffect, useState } from 'react'
 import { getAllUserApi, updateUser } from '~/apis'
@@ -16,9 +16,9 @@ function UserManagerMent() {
     setUserSelected(params)
   }
 
-  const handleRemove = (id) => {
-    // console.log('Remove row with id:', id);
-  }
+  // const handleRemove = (id) => {
+  //   // console.log('Remove row with id:', id);
+  // }
 
   useEffect(() => {
     getAllUserApi()
@@ -78,7 +78,7 @@ function UserManagerMent() {
         icon={<Button color="primary">Update</Button>}
         label="Update"
         onClick={() => handleUpdateUser(params.row)}
-      />,
+      />
       // <GridActionsCellItem
       //   key={index}
       //   icon={<Button color="error">Remove</Button>}
@@ -100,6 +100,7 @@ function UserManagerMent() {
       <Box sx={{ mb:'20px' }}>
         <Typography fontWeight='700' variant='h5'>Users</Typography>
       </Box>
+      
       <Card sx={{ borderRadius:'16px' }}>
         <DataGrid sx={{ borderRadius:'16px', overflow:'hidden' }} rows={rows} pagination paginationModel={paginationModel} onPaginationModelChange={(newModel) => setPaginationModel(newModel)} columns={columns} pageSize={7} rowHeight={70} onRowClick={handleRowClick}/>
       </Card>

@@ -2,10 +2,15 @@ import { Avatar, Box, IconButton, ListItemIcon, Menu, MenuItem, Typography } fro
 import { useState } from 'react'
 import PersonIcon from '@mui/icons-material/Person'
 import LogoutIcon from '@mui/icons-material/Logout'
+import { useNavigate } from 'react-router-dom'
+import Cookies from 'js-cookie'
+import { setUser } from '~/redux/actions/userAction'
+import { useDispatch } from 'react-redux'
 
-function Header() {
+function Header({user}) {
   const [avatarMenuEl, setAvatarMenuEl] = useState(null)
-
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const handleOpenAvatarMenu = (e) => {
     setAvatarMenuEl(e.currentTarget)
   }
@@ -13,10 +18,19 @@ function Header() {
   const handleCloseAvatarMenu = () => {
     setAvatarMenuEl(null)
   }
+
+  const handleLogOut = () => {
+    const action = setUser(null)
+    dispatch(action)
+    Cookies.remove('accessToken')
+    Cookies.remove('refreshToken')
+    localStorage.removeItem('accessToken')
+    navigate('/admin/auth/login')
+  }
   return (
     <Box sx={{ display:'flex', justifyContent:'flex-end', alignItems:'center', height:'72px', width:'100%' }}>
-      <Typography mr='10px' fontWeight='700'> Hi ! Admin Nguyễn Hào </Typography>
-      <IconButton onClick={(e) => handleOpenAvatarMenu(e)}><Avatar /></IconButton>
+      <Typography mr='10px' fontWeight='700'> Hi ! Admin {user.username} </Typography>
+      <IconButton onClick={(e) => handleOpenAvatarMenu(e)}><Avatar src={user.avatar}/></IconButton>
       <Menu
         anchorEl={avatarMenuEl}
         open={Boolean(avatarMenuEl)}
@@ -27,11 +41,12 @@ function Header() {
         }}
         sx={{ width:'200px' }}
       >
-        <MenuItem>
+        <MenuItem onClick={() => navigate('profile') }>
           <ListItemIcon><PersonIcon /></ListItemIcon>
           Profile
         </MenuItem>
-        <MenuItem>
+
+        <MenuItem onClick={() => handleLogOut()} >
           <ListItemIcon><LogoutIcon /></ListItemIcon>
           Log out</MenuItem>
       </Menu>

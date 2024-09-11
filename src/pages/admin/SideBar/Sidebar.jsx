@@ -7,6 +7,7 @@ import { useTheme } from '@emotion/react'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import FlagIcon from '@mui/icons-material/Flag'
 import { useLocation, useNavigate } from 'react-router-dom'
+import PersonIcon from '@mui/icons-material/Person'
 
 function SideBar() {
   const location = useLocation()
@@ -90,6 +91,22 @@ function SideBar() {
             }} />
           </ListItemIcon>
           <ListItemText > <Typography fontWeight='700'>Report </Typography></ListItemText>
+        </ListItemButton>
+
+        <ListItemButton
+          onClick={ () => handleUpdateActiveBtn('profile')}
+          sx={{
+            color: activeBtn === 'profile' ? mainColor : 'unset',
+            bgcolor: activeBtn === 'profile' ? bgColor[50] : 'unset',
+            borderRadius:'5px'
+          }}
+        >
+          <ListItemIcon>
+            <PersonIcon sx={{
+              color: activeBtn === 'profile' ? mainColor : 'unset'
+            }} />
+          </ListItemIcon>
+          <ListItemText > <Typography fontWeight='700'>My profile </Typography></ListItemText>
         </ListItemButton>
       </List>
     </Box>

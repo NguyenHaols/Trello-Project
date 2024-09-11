@@ -34,6 +34,8 @@ import { setUser } from '~/redux/actions/userAction'
 import MenuIcon from '@mui/icons-material/Menu'
 import LanguageSelect from '../LanguageSelect/LanguageSelect'
 import { useTranslation } from 'react-i18next'
+import CampaignIcon from '@mui/icons-material/Campaign'
+import Report from './Report/Report'
 
 function AppBar({ sideBarMobileActive }) {
   const user = useSelector(state => state.user)
@@ -45,6 +47,7 @@ function AppBar({ sideBarMobileActive }) {
   const [notifications, setNotifications] = useState(null)
   const [activeNotification, setActiveNotification] = useState(false)
   const [unReadNoti, setUnReadNoti] = useState(null)
+  const [reportDialogEl, setReportDialogEl] = useState(null)
 
   const { t } = useTranslation()
   const openNotification = Boolean(notificationEl)
@@ -113,6 +116,10 @@ function AppBar({ sideBarMobileActive }) {
             }
           })
       })
+  }
+
+  const handleCloseReportDialog = () => {
+    setReportDialogEl(null)
   }
 
 
@@ -355,9 +362,10 @@ function AppBar({ sideBarMobileActive }) {
 
           </Box>
         </Popover>
-        <Tooltip title="Help">
-          <IconButton><HelpOutlineIcon sx={{ cursor:'pointer' }}/></IconButton>
+        <Tooltip title="Report">
+          <IconButton onClick={e => setReportDialogEl(e.currentTarget)}><CampaignIcon sx={{ cursor:'pointer' }}/></IconButton>
         </Tooltip>
+        <Report open={Boolean(reportDialogEl)} reportDialogEl={reportDialogEl} onClose={handleCloseReportDialog}/>
         <Profiles />
       </Box>
 

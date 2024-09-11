@@ -152,7 +152,8 @@
     "Doing" : "Doing",
     "Reject" : "Reject",
     "Done" : "Done",
-    "Over Time" : "Over Time"
-
+    "Over Time" : "Over Time",
+    "report" : "Report",
+    "title" : "Title"
 
 }

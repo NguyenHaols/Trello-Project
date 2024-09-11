@@ -25,6 +25,9 @@ import DashBoard from './pages/admin/Dashboard/DashBoard'
 import UserManagerMent from './pages/admin/UserManagerment/UserManagerment'
 import WorkspaceAdmin from './pages/admin/WorkspaceAdmin/WorkspaceAdmin'
 import WorkspaceDetail from './pages/admin/WorkspaceDetail/WorkspaceDetail'
+import Report from './pages/admin/Report/Report'
+import AdminProfile from './pages/admin/Profile/AdminProfile'
+import ChangePw from './pages/admin/Auth/ChangePassword/ChangePw'
 
 function App() {
 
@@ -145,7 +148,15 @@ function App() {
         },
         {
           path:'report',
-          element: <div> user </div>
+          element: <Report />
+        },
+        {
+          path:'profile',
+          element:<AdminProfile />
+        },
+        {
+          path:'changePassword',
+          element: <ChangePw />
         }
       ]
     },
