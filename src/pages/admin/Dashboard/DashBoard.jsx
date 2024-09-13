@@ -2,29 +2,32 @@ import { Box, CircularProgress } from '@mui/material'
 import DashBoardItems from './DashBoardItems.jsx/DashBoardItems'
 import DashBoardChart from './DashBoardChart/DashBoardChart'
 import { useEffect, useState } from 'react'
-import { getActivityPercentOnMonthApi, getCountOnMonthApi, getUserPercentOnMonthApi, getWorkspacePercentOnMonthApi } from '~/apis'
+import { getActivityPercentOnMonthApi, getAllReportAPI, getCountOnMonthApi, getUserPercentOnMonthApi, getWorkspacePercentOnMonthApi } from '~/apis'
 
 function DashBoard() {
   const [workspaceItemData, setWorkspaceItemData] = useState(null)
   const [userItemData, setUserItemData] = useState(null)
   const [activityItemData, setactivityItemData] = useState(null)
   const [workspaceCountMonth, setWorkspaceCountMonth] = useState(null)
+  const [reports, setReports] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [workspaceResponse, userResponse, activityResponse, countOnMonthResponse] = await Promise.all([
+        const [workspaceResponse, userResponse, activityResponse, countOnMonthResponse, allReportResponse] = await Promise.all([
           getWorkspacePercentOnMonthApi(),
           getUserPercentOnMonthApi(),
           getActivityPercentOnMonthApi(),
-          getCountOnMonthApi()
+          getCountOnMonthApi(),
+          getAllReportAPI()
         ])
 
         setWorkspaceItemData(workspaceResponse.data)
         setUserItemData(userResponse.data)
         setactivityItemData(activityResponse.data)
         setWorkspaceCountMonth(countOnMonthResponse.data)
+        setReports(allReportResponse.data.length)
       } catch (error) {
         console.error('Error fetching data:', error)
       } finally {
@@ -43,7 +46,7 @@ function DashBoard() {
   }
   return (
     <Box >
-      <DashBoardItems workspaceItemData={workspaceItemData} userItemData={userItemData} activityItemData={activityItemData} />
+      <DashBoardItems workspaceItemData={workspaceItemData} userItemData={userItemData} activityItemData={activityItemData} reports={reports} />
       <DashBoardChart workspaceCountMonth={workspaceCountMonth} />
     </Box>
   )

@@ -74,7 +74,7 @@ function Profiles() {
           <Avatar src={data.avatar} sx={{width:28, height:28, mr:2 }} /> {t('profile')}
         </MenuItem>
         <Divider />
-        <MenuItem >
+        {/* <MenuItem >
           <ListItemIcon>
             <HelpIcon fontSize="small" />
           </ListItemIcon>
@@ -85,7 +85,7 @@ function Profiles() {
             <Settings fontSize="small" />
           </ListItemIcon>
           {t('settings')}
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem onClick={handleNavigationLogOut}>
           <ListItemIcon>
             <Logout fontSize="small" />

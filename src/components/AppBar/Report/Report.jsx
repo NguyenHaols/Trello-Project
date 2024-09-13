@@ -77,8 +77,8 @@ function Report({ open, onClose }) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button type='submit'>Send</Button>
+          <Button onClick={onClose}>{t('cancel')}</Button>
+          <Button type='submit'> {t('send')} </Button>
         </DialogActions>
       </form>
     </Dialog>

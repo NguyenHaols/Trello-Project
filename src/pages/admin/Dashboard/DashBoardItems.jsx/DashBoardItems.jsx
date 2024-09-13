@@ -7,7 +7,7 @@ import report from '~/assets/report.png'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import TrendingDownIcon from '@mui/icons-material/TrendingDown'
 
-function DashBoardItems({ workspaceItemData, userItemData, activityItemData }) {
+function DashBoardItems({ workspaceItemData, userItemData, activityItemData, reports }) {
   const theme = useTheme()
   return (
     <Box sx={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:'24px', width:'100%' }}>
@@ -52,7 +52,7 @@ function DashBoardItems({ workspaceItemData, userItemData, activityItemData }) {
           <Box sx={{ m:'10px 0' }} ><img src={report} style={{ width:'48px', height:'48px' }} /></Box>
           <Box sx={{ textAlign:'center' }}>
             <Typography fontWeight='700' variant='h7'>NEW REPORT</Typography>
-            <Typography fontWeight='700' m='5px 0'>+ 2</Typography>
+            <Typography fontWeight='700' m='5px 0'>+ {reports}</Typography>
 
           </Box>
         </Box>

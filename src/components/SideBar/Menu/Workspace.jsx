@@ -71,7 +71,7 @@ function Workspace( { data, currentUserId } ) {
     },
     validationSchema: Yup.object({
       boardTitle: Yup.string().min(4, t('minimum_4_characters')).max(30, t('maximum_30_characters')).required(t('requiured')),
-      description: Yup.string().min(4, t('minimum_4_characters')).max(150, t('maximum_30_characters')).required(t('requiured'))
+      description: Yup.string().min(4, t('minimum_4_characters')).max(300, t('maximum_300_characters')).required(t('requiured'))
     }),
     onSubmit:(values, { setSubmitting }) => {
       setLoading(true)
@@ -182,7 +182,6 @@ function Workspace( { data, currentUserId } ) {
 
   return (
     <>
-
       <MenuList>
         <Button
           onClick={handleButtonClick}
@@ -216,7 +215,6 @@ function Workspace( { data, currentUserId } ) {
 
             {ownerWorkspace && (
               <>
-
                 <MenuItem onClick={handleOpen}>
                   <ListItemIcon >
                     <AddBoxIcon sx={{ color:'#2196f3' }} />
@@ -243,13 +241,13 @@ function Workspace( { data, currentUserId } ) {
                   <form onSubmit={boardFormik.handleSubmit}>
                     <DialogTitle sx={{ color:(theme) => theme.palette.text.primary }}> {t('new_board')} </DialogTitle>
                     <DialogContent sx={{ display:'flex', flexDirection:'column' }}>
-                      <TextField name='boardTitle' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} size='small' id="outlined-basic" label={t('board_title')} variant="outlined" />
+                      <TextField name='boardTitle' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} size='small' label={t('board_title')} autoComplete='off' />
                       {boardFormik.errors.boardTitle && boardFormik.touched.boardTitle && (
                         <Typography variant='caption' color='error' marginTop='5px' >
                           {boardFormik.errors.boardTitle}
                         </Typography>
                       )}
-                      <TextField name='description' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} multiline maxRows={4} size='large' id="outlined-basic" label={t('description')} variant="outlined" />
+                      <TextField name='description' onChange={boardFormik.handleChange} onBlur={boardFormik.handleBlur} sx={{ margin:'5px 0' }} multiline maxRows={4} size='large' label={t('description')} autoComplete='off'/>
                       {boardFormik.errors.description && boardFormik.touched.description && (
                         <Typography variant='caption' color='error' marginTop='5px' >
                           {boardFormik.errors.description}

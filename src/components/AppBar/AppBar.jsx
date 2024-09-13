@@ -134,7 +134,6 @@ function AppBar({ sideBarMobileActive }) {
     })
 
     socket.on('invited-Notification', (data) => {
-      console.log('data')
       toast.success(data.message)
       getUser()
         .then(data => {
@@ -343,15 +342,15 @@ function AppBar({ sideBarMobileActive }) {
                   '&:hover':{
                     bgcolor: 'var(--mui-palette-action-hover)'
                   } }}>
-                  <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center' }}>
-                    <Box>
+                  <Box sx={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                    <Box sx={{width:'95%'}}>
                       <Box sx={{ display:'block' }}>
                         <Typography sx={{ textAlign: 'right', width: '100%', pr:'10px', color:mainColor }}>
                           {formatDistanceToNow(new Date(noti.createdAt), { addSuffix: true }).replace('about', '')}
                         </Typography></Box>
                       <Box sx={{ display:'flex', alignItems:'center', textAlign:'left', pl:'5px', width:'100%' }}>
                         <Avatar src={noti?.senderInfo?.avatar}/>
-                        <Typography sx={{ pl:'10px' }}>{noti.content} by <b>{noti.senderInfo.username}</b> </Typography>
+                        <Typography sx={{ pl:'10px' }}>{t(`${noti.content}`)} <b>{noti.senderInfo.username}</b> </Typography>
                       </Box>
                     </Box>
                     <Box sx={{ bgcolor:noti.isRead ? 'unset' : mainColor, width:'12px', height:'12px', borderRadius:'50%' }}></Box>

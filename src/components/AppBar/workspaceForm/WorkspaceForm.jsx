@@ -36,7 +36,7 @@ function WorkspaceForm() {
     },
     validationSchema: Yup.object({
       workspaceTitle: Yup.string().min(4, t('minimum_4_characters')).max(30, t('maximum_30_characters')).required(t('requiured')),
-      description: Yup.string().min(4, t('minimum_4_characters')).max(150, t('maximum_30_characters')).required(t('requiured'))
+      description: Yup.string().min(4, t('minimum_4_characters')).max(300, t('maximum_300_characters')).required(t('requiured'))
     }),
     onSubmit:(values, { setSubmitting }) => {
       setLoading(true)

@@ -19,6 +19,11 @@ function Header({user}) {
     setAvatarMenuEl(null)
   }
 
+  const handleNavigateProfile = () => {
+    navigate('profile')
+    setAvatarMenuEl(null)
+  }
+
   const handleLogOut = () => {
     const action = setUser(null)
     dispatch(action)
@@ -41,7 +46,7 @@ function Header({user}) {
         }}
         sx={{ width:'200px' }}
       >
-        <MenuItem onClick={() => navigate('profile') }>
+        <MenuItem onClick={() => handleNavigateProfile() }>
           <ListItemIcon><PersonIcon /></ListItemIcon>
           Profile
         </MenuItem>
