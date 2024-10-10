@@ -616,7 +616,7 @@ function CardDetail({ board, card, open, handleClose }) {
 
               {ownerBoard && (
                 <Box id='status-task' onClick={(event) => handleClick(event, 'status-task')} sx={{ backgroundColor:(theme) => theme.palette.primary[500], marginBottom:'10px', padding:'5px 5px', color:'white', borderRadius:'4px', '&:hover': { bgcolor:(theme) => theme.palette.primary[800], cursor:'pointer' } }}>
-                  <Box sx={{ cursor:'pointer', textAlign:'center', display:'flex', justifyContent:'center' }}>Status Task <HourglassBottomIcon sx={{ ml:'5px' }}/> </Box>
+                  <Box sx={{ cursor:'pointer', textAlign:'center', display:'flex', justifyContent:'center' }}> {t('status')} <HourglassBottomIcon sx={{ ml:'5px' }}/> </Box>
                   <Popover
                     sx={{
                       '& .MuiPopover-paper': {

@@ -152,7 +152,9 @@
     "title" : "Tiêu đề",
     "You have been added to workspace of" : "Bạn đã được thêm vào không gian làm việc của",
     "You have been remove from workspace of" : "Bạn đã bị rời khỏi không gian làm việc của",
-    "send": "Gửi"
+    "send": "Gửi",
+    "status": "Trạng thái",
+    "Good": "Tốt"
 
 
 }

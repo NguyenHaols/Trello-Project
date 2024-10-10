@@ -157,6 +157,8 @@
     "title" : "Title",
     "You have been added to workspace of" : "You have been added to workspace of",
     "You have been remove from workspace of" : "You have been remove from workspace of",
-    "send": "Send"
+    "send": "Send",
+    "status": "Status",
+    "Good": "Good"
 
 }

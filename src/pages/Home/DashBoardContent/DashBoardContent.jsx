@@ -1,19 +1,25 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import StarIcon from '@mui/icons-material/Star'
 import BoardCard from './BoardCard/BoardCard'
 import Workspace from './Workspace/Workspace'
 import LaptopMacIcon from '@mui/icons-material/LaptopMac'
 import { Link, useOutletContext } from 'react-router-dom'
 import { Fragment, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import { useTheme } from '@emotion/react'
+import { setUser } from '~/redux/actions/userAction'
 
 
 function DashBoardContent() {
   const [data] = useOutletContext()
   const cloneData = { ...data }
-  const workspaces = cloneData?.workspaces
+  let workspaces = cloneData?.workspaces
   const { t } = useTranslation()
+  const theme = useTheme()
+  const mainColor = theme.palette.primary.main
+  const dispatch = useDispatch()
+  const user = useSelector(state => state.user)
 
 
   const getStarredBoard = () => {
@@ -33,7 +39,6 @@ function DashBoardContent() {
     return starredBoards
   }
   const starredBoards = getStarredBoard()
-
 
   return (
     <Box sx={{ paddingLeft:'20px' }}>

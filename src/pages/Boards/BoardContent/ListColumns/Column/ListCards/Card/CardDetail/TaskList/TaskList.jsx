@@ -194,7 +194,7 @@ function TaskList({ task, isMembersInCard, ownerBoard, card }) {
                   <IconButton onClick={handleCloseTimeTask}> <CloseIcon /> </IconButton>
                 </Box>
                 <Box sx={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'25px 30px' }}>
-                  <Datepicker selected={selectedDate} showTimeSelect inline onChange={data => setSelectedDate(data)} popperPlacement='bottom-start'/>
+                  <Datepicker selected={selectedDate ?? new Date()} showTimeSelect inline onChange={data => setSelectedDate(data)} popperPlacement='bottom-start'/>
                   <Button onClick={ () => handleUpdateTaskTime(task._id)} onChange={(data) => {setSelectedDate(data)}} sx={{ flex:'2', mt:'15px', marginLeft:'5px', color:'white', width:'100%', bgcolor:(theme) => theme.palette.primary[500], '&:hover':{ bgcolor:(theme) => theme.palette.primary[800] } }}>
                     {t('update')}
                   </Button>
@@ -254,8 +254,6 @@ function TaskList({ task, isMembersInCard, ownerBoard, card }) {
           </Box>
         )}
       </Box>
-
-
     </Box>
   )
 }
