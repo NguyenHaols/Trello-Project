@@ -30,35 +30,45 @@ import AdminProfile from './pages/admin/Profile/AdminProfile'
 import ChangePw from './pages/admin/Auth/ChangePassword/ChangePw'
 
 function App() {
-
   const router = createBrowserRouter([
     {
-      path:'/',
-      element: <DefaultLayout/>,
+      path: '/',
+      element: <DefaultLayout />,
       children: [
         {
-          path:'',
-          element: <DashBoardContent/>
+          path: '',
+          element: <DashBoardContent />
         },
         {
-          path:'boards',
-          element: <DashBoardContent/>
+          path: 'boards',
+          element: <DashBoardContent />
         },
         {
-          path:'workspace/:id',
-          element:<WorkspaceContent />,
-          errorElement: <Box sx={{ display:'flex', justifyContent:'center', alignItems:'center' }}> You are no longer a member of this workspace </Box>,
+          path: 'workspace/:id',
+          element: <WorkspaceContent />,
+          errorElement: (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              {' '}
+              You are no longer a member of this workspace{' '}
+            </Box>
+          ),
           children: [
             {
-              path:'boards',
+              path: 'boards',
               element: <Boards />
             },
             {
-              path:'members',
+              path: 'members',
               element: <MemberPage />
             },
             {
-              path:'settings',
+              path: 'settings',
               element: <Settings />
             }
           ]
@@ -67,102 +77,102 @@ function App() {
       errorElement: <ErrorPage />
     },
     {
-      path:'board/:id',
-      element:<AppBarOnlyLayout/>,
-      children:[
+      path: 'board/:id',
+      element: <AppBarOnlyLayout />,
+      children: [
         {
-          path:'',
-          element:<Board/>
+          path: '',
+          element: <Board />
         }
       ],
       errorElement: <ErrorPage />
     },
     {
-      path:'profile',
-      element:<AppBarOnlyLayout/>,
-      children:[
+      path: 'profile',
+      element: <AppBarOnlyLayout />,
+      children: [
         {
-          path:'',
-          element:<UserProfile/>
+          path: '',
+          element: <UserProfile />
         },
         {
-          path:'changePassword',
-          element:<ChangePassword/>
+          path: 'changePassword',
+          element: <ChangePassword />
         }
       ],
       errorElement: <ErrorPage />
     },
     {
-      path:'auth',
-      element:<Auth/>,
-      children:[
+      path: 'auth',
+      element: <Auth />,
+      children: [
         {
-          path:'',
-          element:<Login/>
+          path: '',
+          element: <Login />
         },
         {
-          path:'login',
-          element:<Login/>
+          path: 'login',
+          element: <Login />
         },
         {
-          path:'register',
-          element:<Register />
+          path: 'register',
+          element: <Register />
         },
         {
-          path:'forgot',
-          element:<Forgot />
+          path: 'forgot',
+          element: <Forgot />
         },
         {
-          path:'recover/:token',
-          element: <RecoverPassword/>
+          path: 'recover/:token',
+          element: <RecoverPassword />
         },
         {
-          path:'login-success/:token',
+          path: 'login-success/:token',
           element: <Auth20 />
         }
       ]
     },
     {
-      path:'admin',
+      path: 'admin',
       element: <AdminLayOut />,
-      children:[
+      children: [
         {
-          path:'',
+          path: '',
           element: <Navigate to='dashboard' replace />
         },
         {
-          path:'dashboard',
+          path: 'dashboard',
           element: <DashBoard />
         },
         {
-          path:'user',
+          path: 'user',
           element: <UserManagerMent />
         },
         {
-          path:'workspace',
+          path: 'workspace',
           element: <WorkspaceAdmin />
         },
         {
-          path:'workspace/:id',
+          path: 'workspace/:id',
           element: <WorkspaceDetail />
         },
         {
-          path:'report',
+          path: 'report',
           element: <Report />
         },
         {
-          path:'profile',
-          element:<AdminProfile />
+          path: 'profile',
+          element: <AdminProfile />
         },
         {
-          path:'changePassword',
+          path: 'changePassword',
           element: <ChangePw />
         }
       ]
     },
     {
-      path:'admin/auth',
-      element:<AuthAdmin/>,
+      path: 'admin/auth',
+      element: <AuthAdmin />,
       children: [
         {
           path: '',
@@ -173,12 +183,14 @@ function App() {
           element: <LoginAdmin />
         }
       ]
+    },
+    {
+      path: '*',
+      element: <ErrorPage />
     }
   ])
 
-  return (
-    <RouterProvider router={router}/>
-  )
+  return <RouterProvider router={router} />
 }
 
 export default App
