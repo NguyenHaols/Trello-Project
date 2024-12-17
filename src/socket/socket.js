@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client'
-const socket = io('ws://localhost:1302', {
+const socket = io('wss://trello-be.vercel.app', {
   transports: ['websocket', 'polling'],
   withCredentials: true,
   extraHeaders: {

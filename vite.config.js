@@ -8,5 +8,19 @@ export default defineConfig({
   base: './',
   resolve: {
     alias: [{ find: '~', replacement: '/src' }]
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        entryFileNames: (chunk) => {
+          // Nếu là entry chính thì đặt là index.js, còn lại thêm hash
+          return chunk.name === 'index'
+            ? 'assets/index.js'
+            : 'assets/[name]-[hash].js'
+        },
+        chunkFileNames: 'assets/[name]-[hash].js', // Chunk phụ
+        assetFileNames: 'assets/[name]-[hash].[ext]' // Các tài nguyên khác
+      }
+    }
   }
 })

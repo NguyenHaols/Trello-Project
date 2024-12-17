@@ -1,9 +1,24 @@
+WEBSITE QUẢN LÝ CÔNG VIỆC, THỜI GIAN
 
-# React + Vite
+Mô tả: Đây là website giúp người dùng quản lý, lên công việc thông qua các bảng, cột và thành viên, thời gian...
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Chức năng:
+Thêm, sửa, xóa, cập nhật công việc
+Thêm ảnh, lưu trữ ảnh
+Quản lý thành viên
+Thông báo thời gian thực
+Bình luận
+Chế độ dark mode/light mode
+Chế độ 2 ngôn ngữ tiếng anh và tiếng việt
+Kéo thả UI công việc
 
-Currently, two official plugins are available:
+Công nghệ sử dụng:
+React
+Material UI
+Nodejs/expressJs
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Công cụ và database:
+Git
+source tree
+Post man
+Mongodb
