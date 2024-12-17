@@ -22,7 +22,7 @@ function Login() {
   const navigate = useNavigate()
   const [errorMessage, setErrorMessage] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const {t} = useTranslation()
+  const { t } = useTranslation()
   const theme = useTheme()
   const textColor = theme.palette.text.primary
   const mainColor = theme.palette.primary.main
@@ -56,15 +56,20 @@ function Login() {
       })
   }
 
-
   const loginFormik = useFormik({
-    initialValues:{
-      email:'',
-      password:''
+    initialValues: {
+      email: '',
+      password: ''
     },
     validationSchema: Yup.object({
-      email: Yup.string().min(2, t('minimum_2_characters')).max(30, t('maximum_30_characters')).required(t('requiured')),
-      password: Yup.string().min(6, t('minimum_6_characters')).max(15, t('maximum_15_characters')).required(t('requiured'))
+      email: Yup.string()
+        .min(2, t('minimum_2_characters'))
+        .max(30, t('maximum_30_characters'))
+        .required(t('requiured')),
+      password: Yup.string()
+        .min(6, t('minimum_6_characters'))
+        .max(15, t('maximum_15_characters'))
+        .required(t('requiured'))
     }),
     onSubmit: handleLogin
   })
@@ -74,8 +79,7 @@ function Login() {
   }
 
   return (
-    <Box flex='1' display='flex' justifyContent='center' alignItems='center'
-    >
+    <Box flex='1' display='flex' justifyContent='center' alignItems='center'>
       <Box
         sx={{
           display: 'flex',
@@ -89,19 +93,32 @@ function Login() {
         }}
       >
         <Box>
-          <Box sx={{ display: 'flex' }} >
+          <Box sx={{ display: 'flex' }}>
             <SvgIcon
               component={trelloIcon}
               inheritViewBox
-              sx={{ color:(theme) => theme.palette.mode === 'light' ? mainColor : textColor, width: '32px', height: '42px' }}
+              sx={{
+                color: (theme) =>
+                  theme.palette.mode === 'light' ? mainColor : textColor,
+                width: '32px',
+                height: '42px'
+              }}
             />
-            <Typography variant='h4' fontWeight='700' color={(theme) => theme.palette.mode === 'light' ? mainColor : textColor}>
+            <Typography
+              variant='h4'
+              fontWeight='700'
+              color={(theme) =>
+                theme.palette.mode === 'light' ? mainColor : textColor
+              }
+            >
               ItWorks
             </Typography>
           </Box>
           <Typography
             variant='subtitle2'
-            color={(theme) => theme.palette.mode === 'light' ? mainColor : textColor}
+            color={(theme) =>
+              theme.palette.mode === 'light' ? mainColor : textColor
+            }
             textAlign={'center'}
           >
             Log in to continue
@@ -110,7 +127,7 @@ function Login() {
         <form
           style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
           onSubmit={loginFormik.handleSubmit}
-        > 
+        >
           <Typography variant='caption'>Your email</Typography>
           <TextField
             name='email'
@@ -130,7 +147,9 @@ function Login() {
               {loginFormik.errors.email}
             </Typography>
           )}
-          <Typography variant='caption' sx={{marginTop:'20px'}}>Your password</Typography>
+          <Typography variant='caption' sx={{ marginTop: '20px' }}>
+            Your password
+          </Typography>
           <TextField
             name='password'
             id='outlined-basic'
@@ -148,9 +167,23 @@ function Login() {
               endAdornment: (
                 <Box>
                   {showPassword ? (
-                    <IconButton onClick={() => {setShowPassword(false)}}> <RemoveRedEyeIcon /> </IconButton>
+                    <IconButton
+                      onClick={() => {
+                        setShowPassword(false)
+                      }}
+                    >
+                      {' '}
+                      <RemoveRedEyeIcon />{' '}
+                    </IconButton>
                   ) : (
-                    <IconButton onClick={() => {setShowPassword(true)}}> <VisibilityOffIcon /> </IconButton>
+                    <IconButton
+                      onClick={() => {
+                        setShowPassword(true)
+                      }}
+                    >
+                      {' '}
+                      <VisibilityOffIcon />{' '}
+                    </IconButton>
                   )}
                 </Box>
               )
@@ -191,12 +224,21 @@ function Login() {
         >
           <Typography
             variant='subtitle2'
+            color={(theme) => theme.palette.text.disabled}
+          >
+            Free account : dinhhao123@gmail.com | 123456
+          </Typography>
+          <Typography
+            variant='subtitle2'
             color={(theme) => theme.palette.text.primary}
           >
             Login with:
           </Typography>
+
           <Button
-            onClick={() => {handleAuth('google')}}
+            onClick={() => {
+              handleAuth('google')
+            }}
             sx={{
               marginTop: '10px',
               width: '100%',
@@ -210,7 +252,9 @@ function Login() {
             </Typography>
           </Button>
           <Button
-           onClick={() => {handleAuth('facebook')}}
+            onClick={() => {
+              handleAuth('facebook')
+            }}
             sx={{
               marginTop: '10px',
               width: '100%',
